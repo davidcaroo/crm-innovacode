@@ -15,7 +15,7 @@
     <script>
         $(document).ready(function() {
             // Toggle del sidebar en móviles
-            $('#sidebarToggle').on('click', function() {
+            $('#sidebarToggle, #sidebarToggleMobile').on('click', function() {
                 $('#sidebar').toggleClass('active');
                 $('#sidebarOverlay').toggleClass('active');
             });

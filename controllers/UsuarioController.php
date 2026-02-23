@@ -12,6 +12,10 @@ class UsuarioController extends BaseController
             $usuarioModel = new Usuario();
             $usuario = $usuarioModel->validarLogin($email, $password);
             if ($usuario) {
+                if ($usuario->estado === 'inactivo') {
+                    $this->view('usuarios/login', ['error' => 'Tu cuenta está inactiva. Contacta al administrador.']);
+                    return;
+                }
                 $_SESSION['usuario_id'] = $usuario->id;
                 $_SESSION['usuario_rol'] = $usuario->rol;
                 $_SESSION['usuario_nombre'] = $usuario->nombre;
@@ -89,12 +93,11 @@ class UsuarioController extends BaseController
         }
         $id           = $this->post('id');
         $usuarioModel = new Usuario();
-        $usuarioModel->actualizar(
-            $id,
-            $this->post('nombre'),
-            $this->post('email'),
-            $this->post('rol') ?: 'usuario'
-        );
+        $rol          = $this->post('rol');
+        $estado       = $this->post('estado') ?: 'activo';
+        
+        $usuarioModel->actualizar($id, $this->post('nombre'), $this->post('email'), $rol ?: 'usuario', $estado);
+        
         $nueva = $this->post('password');
         if ($nueva) {
             $usuarioModel->cambiarPassword($id, $nueva);
@@ -113,4 +116,57 @@ class UsuarioController extends BaseController
         }
         $this->redirect(BASE_URL . '/index.php?controller=usuario&action=lista');
     }
+
+    /**
+     * Módulo Superadmin: Impersonar (Espectar) usuario
+     */
+    public function impersonate()
+    {
+        // Solo Superadmin puede usar esto
+        if (!isset($_SESSION['usuario_rol']) || $_SESSION['usuario_rol'] !== 'superadmin') {
+            $this->redirect(BASE_URL . '/index.php');
+            return;
+        }
+
+        $idToImpersonate = $this->get('id');
+        $usuarioModel = new Usuario();
+        $targetUser = $usuarioModel->obtener($idToImpersonate);
+
+        if ($targetUser) {
+            // Guardamos sesión original
+            $_SESSION['admin_id_original'] = $_SESSION['usuario_id'];
+            $_SESSION['admin_nombre_original'] = $_SESSION['usuario_nombre'];
+            $_SESSION['admin_rol_original'] = $_SESSION['usuario_rol'];
+
+            // Cambiamos a identidad del usuario destino
+            $_SESSION['usuario_id'] = $targetUser->id;
+            $_SESSION['usuario_nombre'] = $targetUser->nombre;
+            $_SESSION['usuario_rol'] = $targetUser->rol;
+            $_SESSION['is_impersonating'] = true;
+
+            $this->redirect(BASE_URL . '/index.php');
+        }
+    }
+
+    /**
+     * Volver a la cuenta de Superadmin
+     */
+    public function stopImpersonating()
+    {
+        if (isset($_SESSION['is_impersonating']) && $_SESSION['is_impersonating']) {
+            $_SESSION['usuario_id'] = $_SESSION['admin_id_original'];
+            $_SESSION['usuario_nombre'] = $_SESSION['admin_nombre_original'];
+            $_SESSION['usuario_rol'] = $_SESSION['admin_rol_original'];
+
+            unset($_SESSION['admin_id_original']);
+            unset($_SESSION['admin_nombre_original']);
+            unset($_SESSION['admin_rol_original']);
+            unset($_SESSION['is_impersonating']);
+
+            $this->redirect(BASE_URL . '/index.php?controller=usuario&action=lista');
+        } else {
+            $this->redirect(BASE_URL . '/index.php');
+        }
+    }
 }
+

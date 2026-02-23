@@ -231,23 +231,5 @@ foreach ($empresasPorEtapa as $row) {
                     }
                 });
             }
-            display: false
-        },
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true,
-                    stepSize: 1
-                }
-            }],
-            xAxes: [{
-                gridLines: {
-                    display: false
-                }
-            }]
-        }
-    }
-    });
-    }
     })();
 </script>

@@ -35,23 +35,26 @@ class Usuario extends BaseModel
 
     public function todos()
     {
-        $sql  = "SELECT id, nombre, email, rol, creado_en FROM usuarios ORDER BY creado_en DESC";
+        $sql  = "SELECT u.id, u.nombre, u.email, u.rol, u.estado, u.creado_en, 
+                        (SELECT COUNT(*) FROM empresas e WHERE e.usuario_id = u.id) as total_empresas
+                 FROM usuarios u 
+                 ORDER BY u.creado_en DESC";
         return $this->db->query($sql)->fetchAll();
     }
 
     public function obtener($id)
     {
-        $sql  = "SELECT id, nombre, email, rol, creado_en FROM usuarios WHERE id = ?";
+        $sql  = "SELECT id, nombre, email, rol, estado, creado_en FROM usuarios WHERE id = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([$id]);
         return $stmt->fetch();
     }
 
-    public function actualizar($id, $nombre, $email, $rol)
+    public function actualizar($id, $nombre, $email, $rol, $estado = 'activo')
     {
-        $sql  = "UPDATE usuarios SET nombre = ?, email = ?, rol = ? WHERE id = ?";
+        $sql  = "UPDATE usuarios SET nombre = ?, email = ?, rol = ?, estado = ? WHERE id = ?";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([$nombre, $email, $rol, $id]);
+        return $stmt->execute([$nombre, $email, $rol, $estado, $id]);
     }
 
     public function cambiarPassword($id, $nuevaPassword)

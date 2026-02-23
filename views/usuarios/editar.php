@@ -2,41 +2,72 @@
 ?>
 
 <div class="page-header">
-    <h2 class="page-title"><span class="mdi mdi-account-edit"></span> Editar Usuario</h2>
-    <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=lista" class="btn btn-sm btn-outline-secondary">
-        <span class="mdi mdi-arrow-left"></span> Volver
+    <div>
+        <h2 class="page-title"><i class="bi bi-person-gear"></i> Editar Usuario</h2>
+        <span class="page-subtitle">Actualiza el perfil y permisos del usuario</span>
+    </div>
+    <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=lista" class="btn btn-sm btn-danger text-white" style="border-radius:6px; font-weight:800;">
+        <i class="bi bi-arrow-left"></i> Volver
     </a>
 </div>
 
 <div class="row">
-    <div class="col-12 col-md-6 col-lg-5">
+    <div class="col-12 col-md-8 col-lg-7">
         <div class="card border-0 shadow-sm">
             <div class="card-body">
                 <form method="post" action="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=actualizarUsuario">
                     <input type="hidden" name="id" value="<?= $usuario->id ?>">
-                    <div class="form-group">
-                        <label><small class="font-weight-bold text-uppercase text-muted">Nombre</small></label>
-                        <input type="text" name="nombre" class="form-control" value="<?= htmlspecialchars($usuario->nombre) ?>" required>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label style="font-size:0.82rem;font-weight:600;color:#475569;">Nombre Completo</label>
+                                <input type="text" name="nombre" class="form-control form-control-sm" value="<?= htmlspecialchars($usuario->nombre) ?>" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label style="font-size:0.82rem;font-weight:600;color:#475569;">Email Institucional</label>
+                                <input type="email" name="email" class="form-control form-control-sm" value="<?= htmlspecialchars($usuario->email) ?>" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label><small class="font-weight-bold text-uppercase text-muted">Email</small></label>
-                        <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($usuario->email) ?>" required>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label style="font-size:0.82rem;font-weight:600;color:#475569;">Rol en el Sistema</label>
+                                <select name="rol" class="form-control form-control-sm shadow-sm">
+                                    <option value="usuario" <?= $usuario->rol === 'usuario' ? 'selected' : '' ?>>Usuario Operativo</option>
+                                    <option value="admin" <?= $usuario->rol === 'admin' ? 'selected' : '' ?>>Administrador Local</option>
+                                    <option value="superadmin" <?= $usuario->rol === 'superadmin' ? 'selected' : '' ?>>Superadmin (Global)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label style="font-size:0.82rem;font-weight:600;color:#475569;">Estado de la Cuenta</label>
+                                <select name="estado" class="form-control form-control-sm shadow-sm">
+                                    <option value="activo" <?= ($usuario->estado ?? 'activo') === 'activo' ? 'selected' : '' ?>>Activo</option>
+                                    <option value="inactivo" <?= ($usuario->estado ?? 'activo') === 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label><small class="font-weight-bold text-uppercase text-muted">Rol</small></label>
-                        <select name="rol" class="form-control">
-                            <option value="usuario" <?= $usuario->rol === 'usuario' ? 'selected' : '' ?>>Usuario</option>
-                            <option value="admin" <?= $usuario->rol === 'admin' ? 'selected' : '' ?>>Admin</option>
-                            <option value="superadmin" <?= $usuario->rol === 'superadmin' ? 'selected' : '' ?>>SuperAdmin</option>
-                        </select>
+
+                    <div class="form-group mb-4">
+                        <label style="font-size:0.82rem;font-weight:600;color:#475569;">Restablecer Contrasena</label>
+                        <input type="password" name="password" class="form-control form-control-sm" placeholder="Dejar vacio para no cambiar...">
+                        <small class="form-text text-muted">Mínimo 8 caracteres si se desea cambiar.</small>
                     </div>
-                    <div class="form-group">
-                        <label><small class="font-weight-bold text-uppercase text-muted">Nueva Contrasena (dejar vacio para no cambiar)</small></label>
-                        <input type="password" name="password" class="form-control" placeholder="Nueva contrasena...">
+
+                    <div class="d-flex justify-content-end" style="gap:10px;">
+                        <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=lista" 
+                           class="btn btn-danger text-white" style="border-radius:8px; padding:8px 22px; font-weight:800;">Cancelar</a>
+                        <button type="submit" class="btn btn-primary" style="border-radius:8px; padding:8px 28px; font-weight:700;">
+                            <i class="bi bi-save"></i> Actualizar Usuario
+                        </button>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block mt-2">
-                        <span class="mdi mdi-content-save"></span> Guardar Cambios
-                    </button>
                 </form>
             </div>
         </div>

@@ -179,35 +179,41 @@ body {
   display: flex;
   align-items: center;
   padding: 14px 22px;
-  color: #2d3a4a;
+  color: #4b5563; /* Gris más oscuro */
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   border-left: 4px solid transparent;
-  font-size: 1.08rem;
-  font-weight: 500;
-  border-radius: 0 20px 20px 0;
+  font-size: 1.02rem;
+  font-weight: 600;
+  border-radius: 0 12px 12px 0;
+  margin-right: 12px;
 }
 
 .sidebar-link:hover {
-  background: #fef3e6;
-  border-left-color: #ff9800;
+  background: rgba(37, 99, 235, 0.08);
   color: #2563eb;
   text-decoration: none;
-  padding-left: 28px;
+  padding-left: 26px;
 }
 
 .sidebar-link.active {
-  background: #e3eaf2;
+  background: #e0e7ff;
   border-left-color: #2563eb;
-  color: #2563eb;
+  color: #1e40af;
   font-weight: 700;
 }
 
 .sidebar-link .mdi {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   margin-right: 14px;
-  width: 28px;
+  width: 24px;
   text-align: center;
+  color: #64748b; /* Iconos más tenues por defecto */
+  transition: color 0.2s;
+}
+
+.sidebar-link:hover .mdi,
+.sidebar-link.active .mdi {
   color: #2563eb;
 }
 
@@ -279,11 +285,50 @@ body {
 
 .content-wrapper {
   margin-left: 250px;
-  padding: 28px 30px 40px 30px;
+  padding: 24px 30px 40px 30px;
   min-height: 100vh;
   transition: margin-left 0.3s ease;
   background: #f0f2f8;
   color: #2d3a4a;
+}
+
+/* ===================================
+   TOP NAVBAR
+   =================================== */
+.top-navbar {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 4px rgba(44, 62, 80, 0.06);
+  border: 1px solid #e4e8f0;
+}
+
+.user-name-top {
+  font-weight: 700;
+  color: #1e40af;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
+
+.user-role-top {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.user-avatar-top {
+  width: 42px;
+  height: 42px;
+  background: #2563eb;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
 }
 
 /* Footer */
@@ -441,21 +486,16 @@ body {
    =================================== */
 
 @media (max-width: 768px) {
-
   /* Mostrar toggle button */
   .sidebar-toggle {
-    display: block;
-    background: #2563eb;
-    color: #fff;
-    border: none;
-    font-size: 1.2rem;
-    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+    display: none; /* Ocultamos el viejo botón flotante */
   }
 
   .sidebar {
     transform: translateX(-100%);
-    background: #e3eaf2;
+    background: #fff;
     border-right: 1px solid #dbe2ef;
+    z-index: 2000;
   }
 
   .sidebar.active {
@@ -464,8 +504,13 @@ body {
 
   .content-wrapper {
     margin-left: 0 !important;
-    padding: 80px 14px 30px 14px;
+    padding: 15px 14px 30px 14px;
     background: #f0f2f8;
+  }
+
+  .top-navbar {
+    padding: 10px 15px;
+    margin-bottom: 20px;
   }
 
   .footer {
