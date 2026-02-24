@@ -4,6 +4,11 @@
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="h3 mb-0 text-gray-800"><i class="mdi mdi-history mr-2" style="color: #28a745; font-weight: bold;"></i>Historial de Actividad Global</h2>
+        <div class="d-flex" style="gap:8px;">
+            <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalExportar">
+                <i class="bi bi-download"></i> Exportar a CSV
+            </button>
+        </div>
     </div>
 
     <div class="card shadow mb-4">
@@ -65,6 +70,58 @@
                         <?php endif; ?>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Exportar -->
+<div class="modal fade" id="modalExportar" tabindex="-1" role="dialog" aria-labelledby="modalExportarLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalExportarLabel"><i class="bi bi-download"></i> Exportar Trazabilidad</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formExportar" method="GET" action="<?php echo url('trazabilidad/exportar'); ?>">
+                    <div class="form-group">
+                        <label class="font-weight-bold">Filtros Opcionales</label>
+                        <p class="text-muted small">Deja los campos vacíos para exportar todo el historial</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_inicio">Fecha Inicio</label>
+                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_fin">Fecha Fin</label>
+                        <input type="date" class="form-control" id="fecha_fin" name="fecha_fin">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipo_actividad">Tipo de Actividad</label>
+                        <select class="form-control" id="tipo_actividad" name="tipo_actividad">
+                            <option value="">-- Todas --</option>
+                            <option value="llamada">Llamada</option>
+                            <option value="correo">Correo</option>
+                            <option value="reunion">Reunión</option>
+                            <option value="visita">Visita</option>
+                            <option value="nota">Nota</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="<?php echo url('trazabilidad/exportar'); ?>" class="btn btn-outline-success">
+                    <i class="bi bi-file-earmark-arrow-down"></i> Exportar Todo
+                </a>
+                <button type="button" class="btn btn-success" onclick="document.getElementById('formExportar').submit();">
+                    <i class="bi bi-funnel"></i> Exportar con Filtros
+                </button>
             </div>
         </div>
     </div>

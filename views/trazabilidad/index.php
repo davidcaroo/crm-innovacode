@@ -25,6 +25,9 @@ $etapaColors = ['prospectado' => 'badge-prospectado', 'contactado' => 'badge-con
         <?php endif; ?>
     </div>
     <div class="d-flex" style="gap:8px;">
+        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalExportarEmpresa">
+            <i class="bi bi-download"></i> Exportar CSV
+        </button>
         <a href="<?php echo url('trazabilidad/registrar', ['empresa_id' => $empresa_id]); ?>"
             class="btn btn-primary btn-sm">
             <span class="mdi mdi-plus"></span> Nueva Actividad
@@ -76,6 +79,64 @@ $etapaColors = ['prospectado' => 'badge-prospectado', 'contactado' => 'badge-con
         <?php endforeach; ?>
     </div>
 <?php endif; ?>
+
+<!-- Modal Exportar Empresa -->
+<div class="modal fade" id="modalExportarEmpresa" tabindex="-1" role="dialog" aria-labelledby="modalExportarEmpresaLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalExportarEmpresaLabel"><i class="bi bi-download"></i> Exportar Trazabilidad</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formExportarEmpresa" method="GET" action="<?php echo url('trazabilidad/exportar'); ?>">
+                    <input type="hidden" name="empresa_id" value="<?php echo $empresa_id; ?>">
+
+                    <div class="alert alert-info" role="alert">
+                        <i class="bi bi-info-circle"></i> Se exportará la trazabilidad de <strong><?php echo htmlspecialchars($empresa->razon_social ?? ''); ?></strong>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="font-weight-bold">Filtros Opcionales</label>
+                        <p class="text-muted small">Deja los campos vacíos para exportar todo el historial</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_inicio_empresa">Fecha Inicio</label>
+                        <input type="date" class="form-control" id="fecha_inicio_empresa" name="fecha_inicio">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_fin_empresa">Fecha Fin</label>
+                        <input type="date" class="form-control" id="fecha_fin_empresa" name="fecha_fin">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipo_actividad_empresa">Tipo de Actividad</label>
+                        <select class="form-control" id="tipo_actividad_empresa" name="tipo_actividad">
+                            <option value="">-- Todas --</option>
+                            <option value="llamada">Llamada</option>
+                            <option value="correo">Correo</option>
+                            <option value="reunion">Reunión</option>
+                            <option value="visita">Visita</option>
+                            <option value="nota">Nota</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="<?php echo url('trazabilidad/exportar', ['empresa_id' => $empresa_id]); ?>" class="btn btn-outline-success">
+                    <i class="bi bi-file-earmark-arrow-down"></i> Exportar Todo
+                </a>
+                <button type="button" class="btn btn-success" onclick="document.getElementById('formExportarEmpresa').submit();">
+                    <i class="bi bi-funnel"></i> Exportar con Filtros
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php // Footer included from BaseController 
 ?>

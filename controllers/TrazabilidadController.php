@@ -74,4 +74,109 @@ class TrazabilidadController extends BaseController
             ]);
         }
     }
+
+    public function exportar()
+    {
+        // Configuración de tiempo y memoria para datasets grandes
+        set_time_limit(300);
+        ini_set('memory_limit', '256M');
+
+        // Capturar filtros
+        $filtros = [];
+
+        // Aplicar filtro de permisos según rol
+        if (!in_array($_SESSION['usuario_rol'], ['admin', 'superadmin'])) {
+            $filtros['usuario_id'] = $_SESSION['usuario_id'];
+        }
+
+        // Filtros opcionales
+        if ($empresa_id = $this->get('empresa_id')) {
+            // Validar propiedad de la empresa
+            $this->validarPropiedadEmpresa($empresa_id);
+            $filtros['empresa_id'] = $empresa_id;
+        }
+
+        if ($fecha_inicio = $this->get('fecha_inicio')) {
+            $filtros['fecha_inicio'] = $fecha_inicio;
+        }
+
+        if ($fecha_fin = $this->get('fecha_fin')) {
+            $filtros['fecha_fin'] = $fecha_fin;
+        }
+
+        if ($tipo_actividad = $this->get('tipo_actividad')) {
+            $filtros['tipo_actividad'] = $tipo_actividad;
+        }
+
+        // Obtener datos
+        $trazabilidadModel = new Trazabilidad();
+        $datos = $trazabilidadModel->historialParaExportar($filtros);
+
+        // Generar nombre de archivo
+        $timestamp = date('Ymd_His');
+        if (!empty($filtros['empresa_id'])) {
+            $filename = "trazabilidad_empresa-{$filtros['empresa_id']}_{$timestamp}.csv";
+        } else {
+            $filename = "trazabilidad_global_{$timestamp}.csv";
+        }
+
+        // Configurar headers para descarga CSV
+        header('Content-Type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+        header('Pragma: public');
+
+        // Abrir output stream
+        $output = fopen('php://output', 'w');
+
+        // Agregar BOM UTF-8 para correcta detección en Excel
+        fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        // Escribir encabezados
+        $encabezados = [
+            'ID',
+            'Fecha',
+            'Empresa ID',
+            'Empresa',
+            'Departamento',
+            'Ciudad',
+            'Actividad Económica',
+            'Correo Comercial',
+            'Etapa Actual Empresa',
+            'Usuario ID',
+            'Usuario',
+            'Rol Usuario',
+            'Tipo Actividad',
+            'Etapa en Actividad',
+            'Observaciones',
+            'Días Transcurridos'
+        ];
+        fputcsv($output, $encabezados, ',');
+
+        // Escribir datos
+        foreach ($datos as $fila) {
+            $row = [
+                $fila->id,
+                $fila->fecha_formateada,
+                $fila->empresa_id,
+                $fila->empresa,
+                $fila->dpto ?? '',
+                $fila->ciudad ?? '',
+                $fila->actividad_economica ?? '',
+                $fila->correo_comercial ?? '',
+                ucfirst($fila->etapa_actual_empresa ?? ''),
+                $fila->usuario_id,
+                $fila->usuario,
+                ucfirst($fila->rol_usuario ?? ''),
+                ucfirst($fila->tipo_actividad ?? ''),
+                ucfirst($fila->etapa_en_actividad ?? ''),
+                $fila->observaciones ?? '',
+                $fila->dias_transcurridos
+            ];
+            fputcsv($output, $row, ',');
+        }
+
+        fclose($output);
+        exit;
+    }
 }

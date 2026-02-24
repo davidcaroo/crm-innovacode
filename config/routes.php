@@ -51,6 +51,7 @@ return [
 
     // ── TRAZABILIDAD ────────────────────────────────────────
     'GET  /trazabilidad'                        => ['trazabilidad', 'historial'],
+    'GET  /trazabilidad/exportar'               => ['trazabilidad', 'exportar'],
     'GET  /trazabilidad/:empresa_id'            => ['trazabilidad', 'index'],
     'GET  /trazabilidad/:empresa_id/registrar'  => ['trazabilidad', 'registrar'],
     'POST /trazabilidad/:empresa_id/registrar'  => ['trazabilidad', 'registrar'],
