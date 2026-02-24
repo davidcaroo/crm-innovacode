@@ -22,7 +22,7 @@ $controllerName = isset($_GET['controller']) ? $_GET['controller'] : 'dashboard'
 $actionName = isset($_GET['action']) ? $_GET['action'] : 'index';
 
 if (!isset($_SESSION['usuario_id']) && !(
-    $controllerName === 'usuario' && in_array($actionName, ['login', 'recuperar', 'resetear'])
+        $controllerName === 'usuario' && in_array($actionName, ['login', 'recuperar', 'resetear'])
 )) {
         header('Location: ' . BASE_URL . '/index.php?controller=usuario&action=login');
         exit;

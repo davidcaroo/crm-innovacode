@@ -357,16 +357,30 @@ if ($ok && isset($okMsgs[$ok])):
     $(document).ready(function() {
         $('#btnProbarSmtp').on('click', function() {
             var btn = $(this);
-            btn.prop('disabled', true).html('<i class="mdi mdi-loading mdi-spin mr-1"></i> Probando...');
-            $.get('<?= BASE_URL ?>/index.php?controller=configuracion&action=probarSmtp', function(res) {
-                var html = res.ok ?
-                    '<div class="alert alert-success mb-0" style="border-radius:8px;"><i class="mdi mdi-check-circle mr-1"></i>' + res.msg + '</div>' :
-                    '<div class="alert alert-danger mb-0" style="border-radius:8px;"><i class="mdi mdi-alert mr-1"></i>' + res.msg + '</div>';
-                $('#smtpTestResult').html(html).show();
-            }, 'json').fail(function() {
-                $('#smtpTestResult').html('<div class="alert alert-danger mb-0" style="border-radius:8px;"><i class="mdi mdi-alert mr-1"></i> Error de comunicación.</div>').show();
-            }).always(function() {
-                btn.prop('disabled', false).html('<i class="mdi mdi-send-check-outline mr-1"></i> Probar conexión');
+            btn.prop('disabled', true).html('<i class="mdi mdi-loading mdi-spin mr-1"></i> Conectando...');
+            $('#smtpTestResult').hide().html('');
+            $.ajax({
+                url: '<?= BASE_URL ?>/index.php?controller=configuracion&action=probarSmtp',
+                type: 'GET',
+                dataType: 'json',
+                timeout: 30000,
+                success: function(res) {
+                    var icon  = res.ok ? 'mdi-check-circle' : 'mdi-alert';
+                    var cls   = res.ok ? 'alert-success' : 'alert-danger';
+                    var html  = '<div class="alert ' + cls + ' mb-0" style="border-radius:8px;">'
+                              + '<i class="mdi ' + icon + ' mr-1"></i>' + res.msg + '</div>';
+                    if (res.log) {
+                        html += '<details class="mt-2" style="font-size:0.8rem;"><summary style="cursor:pointer;color:#64748b;">Ver log de conexión</summary>'
+                              + '<pre style="background:#1e293b;color:#94a3b8;border-radius:6px;padding:10px;font-size:0.78rem;overflow:auto;max-height:180px;margin-top:6px;">' + res.log + '</pre></details>';
+                    }
+                    $('#smtpTestResult').html(html).show();
+                },
+                error: function(xhr) {
+                    $('#smtpTestResult').html('<div class="alert alert-danger mb-0" style="border-radius:8px;"><i class="mdi mdi-alert mr-1"></i> Error de comunicación con el servidor (' + (xhr.status || 'timeout') + ').</div>').show();
+                },
+                complete: function() {
+                    btn.prop('disabled', false).html('<i class="mdi mdi-send-check-outline mr-1"></i> Probar conexión');
+                }
             });
         });
     });

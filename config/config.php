@@ -26,7 +26,7 @@ define('CONTROLLERS_PATH', BASE_PATH . '/controllers');
 define('BASE_URL', 'http://localhost/crm-php.com');
 
 // Configuración de la aplicación
-define('APP_NAME', 'CRM Bahari');
+define('APP_NAME', 'CRM By Innovacode Tech');
 define('APP_VERSION', '2.0.0');
 
 // Clave de cifrado para secretos (API keys, contraseñas SMTP, etc.)

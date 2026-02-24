@@ -306,3 +306,4 @@ class UsuarioController extends BaseController
             'error'      => $error,
         ]);
     }
+}

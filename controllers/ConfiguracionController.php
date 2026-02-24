@@ -135,21 +135,8 @@ class ConfiguracionController extends BaseController
     {
         $this->soloAdmins();
         header('Content-Type: application/json');
-        $smtp = Configuracion::getSMTP();
-        if (empty($smtp['smtp_host']) || empty($smtp['smtp_user'])) {
-            echo json_encode(['ok' => false, 'msg' => 'SMTP no configurado.']);
-            exit;
-        }
-        try {
-            $resultado = Mailer::enviar(
-                $smtp['smtp_user'],
-                '[CRM Bahari] Prueba de conexión SMTP',
-                '<p>Esta es una prueba de conexión SMTP desde el CRM Bahari.</p>'
-            );
-            echo json_encode(['ok' => $resultado, 'msg' => $resultado ? 'Correo de prueba enviado.' : 'Error al enviar.']);
-        } catch (Exception $e) {
-            echo json_encode(['ok' => false, 'msg' => $e->getMessage()]);
-        }
+        $result = Mailer::probarConexion();
+        echo json_encode($result);
         exit;
     }
 }
