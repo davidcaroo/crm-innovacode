@@ -3,7 +3,7 @@
 
 <div class="page-header">
     <h2 class="page-title"><span class="mdi mdi-account-plus"></span> Nuevo Usuario</h2>
-    <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=lista" class="btn btn-sm btn-outline-secondary">
+    <a href="<?php echo url('usuario/lista'); ?>" class="btn btn-sm btn-outline-secondary">
         <span class="mdi mdi-arrow-left"></span> Volver
     </a>
 </div>
@@ -12,7 +12,7 @@
     <div class="col-12 col-md-6 col-lg-5">
         <div class="card border-0 shadow-sm">
             <div class="card-body">
-                <form method="post" action="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=guardarUsuario">
+                <form method="post" action="<?php echo url('usuario/guardarUsuario'); ?>">
                     <div class="form-group">
                         <label><small class="font-weight-bold text-uppercase text-muted">Nombre</small></label>
                         <input type="text" name="nombre" class="form-control" required>

@@ -60,7 +60,7 @@
                         <span class="mdi mdi-login"></span> Entrar
                     </button>
                     <div class="text-center mt-3">
-                        <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=recuperar"
+                        <a href="<?php echo url('usuario/recuperar'); ?>"
                             class="text-muted" style="font-size:0.88rem;">¿Olvidé mi contraseña?</a>
                     </div>
                 </form>

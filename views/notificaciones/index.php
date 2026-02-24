@@ -8,7 +8,7 @@
         <h2 class="page-title"><span class="mdi mdi-bell-outline"></span> Notificaciones</h2>
         <span class="page-subtitle">Tu bandeja de actividad reciente</span>
     </div>
-    <form method="post" action="<?= BASE_URL ?>/index.php?controller=notificacion&action=marcarTodas">
+    <form method="post" action="<?= url('notificacion/marcarTodas') ?>">
         <button type="submit" class="btn btn-sm btn-outline-secondary" style="border-radius:8px;font-weight:600;">
             <i class="mdi mdi-check-all mr-1"></i> Marcar todas como leídas
         </button>

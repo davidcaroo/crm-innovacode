@@ -17,7 +17,7 @@ $total = array_sum(array_map('count', $etapas));
         <h2 class="page-title"><span class="mdi mdi-view-column"></span> Pipeline de Ventas</h2>
         <span class="page-subtitle"><?php echo $total; ?> empresa<?php echo $total != 1 ? 's' : ''; ?> en total</span>
     </div>
-    <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=crear" class="btn btn-primary btn-sm">
+    <a href="<?php echo url('empresa/crear'); ?>" class="btn btn-primary btn-sm">
         <span class="mdi mdi-plus"></span> Nueva Empresa
     </a>
 </div>
@@ -54,22 +54,22 @@ $total = array_sum(array_map('count', $etapas));
                                         </div>
                                     <?php endif; ?>
                                     <div class="d-flex mt-2" style="gap:4px;">
-                                        <a href="<?php echo BASE_URL; ?>/index.php?controller=trazabilidad&action=index&empresa_id=<?= $emp->id ?>"
+                                        <a href="<?php echo url('trazabilidad/index', ['empresa_id' => $emp->id]); ?>"
                                             class="btn btn-sm btn-outline-secondary" title="Trazabilidad"
                                             style="padding:2px 7px;font-size:0.8rem;border-radius:5px;">
                                             <i class="bi bi-clock-history"></i>
                                         </a>
-                                        <a href="<?php echo BASE_URL; ?>/index.php?controller=contacto&action=index&empresa_id=<?= $emp->id ?>"
+                                        <a href="<?php echo url('contacto/index', ['empresa_id' => $emp->id]); ?>"
                                             class="btn btn-sm btn-outline-info" title="Contactos"
                                             style="padding:2px 7px;font-size:0.8rem;border-radius:5px;">
                                             <i class="bi bi-people-fill"></i>
                                         </a>
-                                        <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=editar&id=<?= $emp->id ?>"
+                                        <a href="<?php echo url('empresa/editar', ['id' => $emp->id]); ?>"
                                             class="btn btn-sm btn-outline-primary" title="Editar"
                                             style="padding:2px 7px;font-size:0.8rem;border-radius:5px;">
                                             <i class="bi bi-pencil-fill"></i>
                                         </a>
-                                        <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=eliminar&id=<?= $emp->id ?>"
+                                        <a href="<?php echo url('empresa/eliminar', ['id' => $emp->id]); ?>"
                                             class="btn btn-sm btn-outline-danger" title="Eliminar"
                                             style="padding:2px 7px;font-size:0.8rem;border-radius:5px;"
                                             onclick="return confirm('¿Eliminar empresa?')">

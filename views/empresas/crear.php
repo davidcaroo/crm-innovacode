@@ -6,13 +6,13 @@
         <h2 class="page-title"><i class="bi bi-building-add"></i> Nueva Empresa</h2>
         <span class="page-subtitle">Completa los datos para registrar una empresa</span>
     </div>
-    <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=index"
+    <a href="<?php echo url('empresa/index'); ?>"
         class="btn btn-sm btn-danger text-white" style="border-radius:6px; font-weight:800;">
         <i class="bi bi-arrow-left"></i> Volver
     </a>
 </div>
 
-<form method="post" action="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=guardar">
+<form method="post" action="<?php echo url('empresa/guardar'); ?>">
 
     <div class="row">
 
@@ -103,8 +103,7 @@
     </div>
 
     <div class="d-flex justify-content-end mb-4" style="gap:10px;">
-        <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=index"
-            class="btn btn-danger text-white" style="border-radius:8px;padding:8px 22px; font-weight:800;">Cancelar</a>
+        <a href="<?php echo url('empresa/index'); ?>" class="btn btn-danger text-white" style="border-radius:8px;padding:8px 22px; font-weight:800;">Cancelar</a>
         <button type="submit" class="btn btn-primary" style="border-radius:8px;padding:8px 28px;font-weight:600;">
             <i class="bi bi-plus-lg"></i> Registrar Empresa
         </button>

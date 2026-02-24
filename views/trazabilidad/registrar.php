@@ -8,7 +8,7 @@
             <small class="text-muted"><?php echo htmlspecialchars($empresa->razon_social); ?></small>
         <?php endif; ?>
     </div>
-    <a href="<?php echo BASE_URL; ?>/index.php?controller=trazabilidad&action=index&empresa_id=<?= $empresa_id ?>" class="btn btn-sm btn-outline-secondary">
+    <a href="<?php echo url('trazabilidad/index', ['empresa_id' => $empresa_id]); ?>" class="btn btn-sm btn-outline-secondary">
         <span class="mdi mdi-arrow-left"></span> Volver
     </a>
 </div>
@@ -17,7 +17,7 @@
     <div class="col-12 col-md-7 col-lg-5">
         <div class="card border-0 shadow-sm">
             <div class="card-body">
-                <form method="post" action="<?php echo BASE_URL; ?>/index.php?controller=trazabilidad&action=registrar">
+                <form method="post" action="<?php echo url('trazabilidad/registrar'); ?>">
                     <input type="hidden" name="empresa_id" value="<?= htmlspecialchars($empresa_id) ?>">
 
                     <div class="form-group">

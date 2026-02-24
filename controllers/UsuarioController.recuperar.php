@@ -34,7 +34,7 @@ class UsuarioController extends BaseController
         // Enviar correo usando mail() o PHPMailer
         // ...implementación SMTP...
         // Ejemplo básico:
-        $enlace = BASE_URL . "/index.php?controller=usuario&action=reset&token=" . urlencode($token);
+        $enlace = url("usuario/resetear", ['token' => $token]);
         $asunto = "Recuperación de contraseña CRM";
         $mensaje = "Haz clic en el siguiente enlace para restablecer tu contraseña: $enlace";
         // mail($email, $asunto, $mensaje); // Reemplazar por SMTP real

@@ -205,7 +205,7 @@ class UsuarioController extends BaseController
 
                 $usuarioModel->setRecoveryToken($email, $tokenHashed, null);
 
-                $enlace = BASE_URL . '/index.php?controller=usuario&action=resetear&token=' . urlencode($tokenPlano);
+                $enlace = url('usuario/resetear', ['token' => $tokenPlano]);
 
                 $asunto = 'Recupera tu contraseña – ' . (defined('APP_NAME') ? APP_NAME : 'CRM');
                 $cuerpo = '

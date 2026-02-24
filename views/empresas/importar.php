@@ -4,7 +4,7 @@
         <span class="page-subtitle">Carga de empresas mediante archivo CSV (Separado por comas o punto y coma)</span>
     </div>
     <div>
-        <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=index" class="btn btn-sm btn-outline-secondary">
+        <a href="<?php echo url('empresa/index'); ?>" class="btn btn-sm btn-outline-secondary">
             <span class="mdi mdi-arrow-left"></span> Volver
         </a>
     </div>
@@ -54,7 +54,7 @@
                     </div>
                 <?php endif; ?>
 
-                <form action="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=procesarImportacion" method="POST" enctype="multipart/form-data">
+                <form action="<?php echo url('empresa/procesarImportacion'); ?>" method="POST" enctype="multipart/form-data">
                     <div class="form-group mb-4 mt-3">
                         <label for="archivo_csv" class="form-label" style="font-weight: 600; font-size: 0.85rem; color: #475569;">Archivo CSV (.csv)</label>
                         <input type="file" name="archivo_csv" id="archivo_csv" class="form-control" accept=".csv" required style="border-radius: 8px; padding: 10px;">

@@ -55,7 +55,7 @@ foreach ($empresasPorEtapa as $row) {
             <div class="card-body py-3 px-3">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <strong style="font-size:0.92rem;"><span class="mdi mdi-filter-variant"></span> Pipeline por Etapa</strong>
-                    <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=pipeline" class="btn btn-sm btn-outline-primary" style="font-size:0.82rem;">
+                    <a href="<?php echo url('empresa/pipeline'); ?>" class="btn btn-sm btn-outline-primary" style="font-size:0.82rem;">
                         <span class="mdi mdi-view-column"></span> Ver Kanban
                     </a>
                 </div>

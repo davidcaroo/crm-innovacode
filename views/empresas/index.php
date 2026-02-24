@@ -7,15 +7,15 @@
         <span class="page-subtitle"><?php echo count($empresas); ?> empresa<?php echo count($empresas) != 1 ? 's' : ''; ?> registrada<?php echo count($empresas) != 1 ? 's' : ''; ?></span>
     </div>
     <div class="d-flex" style="gap:8px;">
-        <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=importar"
+        <a href="<?php echo url('empresa/importar'); ?>"
             class="btn btn-sm btn-info shadow-sm text-white" style="border-radius:6px; font-weight:700;">
             <span class="mdi mdi-upload"></span> Importar
         </a>
-        <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=pipeline"
+        <a href="<?php echo url('empresa/pipeline'); ?>"
             class="btn btn-sm btn-outline-primary shadow-sm" style="border-radius:6px;">
             <span class="mdi mdi-view-column"></span> Ver Pipeline
         </a>
-        <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=crear"
+        <a href="<?php echo url('empresa/crear'); ?>"
             class="btn btn-sm btn-primary shadow-sm" style="border-radius:6px;">
             <span class="mdi mdi-plus"></span> Nueva Empresa
         </a>
@@ -73,19 +73,19 @@
                                 </td>
                                 <td>
                                     <div class="d-flex" style="gap:4px;">
-                                        <a href="<?php echo BASE_URL; ?>/index.php?controller=contacto&action=index&empresa_id=<?= $e->id ?>"
+                                        <a href="<?php echo url('contacto/index', ['empresa_id' => $e->id]); ?>"
                                             class="btn btn-sm btn-outline-info" title="Contactos" style="border-radius:6px;padding:3px 8px;">
                                             <i class="bi bi-people-fill"></i>
                                         </a>
-                                        <a href="<?php echo BASE_URL; ?>/index.php?controller=trazabilidad&action=index&empresa_id=<?= $e->id ?>"
+                                        <a href="<?php echo url('trazabilidad/index', ['empresa_id' => $e->id]); ?>"
                                             class="btn btn-sm btn-outline-secondary" title="Trazabilidad" style="border-radius:6px;padding:3px 8px;">
                                             <i class="bi bi-clock-history"></i>
                                         </a>
-                                        <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=editar&id=<?= $e->id ?>"
+                                        <a href="<?php echo url('empresa/editar', ['id' => $e->id]); ?>"
                                             class="btn btn-sm btn-outline-primary" title="Editar" style="border-radius:6px;padding:3px 8px;">
                                             <i class="bi bi-pencil-fill"></i>
                                         </a>
-                                        <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=eliminar&id=<?= $e->id ?>"
+                                        <a href="<?php echo url('empresa/eliminar', ['id' => $e->id]); ?>"
                                             class="btn btn-sm btn-outline-danger" title="Eliminar" style="border-radius:6px;padding:3px 8px;"
                                             onclick="return confirm('¿Eliminar empresa?')">
                                             <i class="bi bi-trash-fill"></i>

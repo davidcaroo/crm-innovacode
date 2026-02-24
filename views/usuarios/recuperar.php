@@ -1,5 +1,6 @@
 ﻿<!doctype html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.4.55/materialdesignicons.min.css">
     <link href="<?php echo BASE_URL; ?>/public/estilo.css" rel="stylesheet">
 </head>
+
 <body style="background:#f0f2f8;">
     <div class="login-wrapper">
         <div class="card shadow w-100" style="max-width:420px;border-radius:16px;border:1px solid #e4e8f0;">
@@ -32,18 +34,18 @@
                     <?php endif; ?>
                 <?php endif; ?>
                 <?php if (empty($mensaje)): ?>
-                <form method="post" autocomplete="off">
-                    <div class="form-group mb-3">
-                        <label for="email" style="font-size:0.88rem;font-weight:600;color:#475569;">Correo electrónico registrado</label>
-                        <input type="email" class="form-control" name="email" id="email" required autofocus placeholder="tucorreo@empresa.com">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block mt-1" style="padding:10px;font-weight:600;letter-spacing:0.3px;border-radius:8px;">
-                        <span class="mdi mdi-email-send-outline"></span> Enviar enlace de recuperación
-                    </button>
-                </form>
+                    <form method="post" autocomplete="off">
+                        <div class="form-group mb-3">
+                            <label for="email" style="font-size:0.88rem;font-weight:600;color:#475569;">Correo electrónico registrado</label>
+                            <input type="email" class="form-control" name="email" id="email" required autofocus placeholder="tucorreo@empresa.com">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block mt-1" style="padding:10px;font-weight:600;letter-spacing:0.3px;border-radius:8px;">
+                            <span class="mdi mdi-email-send-outline"></span> Enviar enlace de recuperación
+                        </button>
+                    </form>
                 <?php endif; ?>
                 <div class="text-center mt-3">
-                    <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=login" class="text-muted" style="font-size:0.88rem;">
+                    <a href="<?php echo url('usuario/login'); ?>" class="text-muted" style="font-size:0.88rem;">
                         <i class="bi bi-arrow-left"></i> Volver al inicio de sesión
                     </a>
                 </div>
@@ -54,4 +56,5 @@
         </div>
     </div>
 </body>
+
 </html>

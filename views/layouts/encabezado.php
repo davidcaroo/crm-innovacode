@@ -33,7 +33,7 @@
             </div>
             <ul class="sidebar-menu">
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=dashboard&action=index">
+                    <a class="sidebar-link" href="<?php echo url('dashboard/index'); ?>">
                         <span class="mdi mdi-desktop-mac-dashboard"></span>
                         <span>Dashboard</span>
                     </a>
@@ -44,19 +44,19 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=pipeline">
+                    <a class="sidebar-link" href="<?php echo url('empresa/pipeline'); ?>">
                         <span class="mdi mdi-view-column"></span>
                         <span>Pipeline Comercial</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=index">
+                    <a class="sidebar-link" href="<?php echo url('empresa/index'); ?>">
                         <span class="mdi mdi-domain"></span>
                         <span>Mis Empresas</span>
                     </a>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=venta&action=index">
+                    <a class="sidebar-link" href="<?php echo url('venta/index'); ?>">
                         <span class="mdi mdi-store"></span>
                         <span>Cierre de Ventas</span>
                     </a>
@@ -67,14 +67,14 @@
                 </li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=reporte&action=index">
+                    <a class="sidebar-link" href="<?php echo url('reporte/index'); ?>">
                         <span class="mdi mdi-chart-line"></span>
                         <span>Panel de Reportes</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=trazabilidad&action=historial">
+                    <a class="sidebar-link" href="<?php echo url('trazabilidad/historial'); ?>">
                         <span class="mdi mdi-clock-outline"></span>
                         <span>Bitácora de Actividad</span>
                     </a>
@@ -85,13 +85,13 @@
                         Configuración avanzada
                     </li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=lista">
+                        <a class="sidebar-link" href="<?php echo url('usuario/lista'); ?>">
                             <span class="mdi mdi-account-group"></span>
                             <span>Gestión de Usuarios</span>
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=configuracion&action=index">
+                        <a class="sidebar-link" href="<?php echo url('configuracion/index'); ?>">
                             <span class="mdi mdi-cog"></span>
                             <span>Configuración</span>
                         </a>
@@ -99,7 +99,7 @@
                 <?php endif; ?>
 
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=notificacion&action=index">
+                    <a class="sidebar-link" href="<?php echo url('notificacion/index'); ?>">
                         <span class="mdi mdi-bell-outline"></span>
                         <span>Notificaciones</span>
                     </a>
@@ -109,14 +109,14 @@
                     Sistema
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=logout">
+                    <a class="sidebar-link" href="<?php echo url('usuario/logout'); ?>">
                         <span class="mdi mdi-logout"></span>
                         <span>Cerrar sesión</span>
                     </a>
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <a class="sidebar-link text-center sidebar-cta" href="<?php echo BASE_URL; ?>/index.php?controller=soporte&action=index">
+                <a class="sidebar-link text-center sidebar-cta" href="<?php echo url('soporte/index'); ?>">
                     <span class="mdi mdi-help-circle-outline"></span>
                     <small>Ayuda y soporte</small>
                 </a>
@@ -137,7 +137,7 @@
                             <div style="font-size:0.95rem; color:#b45309;">Viendo el sistema como: <strong><?= htmlspecialchars($_SESSION['usuario_nombre']) ?></strong></div>
                         </div>
                     </div>
-                    <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=stopImpersonating" class="btn btn-sm btn-dark px-3" style="border-radius:8px; font-weight:700;">
+                    <a href="<?php echo url('usuario/stopImpersonating'); ?>" class="btn btn-sm btn-dark px-3" style="border-radius:8px; font-weight:700;">
                         <i class="bi bi-x-circle mr-1"></i> Volver a mi Admin
                     </a>
                 </div>
@@ -203,7 +203,7 @@
                             <?php else: ?>
                                 <?php foreach ($ultimas5 as $nf):
                                     $m   = $iconosTipoNav[$nf->tipo] ?? ['icono' => 'mdi-bell', 'color' => '#64748b'];
-                                    $url = !empty($nf->url_accion) ? $nf->url_accion : BASE_URL . '/index.php?controller=notificacion&action=index';
+                                    $url = !empty($nf->url_accion) ? $nf->url_accion : url('notificacion/index');
                                 ?>
                                     <a href="<?= htmlspecialchars($url) ?>" class="dropdown-item d-flex align-items-start px-4 py-3" style="border-bottom:1px solid #f1f5f9;white-space:normal;">
                                         <span class="mdi <?= $m['icono'] ?> mr-3 mt-1 flex-shrink-0" style="font-size:1.2rem;color:<?= $m['color'] ?>;"></span>
@@ -216,7 +216,7 @@
                             <?php endif; ?>
                             <!-- Footer -->
                             <div class="text-center py-3" style="background:#f8fafc;">
-                                <a href="<?= BASE_URL ?>/index.php?controller=notificacion&action=index"
+                                <a href="<?= url('notificacion/index') ?>"
                                     style="font-weight:700;font-size:.85rem;color:#1e40af;text-decoration:none;">
                                     <i class="mdi mdi-bell-outline mr-1"></i> Ver todas las notificaciones
                                 </a>

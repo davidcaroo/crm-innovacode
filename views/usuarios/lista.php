@@ -6,7 +6,7 @@
         <h2 class="page-title"><span class="mdi mdi-account-group"></span> Usuarios del Sistema</h2>
         <span class="page-subtitle"><?php echo count($usuarios); ?> usuario<?php echo count($usuarios) != 1 ? 's' : ''; ?> en total</span>
     </div>
-    <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=crearUsuario" class="btn btn-primary btn-sm">
+    <a href="<?php echo url('usuario/crearUsuario'); ?>" class="btn btn-primary btn-sm">
         <span class="mdi mdi-plus"></span> Nuevo Usuario
     </a>
 </div>
@@ -61,20 +61,20 @@
                             <td class="text-right">
                                 <div class="d-flex justify-content-end" style="gap:5px;">
                                     <?php if ($_SESSION['usuario_rol'] === 'superadmin' && $u->id != $_SESSION['usuario_id']): ?>
-                                        <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=impersonate&id=<?= $u->id ?>"
+                                        <a href="<?php echo url('usuario/impersonate', ['id' => $u->id]); ?>"
                                             class="btn btn-sm btn-info text-white" style="border-radius:6px; font-weight:700;"
                                             title="Espectar (Entrar como este usuario)">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     <?php endif; ?>
 
-                                    <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=editarUsuario&id=<?= $u->id ?>"
+                                    <a href="<?php echo url('usuario/editarUsuario', ['id' => $u->id]); ?>"
                                         class="btn btn-sm btn-light border" style="border-radius:6px; color:#475569;" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
                                     <?php if ($u->id != $_SESSION['usuario_id']): ?>
-                                        <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=eliminarUsuario&id=<?= $u->id ?>"
+                                        <a href="<?php echo url('usuario/eliminarUsuario', ['id' => $u->id]); ?>"
                                             class="btn btn-sm btn-light border text-danger" style="border-radius:6px;"
                                             title="Eliminar"
                                             onclick="return confirm('Eliminar usuario <?= htmlspecialchars($u->nombre) ?>?')">

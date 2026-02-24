@@ -22,7 +22,7 @@
                     <span class="mdi mdi-plus-circle-outline" style="font-size:1.5rem;color:#1e40af;margin-right:8px;"></span>
                     <h5 class="mb-0" style="color:#1e40af;font-weight:700;">Registrar Venta</h5>
                 </div>
-                <form action="<?php echo BASE_URL; ?>/index.php?controller=venta&action=guardar" method="post">
+                <form action="<?php echo url('venta/guardar'); ?>" method="post">
                     <div class="form-group mb-2">
                         <label class="mb-1"><small class="font-weight-bold text-uppercase" style="color:#64748b;font-size:0.75rem;">Empresa (Ganada)</small></label>
                         <select required name="empresa_id" class="form-control form-control-sm" style="background:#fff;color:#1e40af;font-weight:600;">
@@ -37,7 +37,7 @@
                             <small class="d-block mt-1" style="color:#f59e0b;">
                                 <span class="mdi mdi-alert"></span>
                                 No hay empresas en etapa <strong>Ganado</strong>.
-                                <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=index">Editar empresas</a>
+                                <a href="<?php echo url('empresa/index'); ?>">Editar empresas</a>
                             </small>
                         <?php endif; ?>
                     </div>
@@ -96,7 +96,7 @@
                                         <td class="font-weight-bold" style="color:#15803d;">$<?php echo number_format($v->monto, 2); ?></td>
                                         <td><small class="text-muted"><?php echo htmlspecialchars($v->fecha); ?></small></td>
                                         <td>
-                                            <a href="<?php echo BASE_URL; ?>/index.php?controller=venta&action=eliminar&id=<?= $v->id ?>"
+                                            <a href="<?php echo url('venta/eliminar', ['id' => $v->id]); ?>"
                                                 class="btn btn-sm btn-outline-danger"
                                                 onclick="return confirm('¿Eliminar esta venta?')"
                                                 style="padding:3px 8px;font-size:0.8rem;border-radius:6px;">

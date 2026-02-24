@@ -29,7 +29,7 @@ if ($ok && isset($okMsgs[$ok])):
 <ul class="nav nav-pills mb-4" id="configTabs" style="background:#fff;border-radius:12px;padding:8px;box-shadow:0 1px 4px rgba(44,62,80,.06);border:1px solid #e4e8f0;gap:4px;">
     <li class="nav-item">
         <a class="nav-link <?= $tab === 'smtp' ? 'active' : '' ?>"
-            href="<?= BASE_URL ?>/index.php?controller=configuracion&action=editar&tab=smtp"
+            href="<?= url('configuracion/editar', ['tab' => 'smtp']) ?>"
             style="border-radius:8px;font-weight:600;">
             <i class="mdi mdi-email-outline mr-1"></i> Comunicaciones
             <?php if (!Configuracion::smtpConfigurado()): ?>
@@ -41,7 +41,7 @@ if ($ok && isset($okMsgs[$ok])):
     </li>
     <li class="nav-item">
         <a class="nav-link <?= $tab === 'integraciones' ? 'active' : '' ?>"
-            href="<?= BASE_URL ?>/index.php?controller=configuracion&action=editar&tab=integraciones"
+            href="<?= url('configuracion/editar', ['tab' => 'integraciones']) ?>"
             style="border-radius:8px;font-weight:600;">
             <i class="mdi mdi-api mr-1"></i> Integraciones
             <?php
@@ -54,7 +54,7 @@ if ($ok && isset($okMsgs[$ok])):
     </li>
     <li class="nav-item">
         <a class="nav-link <?= $tab === 'notificaciones' ? 'active' : '' ?>"
-            href="<?= BASE_URL ?>/index.php?controller=configuracion&action=editar&tab=notificaciones"
+            href="<?= url('configuracion/editar', ['tab' => 'notificaciones']) ?>"
             style="border-radius:8px;font-weight:600;">
             <i class="mdi mdi-bell-outline mr-1"></i> Notificaciones
         </a>
@@ -84,7 +84,7 @@ if ($ok && isset($okMsgs[$ok])):
                         </div>
                     <?php endif; ?>
 
-                    <form method="post" action="<?= BASE_URL ?>/index.php?controller=configuracion&action=guardarSmtp" autocomplete="off">
+                    <form method="post" action="<?= url('configuracion/guardarSmtp') ?>" autocomplete="off">
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="form-group">
@@ -206,7 +206,7 @@ if ($ok && isset($okMsgs[$ok])):
                         </div>
 
                         <!-- Formulario de campos -->
-                        <form method="post" action="<?= BASE_URL ?>/index.php?controller=configuracion&action=guardarIntegracion">
+                        <form method="post" action="<?= url('configuracion/guardarIntegracion') ?>">
                             <input type="hidden" name="slug" value="<?= htmlspecialchars($integ->slug) ?>">
 
                             <?php foreach ($campos_c as $c): ?>
@@ -279,7 +279,7 @@ if ($ok && isset($okMsgs[$ok])):
         </div>
     </div>
 
-    <form method="post" action="<?= BASE_URL ?>/index.php?controller=configuracion&action=guardarNotificaciones">
+    <form method="post" action="<?= url('configuracion/guardarNotificaciones') ?>">
         <div class="card border-0 shadow-sm" style="border-radius:14px;overflow:hidden;">
             <div class="table-responsive">
                 <table class="table mb-0" style="font-size:.9rem;">
@@ -360,7 +360,7 @@ if ($ok && isset($okMsgs[$ok])):
             btn.prop('disabled', true).html('<i class="mdi mdi-loading mdi-spin mr-1"></i> Conectando...');
             $('#smtpTestResult').hide().html('');
             $.ajax({
-                url: '<?= BASE_URL ?>/index.php?controller=configuracion&action=probarSmtp',
+                url: '<?= url('configuracion/probarSmtp') ?>',
                 type: 'GET',
                 dataType: 'json',
                 timeout: 30000,

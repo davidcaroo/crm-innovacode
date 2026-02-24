@@ -1,0 +1,10 @@
+Options -Indexes
+RewriteEngine On
+RewriteBase /crm-php.com/
+
+# Servir archivos y directorios existentes directamente (CSS, JS, imágenes, etc.)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Redirigir todo lo demás a index.php
+RewriteRule ^(.*)$ index.php [QSA,L]

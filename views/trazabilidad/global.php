@@ -25,7 +25,7 @@
                             <tr>
                                 <td class="small"><?= date('d/m/Y H:i', strtotime($h->fecha)) ?></td>
                                 <td>
-                                    <a href="index.php?controller=trazabilidad&action=index&empresa_id=<?= $h->empresa_id ?>" class="font-weight-bold">
+                                    <a href="<?php echo url('trazabilidad/index', ['empresa_id' => $h->empresa_id]); ?>" class="font-weight-bold">
                                         <?= htmlspecialchars($h->empresa) ?>
                                     </a>
                                 </td>

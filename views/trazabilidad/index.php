@@ -25,11 +25,11 @@ $etapaColors = ['prospectado' => 'badge-prospectado', 'contactado' => 'badge-con
         <?php endif; ?>
     </div>
     <div class="d-flex" style="gap:8px;">
-        <a href="<?php echo BASE_URL; ?>/index.php?controller=trazabilidad&action=registrar&empresa_id=<?= $empresa_id ?>"
+        <a href="<?php echo url('trazabilidad/registrar', ['empresa_id' => $empresa_id]); ?>"
             class="btn btn-primary btn-sm">
             <span class="mdi mdi-plus"></span> Nueva Actividad
         </a>
-        <a href="<?php echo BASE_URL; ?>/index.php?controller=empresa&action=index"
+        <a href="<?php echo url('empresa/index'); ?>"
             class="btn btn-outline-secondary btn-sm">
             <span class="mdi mdi-arrow-left"></span> Empresas
         </a>
@@ -40,7 +40,7 @@ $etapaColors = ['prospectado' => 'badge-prospectado', 'contactado' => 'badge-con
     <div class="card border-0 shadow-sm">
         <div class="card-body text-center text-muted py-5">
             <span class="mdi mdi-timeline-text" style="font-size:2.5rem;opacity:0.3;"></span>
-            <p class="mt-2">Sin actividades registradas. <a href="<?php echo BASE_URL; ?>/index.php?controller=trazabilidad&action=registrar&empresa_id=<?= $empresa_id ?>">Registrar primera actividad</a></p>
+            <p class="mt-2">Sin actividades registradas. <a href="<?php echo url('trazabilidad/registrar', ['empresa_id' => $empresa_id]); ?>">Registrar primera actividad</a></p>
         </div>
     </div>
 <?php else: ?>

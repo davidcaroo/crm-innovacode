@@ -63,16 +63,41 @@ abstract class BaseController
 
     /**
      * Redirigir a una URL
-     * 
-     * @param string $url URL relativa o absoluta
+     *
+     * Acepta:
+     *   - URL absoluta: "https://..."
+     *   - Ruta limpia: url('empresa/index') — resultado de la función url()
+     *   - Formato legacy: "index.php?controller=X&action=Y[&param=val...]"
+     *     → se convierte automáticamente a URL amigable vía url()
+     *
+     * @param string $url URL o par controlador/acción
      */
     protected function redirect($url)
     {
-        // Si la URL no empieza con http, asumimos que es relativa al BASE_URL
-        if (strpos($url, 'http') !== 0) {
-            $url = BASE_URL . '/' . ltrim($url, '/');
+        // ── Detectar formato legacy: index.php?controller=X&action=Y ────────
+        if (strpos($url, 'controller=') !== false) {
+            // Extraer query string (sea cual sea el formato)
+            $qpos = strpos($url, '?');
+            $qs   = $qpos !== false ? substr($url, $qpos + 1) : $url;
+            parse_str($qs, $qp);
+
+            if (!empty($qp['controller']) && !empty($qp['action'])) {
+                $route = $qp['controller'] . '/' . $qp['action'];
+                unset($qp['controller'], $qp['action']);
+                $url = url($route, $qp);
+                header("Location: " . $url);
+                exit();
+            }
         }
 
+        // ── URL absoluta: usar tal cual ──────────────────────────────────────
+        if (strpos($url, 'http') === 0) {
+            header("Location: " . $url);
+            exit();
+        }
+
+        // ── Ruta relativa: anteponer BASE_URL ────────────────────────────────
+        $url = BASE_URL . '/' . ltrim($url, '/');
         header("Location: " . $url);
         exit();
     }

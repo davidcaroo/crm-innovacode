@@ -4,7 +4,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <h4 class="mb-4 text-primary">Registrar Contacto</h4>
-            <form method="post" action="<?php echo BASE_URL; ?>/index.php?controller=contacto&action=guardar">
+            <form method="post" action="<?php echo url('contacto/guardar'); ?>">
                 <input type="hidden" name="empresa_id" value="<?= htmlspecialchars($empresa_id) ?>">
                 <div class="form-group">
                     <label>Nombre</label>

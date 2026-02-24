@@ -17,6 +17,12 @@ session_start();
 // Cargar configuración
 require_once __DIR__ . '/config/config.php';
 
+// ── Enrutador de URLs amigables ──────────────────────────────────────────────
+// Parsea REQUEST_URI y rellena $_GET['controller'] / $_GET['action'] + params
+require_once __DIR__ . '/core/Router.php';
+(new Router('/crm-php.com'))->dispatch();
+// ────────────────────────────────────────────────────────────────────────────
+
 // Control de acceso: solo login y registro públicos
 $controllerName = isset($_GET['controller']) ? $_GET['controller'] : 'dashboard';
 $actionName = isset($_GET['action']) ? $_GET['action'] : 'index';
@@ -24,7 +30,7 @@ $actionName = isset($_GET['action']) ? $_GET['action'] : 'index';
 if (!isset($_SESSION['usuario_id']) && !(
         $controllerName === 'usuario' && in_array($actionName, ['login', 'recuperar', 'resetear'])
 )) {
-        header('Location: ' . BASE_URL . '/index.php?controller=usuario&action=login');
+        header('Location: ' . url('usuario/login'));
         exit;
 }
 
