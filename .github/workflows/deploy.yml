@@ -14,10 +14,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
-      - name: Start ssh-agent and add key
-        uses: webfactory/ssh-agent@v0.9.1
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Start ssh-agent and add key (manual, with CRLF cleanup and PEM conversion)
+        run: |
+          set -euo pipefail
+          echo "Starting ssh-agent"
+          eval "$(ssh-agent -s)"
+
+          # Write secret to file and remove possible CRLF (Windows line endings)
+          echo "Writing private key to /tmp/deploy_key (CRLF removed)"
+          printf "%s" "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > /tmp/deploy_key
+          chmod 600 /tmp/deploy_key
+
+          # Try to add key; if ssh-add fails (libcrypto error), attempt to convert to PEM and retry
+          if ssh-add /tmp/deploy_key; then
+            echo "Key added to ssh-agent"
+          else
+            echo "ssh-add failed, attempting to convert key to PEM format and retry"
+            ssh-keygen -p -m PEM -f /tmp/deploy_key -N "" || true
+            ssh-add /tmp/deploy_key
+          fi
+        shell: bash
 
       - name: Add host to known_hosts
         run: |
