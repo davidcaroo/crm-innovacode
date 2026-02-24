@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../models/Empresa.php';
 require_once __DIR__ . '/../models/Configuracion.php';
 require_once __DIR__ . '/../models/Mailer.php';
+require_once __DIR__ . '/../models/Notificacion.php';
 require_once __DIR__ . '/BaseController.php';
 
 class EmpresaController extends BaseController
@@ -38,6 +39,15 @@ class EmpresaController extends BaseController
             ];
             $empresaModel = new Empresa();
             $empresaModel->crear($data);
+
+            // Notificación in-app: nueva empresa creada
+            Notificacion::emitir(
+                'empresa_creada',
+                'Nueva empresa: ' . $data['razon_social'],
+                "{$_SESSION['usuario_nombre']} creó la empresa \"{$data['razon_social']}\" en etapa " . ucfirst($data['etapa_venta']) . ".",
+                BASE_URL . '/index.php?controller=empresa&action=index'
+            );
+
             $this->redirect(BASE_URL . '/index.php?controller=empresa&action=index');
         }
     }
@@ -99,10 +109,25 @@ class EmpresaController extends BaseController
                            <p>El vendedor <b>$vendedor</b> ha marcado como <b>GANADA</b> la oportunidad de: <b>$empresaNombre</b>.</p>
                            <p>¡Felicidades!</p>";
 
-                // Enviar a los administradores o al correo de configuración
                 $smtp = Configuracion::getSMTP();
                 $destinatario = $smtp['smtp_user'] ?: 'admin@servidor.com';
                 Mailer::enviar($destinatario, $asunto, $cuerpo);
+
+                // Notificación in-app: oportunidad ganada
+                Notificacion::emitir(
+                    'venta_ganada',
+                    "¡Oportunidad ganada! {$empresaNombre}",
+                    "{$vendedor} cerró la oportunidad de \"{$empresaNombre}\" como GANADA.",
+                    BASE_URL . '/index.php?controller=empresa&action=index'
+                );
+            } elseif ($nuevaEtapa !== $etapaAnterior) {
+                // Notificación in-app: cambio de etapa
+                Notificacion::emitir(
+                    'cambio_etapa',
+                    'Cambio de etapa: ' . $data['razon_social'],
+                    "{$_SESSION['usuario_nombre']} movió \"{$data['razon_social']}\" de " . ucfirst($etapaAnterior) . " → " . ucfirst($nuevaEtapa) . ".",
+                    BASE_URL . '/index.php?controller=empresa&action=index'
+                );
             }
 
             $this->redirect(BASE_URL . '/index.php?controller=empresa&action=index');

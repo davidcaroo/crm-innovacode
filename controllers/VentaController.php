@@ -6,6 +6,7 @@
 require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../models/Venta.php';
 require_once __DIR__ . '/../models/Empresa.php';
+require_once __DIR__ . '/../models/Notificacion.php';
 
 class VentaController extends BaseController
 {
@@ -54,6 +55,18 @@ class VentaController extends BaseController
             $usuario_id  = $_SESSION['usuario_id'];
 
             $this->ventaModel->agregar($empresa_id, $monto, $fecha, $usuario_id);
+
+            // Emitir notificación in-app a admins/superadmins
+            $empresa = $this->empresaModel->obtener($empresa_id, null);
+            $nombre  = $empresa ? $empresa->razon_social : 'Empresa';
+            $montoFmt = '$' . number_format((float)$monto, 2);
+            Notificacion::emitir(
+                'venta_ganada',
+                "Venta registrada: {$nombre}",
+                "{$_SESSION['usuario_nombre']} registró una venta de {$montoFmt} el {$fecha}.",
+                BASE_URL . '/index.php?controller=venta&action=index'
+            );
+
             $this->redirect('index.php?controller=venta&action=index');
         } catch (Exception $e) {
             $this->error($e->getMessage());

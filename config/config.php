@@ -29,6 +29,10 @@ define('BASE_URL', 'http://localhost/crm-php.com');
 define('APP_NAME', 'CRM Bahari');
 define('APP_VERSION', '2.0.0');
 
+// Clave de cifrado para secretos (API keys, contraseñas SMTP, etc.)
+// ⚠️ CAMBIAR en producción por una clave de 32 bytes segura y aleatoria
+define('ENCRYPTION_KEY', 'CRM_Bahari_S3cr3t_K3y_2026_32ch!!');
+
 // Modo de desarrollo (cambiar a false en producción)
 define('DEBUG_MODE', true);
 

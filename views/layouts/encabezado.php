@@ -91,12 +91,19 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=configuracion&action=editar">
+                        <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=configuracion&action=index">
                             <span class="mdi mdi-cog"></span>
-                            <span>Configuracion</span>
+                            <span>Configuración</span>
                         </a>
                     </li>
                 <?php endif; ?>
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=notificacion&action=index">
+                        <span class="mdi mdi-bell-outline"></span>
+                        <span>Notificaciones</span>
+                    </a>
+                </li>
 
                 <li class="sidebar-header-text mt-4 mb-2 px-4" style="font-size: 0.75rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;">
                     Sistema
@@ -149,6 +156,74 @@
                 </div>
 
                 <div class="navbar-right d-flex align-items-center">
+                    <!-- Campana de notificaciones -->
+                    <?php
+                        require_once MODELS_PATH . '/Notificacion.php';
+                        $notifModel   = new Notificacion();
+                        $noLeidas     = $notifModel->getNoLeidas($_SESSION['usuario_id']);
+                        $countNoLeidas = count($noLeidas);
+                    ?>
+                    <div class="dropdown mr-3">
+                        <button class="btn btn-light shadow-sm position-relative" id="campanaBtn" data-toggle="dropdown" aria-expanded="false"
+                                style="border-radius:10px;width:42px;height:42px;border:1px solid #e2e8f0;padding:0;display:flex;align-items:center;justify-content:center;">
+                            <i class="mdi mdi-bell-outline" style="font-size:1.4rem;color:#1e40af;"></i>
+                            <?php if ($countNoLeidas > 0): ?>
+                                <span id="campanaBadge" class="position-absolute"
+                                      style="top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:50%;width:18px;height:18px;font-size:.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;">
+                                    <?= min($countNoLeidas, 9) ?><?= $countNoLeidas > 9 ? '+' : '' ?>
+                                </span>
+                            <?php else: ?>
+                                <span id="campanaBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:50%;width:18px;height:18px;font-size:.65rem;font-weight:800;border:2px solid #fff;align-items:center;justify-content:center;"></span>
+                            <?php endif; ?>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right shadow-lg border-0 p-0"
+                             style="min-width:340px;border-radius:14px;overflow:hidden;margin-top:8px;">
+                            <!-- Header dropdown -->
+                            <div class="d-flex align-items-center justify-content-between px-4 py-3" style="background:#1e40af;color:#fff;">
+                                <span style="font-weight:700;font-size:.95rem;"><i class="mdi mdi-bell-outline mr-1"></i> Notificaciones</span>
+                                <?php if ($countNoLeidas > 0): ?>
+                                    <span class="badge" style="background:rgba(255,255,255,.25);color:#fff;border-radius:8px;font-size:.75rem;"><?= $countNoLeidas ?> nueva<?= $countNoLeidas !== 1 ? 's' : '' ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <!-- Lista últimas 5 -->
+                            <?php
+                            $iconosTipoNav = [
+                                'venta_ganada'     => ['icono' => 'mdi-cash-check',         'color' => '#15803d'],
+                                'empresa_creada'   => ['icono' => 'mdi-domain',              'color' => '#1e40af'],
+                                'cambio_etapa'     => ['icono' => 'mdi-arrow-right-circle',  'color' => '#7c3aed'],
+                                'credito_aprobado' => ['icono' => 'mdi-credit-card-check',   'color' => '#b45309'],
+                            ];
+                            $ultimas5 = array_slice($noLeidas, 0, 5);
+                            ?>
+                            <?php if (empty($ultimas5)): ?>
+                                <div class="text-center py-4 text-muted" style="font-size:.88rem;">
+                                    <i class="mdi mdi-bell-sleep-outline d-block mb-2" style="font-size:1.8rem;color:#cbd5e1;"></i>
+                                    Sin notificaciones nuevas
+                                </div>
+                            <?php else: ?>
+                                <?php foreach ($ultimas5 as $nf):
+                                    $m   = $iconosTipoNav[$nf->tipo] ?? ['icono' => 'mdi-bell', 'color' => '#64748b'];
+                                    $url = !empty($nf->url_accion) ? $nf->url_accion : BASE_URL . '/index.php?controller=notificacion&action=index';
+                                ?>
+                                    <a href="<?= htmlspecialchars($url) ?>" class="dropdown-item d-flex align-items-start px-4 py-3" style="border-bottom:1px solid #f1f5f9;white-space:normal;">
+                                        <span class="mdi <?= $m['icono'] ?> mr-3 mt-1 flex-shrink-0" style="font-size:1.2rem;color:<?= $m['color'] ?>;"></span>
+                                        <div>
+                                            <div style="font-weight:700;font-size:.88rem;color:#1e293b;"><?= htmlspecialchars($nf->titulo) ?></div>
+                                            <div style="font-size:.75rem;color:#94a3b8;"><?= date('d M, H:i', strtotime($nf->creado_en)) ?></div>
+                                        </div>
+                                    </a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                            <!-- Footer -->
+                            <div class="text-center py-3" style="background:#f8fafc;">
+                                <a href="<?= BASE_URL ?>/index.php?controller=notificacion&action=index"
+                                   style="font-weight:700;font-size:.85rem;color:#1e40af;text-decoration:none;">
+                                    <i class="mdi mdi-bell-outline mr-1"></i> Ver todas las notificaciones
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="user-info-box d-flex align-items-center">
                         <div class="text-right mr-3 d-none d-md-block">
                             <div class="user-name-top"><?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></div>

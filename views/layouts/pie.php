@@ -56,6 +56,23 @@
             });
         });
     </script>
+    <!-- Polling campana de notificaciones (cada 60s) -->
+    <script>
+        (function pollNotificaciones() {
+            setTimeout(function() {
+                $.getJSON('<?php echo BASE_URL; ?>/index.php?controller=notificacion&action=conteo', function(res) {
+                    var badge = $('#campanaBadge');
+                    if (res.count > 0) {
+                        badge.text(res.count > 9 ? '9+' : res.count).css('display', 'flex');
+                    } else {
+                        badge.hide();
+                    }
+                }).always(function() {
+                    pollNotificaciones();
+                });
+            }, 60000);
+        })();
+    </script>
     </body>
 
     </html>
