@@ -20,7 +20,7 @@ require_once __DIR__ . '/config/config.php';
 // ── Enrutador de URLs amigables ──────────────────────────────────────────────
 // Parsea REQUEST_URI y rellena $_GET['controller'] / $_GET['action'] + params
 require_once __DIR__ . '/core/Router.php';
-(new Router('/crm-php.com'))->dispatch();
+(new Router(''))->dispatch();
 // ────────────────────────────────────────────────────────────────────────────
 
 // Control de acceso: solo login y registro públicos
