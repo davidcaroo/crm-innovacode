@@ -193,34 +193,94 @@
 <!-- JS para Gráficos -->
 <script src="<?php echo BASE_URL; ?>/public/js/Chart.min.js"></script>
 <script>
-    // Chart Ventas
+    // Chart Ventas — mejorada: línea con puntos, delta y formato COP
+    var ventasLabels = <?php echo json_encode($labelsVentas); ?>;
+    var ventasData = <?php echo json_encode($dataVentas); ?>;
+    // asegurar que sean números (Chart.js v3 espera números en parsed)
+    ventasData = ventasData.map(function(v) {
+        if (v === null || v === undefined || v === '') return NaN;
+        return Number(v);
+    });
     var ctxV = document.getElementById('ventasChart').getContext('2d');
+
+    // filtrar NaN para calcular min/max
+    var numeric = ventasData.filter(function(x) {
+        return isFinite(x);
+    });
+    var minV = numeric.length ? Math.min.apply(null, numeric) : 0;
+    var maxV = numeric.length ? Math.max.apply(null, numeric) : 0;
+    var padding = (maxV - minV) * 0.15 || (maxV * 0.1);
+
     new Chart(ctxV, {
         type: 'line',
         data: {
-            labels: <?php echo json_encode($labelsVentas); ?>,
+            labels: ventasLabels,
             datasets: [{
-                label: "Monto ($)",
-                lineTension: 0.3,
-                backgroundColor: "rgba(78, 115, 223, 0.05)",
-                borderColor: "rgba(78, 115, 223, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(78, 115, 223, 1)",
-                pointBorderColor: "rgba(78, 115, 223, 1)",
-                data: <?php echo json_encode($dataVentas); ?>,
+                label: 'Monto (COP)',
+                data: ventasData,
+                backgroundColor: 'rgba(78, 115, 223, 0.06)',
+                borderColor: 'rgba(78, 115, 223, 1)',
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                pointBackgroundColor: function(context) {
+                    var idx = context.dataIndex;
+                    if (idx === 0) return 'rgba(78, 115, 223, 1)';
+                    var cur = ventasData[idx];
+                    var prev = ventasData[idx - 1];
+                    if (!isFinite(cur) || !isFinite(prev)) return 'rgba(78, 115, 223, 1)';
+                    return cur >= prev ? 'rgba(28, 200, 138, 1)' : 'rgba(231, 74, 59, 1)';
+                },
+                fill: true,
+                tension: 0.2,
             }]
         },
         options: {
             maintainAspectRatio: false,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        callback: function(value, index, values) {
-                            return '$' + value.toLocaleString();
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        label: function(context) {
+                            var nf = new Intl.NumberFormat('es-CO');
+                            var value = context.parsed && context.parsed.y !== undefined ? context.parsed.y : context.parsed;
+                            var idx = context.dataIndex;
+                            var prev = idx > 0 ? ventasData[idx - 1] : null;
+                            var diff = (isFinite(value) && isFinite(prev)) ? (value - prev) : null;
+                            var pct = (isFinite(prev) && diff !== null) ? (diff / prev * 100) : null;
+                            var s = ' $' + (isFinite(value) ? nf.format(value) : value);
+                            if (diff !== null) {
+                                var sign = diff >= 0 ? '+' : '';
+                                s += ' ( ' + sign + nf.format(diff) + ', ' + sign + (pct !== null ? pct.toFixed(1) + '%' : '') + ')';
+                            }
+                            return s;
                         }
                     }
-                }]
+                },
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    display: true,
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    ticks: {
+                        beginAtZero: false,
+                        suggestedMin: Math.max(0, minV - padding),
+                        suggestedMax: maxV + padding,
+                        callback: function(value) {
+                            return '$' + Number(value).toLocaleString('es-CO');
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0,0,0,0.05)'
+                    }
+                }
             }
         }
     });
