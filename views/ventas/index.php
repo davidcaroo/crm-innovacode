@@ -100,7 +100,7 @@
                                                 class="btn btn-sm btn-outline-danger"
                                                 onclick="return confirmarEliminacion('<?php echo url('venta/eliminar', ['id' => $v->id]); ?>', '¿Eliminar esta venta por $<?php echo number_format($v->monto, 2); ?>?')"
                                                 style="padding:3px 8px;font-size:0.8rem;border-radius:6px;">
-                                                <span class="mdi mdi-delete"></span>
+                                                <i class="bi bi-trash"></i>
                                             </a>
                                         </td>
                                     </tr>
