@@ -9,7 +9,7 @@
         <span class="page-subtitle">Tu bandeja de actividad reciente</span>
     </div>
     <form method="post" action="<?= url('notificacion/marcarTodas') ?>">
-        <button type="submit" class="btn btn-sm btn-outline-secondary" style="border-radius:8px;font-weight:600;">
+        <button type="submit" class="btn btn-sm" style="border-radius:8px; font-weight: bold; background-color: #28a745; color: white;">
             <i class="mdi mdi-check-all mr-1"></i> Marcar todas como leídas
         </button>
     </form>

@@ -21,7 +21,7 @@ abstract class BaseController
         // Incluir encabezado
         // Si la vista es login o recuperar, forzar layout limpio
         $layout = true;
-        if ($viewName === 'usuarios/login' || $viewName === 'usuarios/recuperar' || $viewName === 'usuarios/resetear') {
+        if ($viewName === 'usuarios/login' || $viewName === 'usuarios/recuperar' || $viewName === 'usuarios/resetear' || $viewName === 'usuarios/cambiar_password_obligatorio') {
             $layout = false;
         } else {
             require_once VIEWS_PATH . '/layouts/encabezado.php';

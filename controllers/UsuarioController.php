@@ -20,6 +20,14 @@ class UsuarioController extends BaseController
                 $_SESSION['usuario_id'] = $usuario->id;
                 $_SESSION['usuario_rol'] = $usuario->rol;
                 $_SESSION['usuario_nombre'] = $usuario->nombre;
+
+                // Verificar si es el primer login y forzar cambio de contraseña
+                if (isset($usuario->primer_login) && $usuario->primer_login == 1) {
+                    $_SESSION['cambio_password_obligatorio'] = true;
+                    $this->redirect(url('usuario/cambiarPasswordObligatorio'));
+                    return;
+                }
+
                 $this->redirect(BASE_URL . '/index.php');
             } else {
                 $this->view('usuarios/login', ['error' => 'Credenciales inválidas']);
@@ -125,14 +133,36 @@ class UsuarioController extends BaseController
             $this->redirect(BASE_URL . '/index.php?controller=usuario&action=lista');
             return;
         }
+
+        $nombre = $this->post('nombre');
+        $email = $this->post('email');
+        $rol = $this->post('rol') ?: 'usuario';
+
+        // Generar contraseña temporal automática
+        $passwordTemporal = Usuario::generarPasswordTemporal(12);
+
+        // DEBUG: Log temporal (comentar en producción)
+        if (defined('DEBUG_MODE') && DEBUG_MODE) {
+            error_log("DEBUG - Nuevo usuario: Email=$email, Password temporal=$passwordTemporal");
+        }
+
         $usuarioModel = new Usuario();
-        $usuarioModel->crear(
-            $this->post('nombre'),
-            $this->post('email'),
-            $this->post('password'),
-            $this->post('rol') ?: 'usuario'
-        );
-        $this->redirect(BASE_URL . '/index.php?controller=usuario&action=lista');
+        $resultado = $usuarioModel->crear($nombre, $email, $passwordTemporal, $rol, 1);
+
+        if (!$resultado) {
+            error_log("ERROR: No se pudo crear el usuario $email en la base de datos");
+            $this->redirect(url('usuario/lista', ['error' => 'creation_failed']));
+            return;
+        }
+
+        // Enviar email con credenciales
+        $emailEnviado = Mailer::enviarCredencialesNuevoUsuario($nombre, $email, $passwordTemporal);
+
+        if (!$emailEnviado && defined('DEBUG_MODE') && DEBUG_MODE) {
+            error_log("ADVERTENCIA: No se pudo enviar el email de credenciales a $email");
+        }
+
+        $this->redirect(url('usuario/lista', ['success' => 'user_created']));
     }
 
     public function editarUsuario()
@@ -306,5 +336,122 @@ class UsuarioController extends BaseController
             'tokenPlano' => $tokenPlano,
             'error'      => $error,
         ]);
+    }
+
+    /* ============================
+       Cambio Obligatorio de Contraseña (Primer Login)
+       ============================ */
+
+    /**
+     * Muestra el formulario de cambio obligatorio de contraseña
+     * Solo accesible si el usuario tiene primer_login = 1
+     */
+    public function cambiarPasswordObligatorio()
+    {
+        // Verificar que el usuario esté logueado
+        if (!isset($_SESSION['usuario_id'])) {
+            $this->redirect(url('usuario/login'));
+            return;
+        }
+
+        // Verificar que realmente necesite cambiar la contraseña
+        if (!isset($_SESSION['cambio_password_obligatorio'])) {
+            $this->redirect(BASE_URL . '/index.php');
+            return;
+        }
+
+        // Mostrar el formulario sin el layout normal (sin sidebar)
+        $this->view('usuarios/cambiar_password_obligatorio', [
+            'usuario_nombre' => $_SESSION['usuario_nombre']
+        ], false); // false = sin layout
+    }
+
+    /**
+     * Procesa el cambio obligatorio de contraseña
+     */
+    public function procesarCambioObligatorio()
+    {
+        if (!$this->isPost() || !isset($_SESSION['usuario_id'])) {
+            $this->redirect(url('usuario/login'));
+            return;
+        }
+
+        if (!isset($_SESSION['cambio_password_obligatorio'])) {
+            $this->redirect(BASE_URL . '/index.php');
+            return;
+        }
+
+        try {
+            $passwordActual = $this->post('password_actual');
+            $passwordNueva = $this->post('password_nueva');
+            $passwordConfirma = $this->post('password_confirma');
+
+            $usuarioModel = new Usuario();
+            $usuario = $usuarioModel->obtenerConPassword($_SESSION['usuario_id']);
+
+            // Validar que el usuario existe y tiene password
+            if (!$usuario || empty($usuario->password)) {
+                $this->view('usuarios/cambiar_password_obligatorio', [
+                    'usuario_nombre' => $_SESSION['usuario_nombre'],
+                    'error' => 'Error al cargar los datos del usuario. Contacta al administrador.'
+                ], false);
+                return;
+            }
+
+            // Validar contraseña actual
+            if (!password_verify($passwordActual, $usuario->password)) {
+                $this->view('usuarios/cambiar_password_obligatorio', [
+                    'usuario_nombre' => $_SESSION['usuario_nombre'],
+                    'error' => 'La contraseña temporal es incorrecta. Verifica las mayúsculas/minúsculas.'
+                ], false);
+                return;
+            }
+
+            // Validar longitud mínima
+            if (strlen($passwordNueva) < 8) {
+                $this->view('usuarios/cambiar_password_obligatorio', [
+                    'usuario_nombre' => $_SESSION['usuario_nombre'],
+                    'error' => 'La nueva contraseña debe tener al menos 8 caracteres.'
+                ], false);
+                return;
+            }
+
+            // Validar que coincidan
+            if ($passwordNueva !== $passwordConfirma) {
+                $this->view('usuarios/cambiar_password_obligatorio', [
+                    'usuario_nombre' => $_SESSION['usuario_nombre'],
+                    'error' => 'Las contraseñas no coinciden.'
+                ], false);
+                return;
+            }
+
+            // Validar que no sea igual a la temporal
+            if ($passwordActual === $passwordNueva) {
+                $this->view('usuarios/cambiar_password_obligatorio', [
+                    'usuario_nombre' => $_SESSION['usuario_nombre'],
+                    'error' => 'La nueva contraseña debe ser diferente a la temporal.'
+                ], false);
+                return;
+            }
+
+            // Actualizar contraseña y marcar primer_login = 0
+            $resultado = $usuarioModel->cambiarPassword($usuario->id, $passwordNueva, true);
+
+            if (!$resultado) {
+                throw new Exception('No se pudo actualizar la contraseña en la base de datos');
+            }
+
+            // Limpiar flag de sesión
+            unset($_SESSION['cambio_password_obligatorio']);
+
+            // Redirigir al dashboard con mensaje de éxito
+            $this->redirect(url('dashboard/index', ['success' => 'password_changed']));
+        } catch (Exception $e) {
+            error_log("ERROR en procesarCambioObligatorio: " . $e->getMessage());
+            $this->view('usuarios/cambiar_password_obligatorio', [
+                'usuario_nombre' => $_SESSION['usuario_nombre'],
+                'error' => 'Ha ocurrido un error inesperado. Por favor, intenta de nuevo o contacta al administrador.'
+            ], false);
+        }
     }
 }

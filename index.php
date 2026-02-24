@@ -34,6 +34,17 @@ if (!isset($_SESSION['usuario_id']) && !(
         exit;
 }
 
+// Middleware: Forzar cambio de contraseña si es primer login
+// Permitir solo las rutas relacionadas con el cambio obligatorio
+if (isset($_SESSION['cambio_password_obligatorio']) && $_SESSION['cambio_password_obligatorio'] === true) {
+        $rutasPermitidas = ['cambiarPasswordObligatorio', 'procesarCambioObligatorio', 'logout'];
+
+        if ($controllerName !== 'usuario' || !in_array($actionName, $rutasPermitidas)) {
+                header('Location: ' . url('usuario/cambiarPasswordObligatorio'));
+                exit;
+        }
+}
+
 // Obtener parámetros de la URL
 $controllerName = isset($_GET['controller']) ? $_GET['controller'] : 'dashboard';
 $actionName = isset($_GET['action']) ? $_GET['action'] : 'index';

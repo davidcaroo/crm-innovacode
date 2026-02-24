@@ -1,0 +1,71 @@
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      
+      - name: Deploy to Hostinger via rsync
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          rsync -avz --delete \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='logs/*.log' \
+            --exclude='config/config.php' \
+            --exclude='.env' \
+            --exclude='node_modules' \
+            --exclude='vendor' \
+            --exclude='old_files_backup' \
+            --exclude='.DS_Store' \
+            --exclude='Thumbs.db' \
+            -e "ssh -p $SSH_PORT -o StrictHostKeyChecking=no" \
+            ./ $SSH_USER@$SSH_HOST:/home/$SSH_USER/domains/crm.bahariaqua.com/public_html/
+      
+      - name: Run post-deployment tasks
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+        run: |
+          ssh -p $SSH_PORT -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+            cd /home/$SSH_USER/domains/crm.bahariaqua.com/public_html/
+            
+            # Ensure logs directory exists and has correct permissions
+            mkdir -p logs
+            chmod 755 logs
+            touch logs/.gitkeep
+            
+            # Create uploads directory if needed
+            mkdir -p uploads
+            chmod 755 uploads
+            
+            echo "Deployment completed successfully!"
+          EOF
+      
+      - name: Deployment notification
+        if: success()
+        run: echo "✅ Deployment to crm.bahariaqua.com completed successfully!"
+      
+      - name: Deployment failed notification
+        if: failure()
+        run: echo "❌ Deployment to crm.bahariaqua.com failed!"

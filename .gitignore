@@ -1,0 +1,53 @@
+# Logs
+logs/*.log
+logs/error.log
+*.log
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Configuration files with credentials (keep example files)
+config/config.php
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.cache
+
+# Dependency directories
+node_modules/
+vendor/
+
+# Backup files
+*.sql.backup
+*.backup
+old_files_backup/
+
+# Upload directories (if applicable)
+uploads/*
+!uploads/.gitkeep
+
+# Compiled files
+*.compiled

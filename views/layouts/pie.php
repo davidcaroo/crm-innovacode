@@ -1,7 +1,7 @@
     </main>
 
     <?php $ctrl = isset($_GET['controller']) ? preg_replace('/[^a-z0-9_\-]/i', '', $_GET['controller']) : ''; ?>
-    <footer class="footer <?php echo $ctrl ? 'ctrl-' . $ctrl : ''; ?>">
+    <footer class="footer <?php echo $ctrl ? 'ctrl-' . $ctrl : ''; ?>" style="margin-left: 0; width: 100%;">
         <span>CRM By Innovacode Tech &copy; <?php echo date('Y'); ?> | <a href="<?php echo url('soporte/index'); ?>" style="color:#2563eb;text-decoration:none;">Ayuda y soporte</a></span>
     </footer>
 
@@ -49,6 +49,14 @@
                 if (msgType === 'deleted') text = "Registro eliminado con éxito.";
                 if (msgType === 'saved') text = "Datos guardados correctamente.";
                 if (msgType === 'updated') text = "Información actualizada.";
+                if (msgType === 'user_created') {
+                    title = "Usuario creado";
+                    text = "El usuario ha sido creado y recibirá un correo con sus credenciales.";
+                }
+                if (msgType === 'password_changed') {
+                    title = "¡Contraseña actualizada!";
+                    text = "Tu contraseña ha sido cambiada exitosamente. Bienvenido(a) al sistema.";
+                }
 
                 Swal.fire({
                     icon: 'success',
@@ -70,6 +78,10 @@
                 }
                 if (errorType === 'not_found') text = "El registro solicitado no existe.";
                 if (errorType === 'access_denied') text = "No tienes permisos para realizar esta acción.";
+                if (errorType === 'creation_failed') {
+                    title = "Error al crear usuario";
+                    text = "No se pudo crear el usuario en la base de datos. Contacta al administrador.";
+                }
 
                 Swal.fire({
                     icon: 'error',

@@ -16,12 +16,30 @@ class Usuario extends BaseModel
         return $stmt->fetch();
     }
 
-    public function crear($nombre, $email, $password, $rol = 'usuario')
+    public function crear($nombre, $email, $password, $rol = 'usuario', $primerLogin = 1)
     {
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO usuarios (nombre, email, password, rol, primer_login, estado) VALUES (?, ?, ?, ?, ?, 'activo')";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([$nombre, $email, $hash, $rol]);
+        return $stmt->execute([$nombre, $email, $hash, $rol, $primerLogin]);
+    }
+
+    /**
+     * Genera una contraseña temporal aleatoria segura
+     * @param int $longitud Longitud de la contraseña (por defecto 12)
+     * @return string Contraseña generada
+     */
+    public static function generarPasswordTemporal($longitud = 12)
+    {
+        $caracteres = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        $password = '';
+        $max = strlen($caracteres) - 1;
+
+        for ($i = 0; $i < $longitud; $i++) {
+            $password .= $caracteres[random_int(0, $max)];
+        }
+
+        return $password;
     }
 
     public function validarLogin($email, $password)
@@ -50,6 +68,18 @@ class Usuario extends BaseModel
         return $stmt->fetch();
     }
 
+    /**
+     * Obtiene un usuario incluyendo el campo password
+     * Solo para validaciones internas (login, cambio de contraseña)
+     */
+    public function obtenerConPassword($id)
+    {
+        $sql  = "SELECT id, nombre, email, password, rol, estado, primer_login, creado_en FROM usuarios WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch();
+    }
+
     public function actualizar($id, $nombre, $email, $rol, $estado = 'activo')
     {
         $sql  = "UPDATE usuarios SET nombre = ?, email = ?, rol = ?, estado = ? WHERE id = ?";
@@ -57,10 +87,16 @@ class Usuario extends BaseModel
         return $stmt->execute([$nombre, $email, $rol, $estado, $id]);
     }
 
-    public function cambiarPassword($id, $nuevaPassword)
+    public function cambiarPassword($id, $nuevaPassword, $esPrimerCambio = false)
     {
         $hash = password_hash($nuevaPassword, PASSWORD_DEFAULT);
-        $sql  = "UPDATE usuarios SET password = ? WHERE id = ?";
+
+        if ($esPrimerCambio) {
+            $sql = "UPDATE usuarios SET password = ?, primer_login = 0, ultimo_cambio_password = NOW() WHERE id = ?";
+        } else {
+            $sql = "UPDATE usuarios SET password = ?, ultimo_cambio_password = NOW() WHERE id = ?";
+        }
+
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([$hash, $id]);
     }
