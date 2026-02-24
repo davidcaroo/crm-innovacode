@@ -74,10 +74,10 @@
                                     </a>
 
                                     <?php if ($u->id != $_SESSION['usuario_id']): ?>
-                                        <a href="<?php echo url('usuario/eliminarUsuario', ['id' => $u->id]); ?>"
+                                        <a href="#"
                                             class="btn btn-sm btn-light border text-danger" style="border-radius:6px;"
                                             title="Eliminar"
-                                            onclick="return confirm('Eliminar usuario <?= htmlspecialchars($u->nombre) ?>?')">
+                                            onclick="return confirmarEliminacion('<?php echo url('usuario/eliminarUsuario', ['id' => $u->id]); ?>', '¿Eliminar al usuario <?php echo htmlspecialchars($u->nombre); ?>?')">
                                             <i class="bi bi-trash"></i>
                                         </a>
                                     <?php endif; ?>

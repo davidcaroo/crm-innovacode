@@ -55,9 +55,9 @@ $total = array_sum(array_map('count', $etapas));
                                     <?php endif; ?>
                                     <div class="d-flex mt-2" style="gap:4px;">
                                         <a href="<?php echo url('trazabilidad/index', ['empresa_id' => $emp->id]); ?>"
-                                            class="btn btn-sm btn-outline-secondary" title="Trazabilidad"
-                                            style="padding:2px 7px;font-size:0.8rem;border-radius:5px;">
-                                            <i class="bi bi-clock-history"></i>
+                                            class="btn btn-sm btn-outline-success" title="Trazabilidad"
+                                            style="padding:2px 7px;font-size:0.8rem;border-radius:5px; border-color: #28a745;">
+                                            <i class="bi bi-clock-history" style="color: #28a745; font-weight: bold;"></i>
                                         </a>
                                         <a href="<?php echo url('contacto/index', ['empresa_id' => $emp->id]); ?>"
                                             class="btn btn-sm btn-outline-info" title="Contactos"
@@ -69,10 +69,10 @@ $total = array_sum(array_map('count', $etapas));
                                             style="padding:2px 7px;font-size:0.8rem;border-radius:5px;">
                                             <i class="bi bi-pencil-fill"></i>
                                         </a>
-                                        <a href="<?php echo url('empresa/eliminar', ['id' => $emp->id]); ?>"
+                                        <a href="#"
                                             class="btn btn-sm btn-outline-danger" title="Eliminar"
                                             style="padding:2px 7px;font-size:0.8rem;border-radius:5px;"
-                                            onclick="return confirm('¿Eliminar empresa?')">
+                                            onclick="return confirmarEliminacion('<?php echo url('empresa/eliminar', ['id' => $emp->id]); ?>', '¿Eliminar la empresa <?php echo htmlspecialchars($emp->razon_social); ?>?')">
                                             <i class="bi bi-trash-fill"></i>
                                         </a>
                                     </div>

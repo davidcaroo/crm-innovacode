@@ -78,16 +78,16 @@
                                             <i class="bi bi-people-fill"></i>
                                         </a>
                                         <a href="<?php echo url('trazabilidad/index', ['empresa_id' => $e->id]); ?>"
-                                            class="btn btn-sm btn-outline-secondary" title="Trazabilidad" style="border-radius:6px;padding:3px 8px;">
-                                            <i class="bi bi-clock-history"></i>
+                                            class="btn btn-sm btn-outline-success" title="Trazabilidad" style="border-radius:6px;padding:3px 8px; border-color: #28a745;">
+                                            <i class="bi bi-clock-history" style="color: #28a745; font-weight: bold;"></i>
                                         </a>
                                         <a href="<?php echo url('empresa/editar', ['id' => $e->id]); ?>"
                                             class="btn btn-sm btn-outline-primary" title="Editar" style="border-radius:6px;padding:3px 8px;">
                                             <i class="bi bi-pencil-fill"></i>
                                         </a>
-                                        <a href="<?php echo url('empresa/eliminar', ['id' => $e->id]); ?>"
+                                        <a href="#"
                                             class="btn btn-sm btn-outline-danger" title="Eliminar" style="border-radius:6px;padding:3px 8px;"
-                                            onclick="return confirm('¿Eliminar empresa?')">
+                                            onclick="return confirmarEliminacion('<?php echo url('empresa/eliminar', ['id' => $e->id]); ?>', '¿Eliminar la empresa <?php echo htmlspecialchars($e->razon_social); ?>?')">
                                             <i class="bi bi-trash-fill"></i>
                                         </a>
                                     </div>

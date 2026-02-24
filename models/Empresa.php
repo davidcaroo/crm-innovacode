@@ -80,16 +80,38 @@ class Empresa extends BaseModel
 
     public function eliminar($id, $usuario_id = null)
     {
-        $sql = "DELETE FROM empresas WHERE id = ?";
-        $params = [$id];
+        try {
+            // Iniciar transacción para asegurar integridad
+            $this->db->beginTransaction();
 
-        if ($usuario_id) {
-            $sql .= " AND usuario_id = ?";
-            $params[] = $usuario_id;
+            // 1. Eliminar registros relacionados en trazabilidad
+            $sqlTrazabilidad = "DELETE FROM trazabilidad WHERE empresa_id = ?";
+            $stmtTraz = $this->db->prepare($sqlTrazabilidad);
+            $stmtTraz->execute([$id]);
+
+            // 2. Eliminar registros relacionados en contactos
+            $sqlContactos = "DELETE FROM contactos WHERE empresa_id = ?";
+            $stmtCont = $this->db->prepare($sqlContactos);
+            $stmtCont->execute([$id]);
+
+            // 3. Eliminar la empresa
+            $sql = "DELETE FROM empresas WHERE id = ?";
+            $params = [$id];
+
+            if ($usuario_id) {
+                $sql .= " AND usuario_id = ?";
+                $params[] = $usuario_id;
+            }
+
+            $stmt = $this->db->prepare($sql);
+            $result = $stmt->execute($params);
+
+            $this->db->commit();
+            return $result;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            throw $e;
         }
-
-        $stmt = $this->db->prepare($sql);
-        return $stmt->execute($params);
     }
 
     /**

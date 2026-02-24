@@ -9,11 +9,75 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="<?php echo BASE_URL; ?>/public/js/Chart.min.js"></script>
 
-    <!-- Script para controlar el Sidebar -->
+    <!-- Script para gestionar la UI y alertas -->
     <script>
+        /**
+         * Función global para confirmar eliminaciones con SweetAlert2
+         */
+        function confirmarEliminacion(url, mensaje = "¿Estás seguro de eliminar este registro?") {
+            Swal.fire({
+                title: mensaje,
+                text: "¡Esta acción no se puede deshacer y podría eliminar datos relacionados!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+            return false;
+        }
+
         $(document).ready(function() {
+            // Manejo de notificaciones desde la URL (success / error)
+            const urlParams = new URLSearchParams(window.location.search);
+
+            if (urlParams.has('success')) {
+                const msgType = urlParams.get('success');
+                let title = "¡Éxito!";
+                let text = "Operación realizada correctamente.";
+
+                if (msgType === 'deleted') text = "Registro eliminado con éxito.";
+                if (msgType === 'saved') text = "Datos guardados correctamente.";
+                if (msgType === 'updated') text = "Información actualizada.";
+
+                Swal.fire({
+                    icon: 'success',
+                    title: title,
+                    text: text,
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }
+
+            if (urlParams.has('error')) {
+                const errorType = urlParams.get('error');
+                let title = "Error";
+                let text = "Ha ocurrido un problema inesperado.";
+
+                if (errorType === 'fk_constraint') {
+                    title = "No se puede eliminar";
+                    text = "Este registro tiene datos relacionados que impiden su eliminación.";
+                }
+                if (errorType === 'not_found') text = "El registro solicitado no existe.";
+                if (errorType === 'access_denied') text = "No tienes permisos para realizar esta acción.";
+
+                Swal.fire({
+                    icon: 'error',
+                    title: title,
+                    text: text
+                });
+            }
+
             // Toggle del sidebar en móviles
             $('#sidebarToggle, #sidebarToggleMobile').on('click', function() {
                 $('#sidebar').toggleClass('active');

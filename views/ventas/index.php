@@ -96,9 +96,9 @@
                                         <td class="font-weight-bold" style="color:#15803d;">$<?php echo number_format($v->monto, 2); ?></td>
                                         <td><small class="text-muted"><?php echo htmlspecialchars($v->fecha); ?></small></td>
                                         <td>
-                                            <a href="<?php echo url('venta/eliminar', ['id' => $v->id]); ?>"
+                                            <a href="#"
                                                 class="btn btn-sm btn-outline-danger"
-                                                onclick="return confirm('¿Eliminar esta venta?')"
+                                                onclick="return confirmarEliminacion('<?php echo url('venta/eliminar', ['id' => $v->id]); ?>', '¿Eliminar esta venta por $<?php echo number_format($v->monto, 2); ?>?')"
                                                 style="padding:3px 8px;font-size:0.8rem;border-radius:6px;">
                                                 <span class="mdi mdi-delete"></span>
                                             </a>

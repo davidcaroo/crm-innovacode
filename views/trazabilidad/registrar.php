@@ -3,7 +3,7 @@
 
 <div class="page-header">
     <div>
-        <h2 class="page-title"><span class="mdi mdi-timeline-plus"></span> Registrar Actividad</h2>
+        <h2 class="page-title"><span class="mdi mdi-timeline-plus" style="color: #28a745;"></span> Registrar Actividad</h2>
         <?php if (isset($empresa)): ?>
             <small class="text-muted"><?php echo htmlspecialchars($empresa->razon_social); ?></small>
         <?php endif; ?>

@@ -140,9 +140,12 @@ class EmpresaController extends BaseController
         $usuario_id = in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']) ? null : $_SESSION['usuario_id'];
 
         $empresaModel = new Empresa();
-        $empresaModel->eliminar($id, $usuario_id);
-
-        $this->redirect(BASE_URL . '/index.php?controller=empresa&action=index');
+        try {
+            $empresaModel->eliminar($id, $usuario_id);
+            $this->redirect(url('empresa/index', ['success' => 'deleted']));
+        } catch (Exception $e) {
+            $this->redirect(url('empresa/index', ['error' => 'fk_constraint']));
+        }
     }
 
     /**

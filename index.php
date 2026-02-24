@@ -48,12 +48,8 @@ $controllerFile = CONTROLLERS_PATH . '/' . $controllerClass . '.php';
 // Verificar que el archivo del controlador exista
 if (!file_exists($controllerFile)) {
         http_response_code(404);
-        die("
-        <h1>Error 404</h1>
-        <p>Controlador no encontrado: <strong>{$controllerClass}</strong></p>
-        <p>Archivo esperado: {$controllerFile}</p>
-        <a href='" . BASE_URL . "'>Volver al inicio</a>
-    ");
+        include __DIR__ . '/views/errors/404.php';
+        exit;
 }
 
 // Incluir el archivo del controlador
@@ -62,11 +58,9 @@ require_once $controllerFile;
 // Verificar que la clase del controlador exista
 if (!class_exists($controllerClass)) {
         http_response_code(500);
-        die("
-        <h1>Error 500</h1>
-        <p>La clase <strong>{$controllerClass}</strong> no existe en el archivo.</p>
-        <a href='" . BASE_URL . "'>Volver al inicio</a>
-    ");
+        $exception = new Exception("La clase {$controllerClass} no fue encontrada.");
+        include __DIR__ . '/views/errors/500.php';
+        exit;
 }
 
 // Crear instancia del controlador
@@ -76,12 +70,8 @@ try {
         // Verificar que el método (acción) exista en el controlador
         if (!method_exists($controller, $actionName)) {
                 http_response_code(404);
-                die("
-            <h1>Error 404</h1>
-            <p>La acción <strong>{$actionName}</strong> no existe en el controlador <strong>{$controllerClass}</strong></p>
-            <p>Métodos disponibles: " . implode(', ', get_class_methods($controller)) . "</p>
-            <a href='" . BASE_URL . "'>Volver al inicio</a>
-        ");
+                include __DIR__ . '/views/errors/404.php';
+                exit;
         }
 
         // Ejecutar la acción del controlador
@@ -89,43 +79,13 @@ try {
 } catch (PDOException $e) {
         // Error de base de datos
         http_response_code(500);
-
-        if (DEBUG_MODE) {
-                die("
-            <h1>Error de Base de Datos</h1>
-            <p><strong>Mensaje:</strong> " . htmlspecialchars($e->getMessage()) . "</p>
-            <p><strong>Archivo:</strong> " . htmlspecialchars($e->getFile()) . "</p>
-            <p><strong>Línea:</strong> " . $e->getLine() . "</p>
-            <pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>
-            <a href='" . BASE_URL . "'>Volver al inicio</a>
-        ");
-        } else {
-                error_log("Database Error: " . $e->getMessage());
-                die("
-            <h1>Error del Sistema</h1>
-            <p>Ha ocurrido un error al procesar su solicitud. Por favor, intente nuevamente más tarde.</p>
-            <a href='" . BASE_URL . "'>Volver al inicio</a>
-        ");
-        }
+        $exception = $e;
+        include __DIR__ . '/views/errors/500.php';
+        exit;
 } catch (Exception $e) {
         // Cualquier otro error
         http_response_code(500);
-
-        if (DEBUG_MODE) {
-                die("
-            <h1>Error de Aplicación</h1>
-            <p><strong>Mensaje:</strong> " . htmlspecialchars($e->getMessage()) . "</p>
-            <p><strong>Archivo:</strong> " . htmlspecialchars($e->getFile()) . "</p>
-            <p><strong>Línea:</strong> " . $e->getLine() . "</p>
-            <pre>" . htmlspecialchars($e->getTraceAsString()) . "</pre>
-            <a href='" . BASE_URL . "'>Volver al inicio</a>
-        ");
-        } else {
-                error_log("Application Error: " . $e->getMessage());
-                die("
-            <h1>Error del Sistema</h1>
-            <p>Ha ocurrido un error al procesar su solicitud. Por favor, intente nuevamente más tarde.</p>
-            <a href='" . BASE_URL . "'>Volver al inicio</a>
-        ");
-        }
+        $exception = $e;
+        include __DIR__ . '/views/errors/500.php';
+        exit;
 }

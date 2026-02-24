@@ -27,7 +27,7 @@
                         <td><?= htmlspecialchars($c->telefono) ?></td>
                         <td>
                             <a href="<?php echo url('contacto/editar', ['empresa_id' => $empresa_id, 'id' => $c->id]); ?>" class="btn btn-sm btn-outline-primary"><span class="mdi mdi-pencil"></span></a>
-                            <a href="<?php echo url('contacto/eliminar', ['id' => $c->id]); ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar contacto?')"><span class="mdi mdi-delete"></span></a>
+                            <a href="#" class="btn btn-sm btn-outline-danger" onclick="return confirmarEliminacion('<?php echo url('contacto/eliminar', ['id' => $c->id]); ?>', '¿Eliminar el contacto <?php echo htmlspecialchars($c->nombre); ?>?')"><span class="mdi mdi-delete"></span></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

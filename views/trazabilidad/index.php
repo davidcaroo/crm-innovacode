@@ -14,7 +14,7 @@ $etapaColors = ['prospectado' => 'badge-prospectado', 'contactado' => 'badge-con
 
 <div class="page-header">
     <div>
-        <h2 class="page-title"><span class="mdi mdi-timeline-text"></span> Trazabilidad</h2>
+        <h2 class="page-title"><span class="mdi mdi-timeline-text" style="color: #28a745;"></span> Trazabilidad</h2>
         <?php if (isset($empresa)): ?>
             <span class="page-subtitle">
                 <?php echo htmlspecialchars($empresa->razon_social); ?> &mdash;

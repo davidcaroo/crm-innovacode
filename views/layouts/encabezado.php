@@ -75,8 +75,8 @@
 
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="<?php echo url('trazabilidad/historial'); ?>">
-                        <span class="mdi mdi-clock-outline"></span>
-                        <span>Bitácora de Actividad</span>
+                        <span class="mdi mdi-clock-outline" style="color: #28a745; font-weight: bold;"></span>
+                        <span style="color: #28a745; font-weight: bold;">Bitácora de Actividad</span>
                     </a>
                 </li>
 
