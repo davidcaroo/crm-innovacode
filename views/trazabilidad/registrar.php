@@ -17,12 +17,12 @@
     <div class="col-12 col-md-7 col-lg-5">
         <div class="card border-0 shadow-sm">
             <div class="card-body">
-                <form method="post" action="<?php echo url('trazabilidad/registrar'); ?>">
+                <form method="post" action="<?php echo url('trazabilidad/registrar', ['empresa_id' => $empresa_id]); ?>">
                     <input type="hidden" name="empresa_id" value="<?= htmlspecialchars($empresa_id) ?>">
 
                     <div class="form-group">
                         <label><small class="font-weight-bold text-uppercase text-muted">Tipo de Actividad</small></label>
-                        <select name="tipo_actividad" class="form-control" required>
+                        <select name="tipo_actividad" class="form-control" required style="color:#2d3a4a;background-color:#fff;">
                             <option value="llamada"><span class="mdi mdi-phone"></span> Llamada</option>
                             <option value="correo">Correo</option>
                             <option value="reunion">Reunion</option>
@@ -33,7 +33,7 @@
 
                     <div class="form-group">
                         <label><small class="font-weight-bold text-uppercase text-muted">Nueva Etapa</small></label>
-                        <select name="etapa_venta" class="form-control" required>
+                        <select name="etapa_venta" class="form-control" required style="color:#2d3a4a;background-color:#fff;">
                             <?php
                             $etapas = ['prospectado' => 'Prospectado', 'contactado' => 'Contactado', 'negociacion' => 'Negociacion', 'ganado' => 'Ganado', 'perdido' => 'Perdido'];
                             $etapaActual = isset($empresa) ? $empresa->etapa_venta : '';

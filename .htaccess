@@ -1,6 +1,6 @@
 Options -Indexes
 RewriteEngine On
-RewriteBase /
+RewriteBase /crm-php.com/
 
 # Servir archivos y directorios existentes directamente (CSS, JS, imágenes, etc.)
 RewriteCond %{REQUEST_FILENAME} !-f

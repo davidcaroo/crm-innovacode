@@ -179,7 +179,8 @@ body {
   display: flex;
   align-items: center;
   padding: 14px 22px;
-  color: #4b5563; /* Gris más oscuro */
+  color: #4b5563;
+  /* Gris más oscuro */
   text-decoration: none;
   transition: all 0.2s ease;
   border-left: 4px solid transparent;
@@ -201,18 +202,45 @@ body {
 }
 
 /* Dashboard KPI Cards */
-.border-left-primary { border-left: .25rem solid #4e73df !important; }
-.border-left-success { border-left: .25rem solid #1cc88a !important; }
-.border-left-info { border-left: .25rem solid #36b9cc !important; }
-.border-left-warning { border-left: .25rem solid #f6c23e !important; }
-.text-xs { font-size: .7rem; }
-.font-weight-bold { font-weight: 700 !important; }
-.text-gray-300 { color: #dddfeb !important; }
-.text-gray-800 { color: #5a5c69 !important; }
-.shadow { box-shadow: 0 .15rem 1.75rem 0 rgba(58, 59, 69, .15) !important; }
-  border-left-color: #2563eb;
-  color: #1e40af;
-  font-weight: 700;
+.border-left-primary {
+  border-left: .25rem solid #4e73df !important;
+}
+
+.border-left-success {
+  border-left: .25rem solid #1cc88a !important;
+}
+
+.border-left-info {
+  border-left: .25rem solid #36b9cc !important;
+}
+
+.border-left-warning {
+  border-left: .25rem solid #f6c23e !important;
+}
+
+.text-xs {
+  font-size: .7rem;
+}
+
+.font-weight-bold {
+  font-weight: 700 !important;
+}
+
+.text-gray-300 {
+  color: #dddfeb !important;
+}
+
+.text-gray-800 {
+  color: #5a5c69 !important;
+}
+
+.shadow {
+  box-shadow: 0 .15rem 1.75rem 0 rgba(58, 59, 69, .15) !important;
+}
+
+border-left-color: #2563eb;
+color: #1e40af;
+font-weight: 700;
 }
 
 .sidebar-link .mdi {
@@ -220,7 +248,8 @@ body {
   margin-right: 14px;
   width: 24px;
   text-align: center;
-  color: #64748b; /* Iconos más tenues por defecto */
+  color: #64748b;
+  /* Iconos más tenues por defecto */
   transition: color 0.2s;
 }
 
@@ -355,6 +384,33 @@ body {
   color: #6b7280;
   font-size: 0.88rem;
   transition: margin-left 0.3s ease;
+}
+
+/* ===================================
+   FORMULARIOS - SELECTS E INPUTS
+   =================================== */
+select,
+select option,
+select.form-control,
+select.form-control-sm,
+select.form-control option,
+select.form-control-sm option {
+  color: #2d3a4a !important;
+  background-color: #ffffff !important;
+}
+
+input.form-control,
+input.form-control-sm,
+textarea.form-control,
+textarea.form-control-sm {
+  color: #2d3a4a !important;
+  background-color: #ffffff !important;
+}
+
+/* Forzar texto visible en Chrome/Edge donde -webkit-text-fill-color pisa a color */
+select:not([multiple]) {
+  color: #2d3a4a !important;
+  -webkit-text-fill-color: #2d3a4a !important;
 }
 
 /* ===================================
@@ -500,9 +556,11 @@ body {
    =================================== */
 
 @media (max-width: 768px) {
+
   /* Mostrar toggle button */
   .sidebar-toggle {
-    display: none; /* Ocultamos el viejo botón flotante */
+    display: none;
+    /* Ocultamos el viejo botón flotante */
   }
 
   .sidebar {
@@ -590,4 +648,43 @@ body {
 
 .sidebar::-webkit-scrollbar-thumb:hover {
   background: rgba(44, 62, 80, 0.4);
+}
+
+/* ==========================================================================
+   SOLUCIÓN DEFINITIVA PARA SELECTS (Chrome/Edge/Safari fix)
+   Fuerza la visualización del texto en elementos select ignorando estilos
+   heredados o del navegador que causen invisibilidad.
+   ========================================================================== */
+select.form-control,
+select.form-control-sm,
+select:not([multiple]) {
+  color: #2d3a4a !important;
+  /* Texto oscuro casi negro */
+  -webkit-text-fill-color: #2d3a4a !important;
+  /* Fix específico para Webkit */
+  background-color: #ffffff !important;
+  /* Fondo blanco puro */
+  opacity: 1 !important;
+  /* Opacidad total */
+
+  /* Restaurar apariencia nativa para garantizar visibilidad */
+  appearance: menulist !important;
+  -webkit-appearance: menulist !important;
+  -moz-appearance: menulist !important;
+
+  /* Ajustes de caja para evitar recorte de texto */
+  height: auto !important;
+  min-height: 34px !important;
+  /* Altura mínima razonable */
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  padding-left: 8px !important;
+
+  /* Asegurar que se sobrepone a cualquier capa */
+  background-image: none !important;
+}
+
+select option {
+  color: #2d3a4a !important;
+  background-color: #ffffff !important;
 }

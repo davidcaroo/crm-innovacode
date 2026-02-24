@@ -22,7 +22,7 @@
     <?php if (isset($_SESSION['usuario_id'])): ?>
         <!-- Toggle Button para móviles (Fuera de navbar si es necesario) -->
         <button class="btn sidebar-toggle shadow-lg" id="sidebarToggle" aria-label="Abrir menú" style="background-color: #1e40af; color: white; border-radius: 8px; width: 45px; height: 45px; display: none; align-items: center; justify-content: center; border: none; z-index: 9999;">
-            <i class="mdi mdi-menu" style="font-size: 1.8rem;"></i>
+            <i class="bi bi-list" style="font-size: 1.8rem; line-height:1;"></i>
         </button>
 
         <!-- Sidebar -->
@@ -147,12 +147,8 @@
             <div class="top-navbar d-flex align-items-center justify-content-between">
                 <div class="navbar-left d-flex align-items-center">
                     <button class="btn d-md-none mr-3 shadow-sm" id="sidebarToggleMobile" style="border-radius: 8px; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background-color: #1e40af; border: none; padding: 0;">
-                        <i class="mdi mdi-menu" style="font-size: 1.8rem; color: #ffffff;"></i>
+                        <i class="bi bi-list" style="font-size: 1.8rem; color: #ffffff; line-height:1;"></i>
                     </button>
-                    <h5 class="mb-0 d-none d-sm-block text-muted" style="font-weight: 500; font-size: 0.9rem;">
-                        <span class="mdi mdi-calendar-check mr-1"></span>
-                        <?php echo date('d M, Y'); ?>
-                    </h5>
                 </div>
 
                 <div class="navbar-right d-flex align-items-center">

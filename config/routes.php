@@ -50,10 +50,11 @@ return [
     'GET  /reportes'                           => ['reporte', 'index'],
 
     // ── TRAZABILIDAD ────────────────────────────────────────
-    'GET  /trazabilidad'                       => ['trazabilidad', 'historial'],
-    'GET  /trazabilidad/:empresa_id'           => ['trazabilidad', 'index'],
-    'GET  /trazabilidad/:empresa_id/registrar' => ['trazabilidad', 'registrar'],
-    'POST /trazabilidad/guardar'               => ['trazabilidad', 'registrar'],
+    'GET  /trazabilidad'                        => ['trazabilidad', 'historial'],
+    'GET  /trazabilidad/:empresa_id'            => ['trazabilidad', 'index'],
+    'GET  /trazabilidad/:empresa_id/registrar'  => ['trazabilidad', 'registrar'],
+    'POST /trazabilidad/:empresa_id/registrar'  => ['trazabilidad', 'registrar'],
+    'POST /trazabilidad/guardar'                => ['trazabilidad', 'registrar'],
 
     // ── NOTIFICACIONES ──────────────────────────────────────
     'GET  /notificaciones'                     => ['notificacion', 'index'],

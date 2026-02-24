@@ -46,12 +46,14 @@
                                 </td>
                                 <td>
                                     <?php
-                                    $badgeClass = 'bg-secondary';
-                                    if ($h->etapa_venta == 'ganado') $badgeClass = 'bg-success';
-                                    if ($h->etapa_venta == 'perdido') $badgeClass = 'bg-danger';
-                                    if ($h->etapa_venta == 'negociacion') $badgeClass = 'bg-warning text-dark';
+                                    $badgeClass = 'badge-secondary';
+                                    if ($h->etapa_venta == 'ganado') $badgeClass = 'badge-success';
+                                    if ($h->etapa_venta == 'perdido') $badgeClass = 'badge-danger';
+                                    if ($h->etapa_venta == 'negociacion') $badgeClass = 'badge-warning';
+                                    if ($h->etapa_venta == 'prospectado') $badgeClass = 'badge-info';
+                                    if ($h->etapa_venta == 'contactado') $badgeClass = 'badge-primary';
                                     ?>
-                                    <span class="badge <?= $badgeClass ?> text-white"><?= ucfirst($h->etapa_venta) ?></span>
+                                    <span class="badge <?= $badgeClass ?>"><?= ucfirst($h->etapa_venta) ?></span>
                                 </td>
                                 <td class="small text-muted"><?= htmlspecialchars($h->observaciones) ?></td>
                             </tr>

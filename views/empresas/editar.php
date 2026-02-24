@@ -78,7 +78,7 @@
                         <div class="col-6">
                             <div class="form-group mb-3">
                                 <label style="font-size:0.82rem;font-weight:600;color:#475569;">Etapa de Venta</label>
-                                <select name="etapa_venta" class="form-control form-control-sm">
+                                <select name="etapa_venta" class="form-control form-control-sm" style="color:#2d3a4a;background-color:#fff;">
                                     <option value="prospectado" <?= ($empresa->etapa_venta ?? '') === 'prospectado' ? 'selected' : '' ?>>Prospectado</option>
                                     <option value="contactado" <?= ($empresa->etapa_venta ?? '') === 'contactado'  ? 'selected' : '' ?>>Contactado</option>
                                     <option value="negociacion" <?= ($empresa->etapa_venta ?? '') === 'negociacion' ? 'selected' : '' ?>>Negociación</option>
@@ -90,7 +90,7 @@
                         <div class="col-6">
                             <div class="form-group mb-3">
                                 <label style="font-size:0.82rem;font-weight:600;color:#475569;">¿Aplica?</label>
-                                <select name="aplica" class="form-control form-control-sm">
+                                <select name="aplica" class="form-control form-control-sm" style="color:#2d3a4a;background-color:#fff;">
                                     <option value="SI" <?= ($empresa->aplica ?? '') === 'SI' ? 'selected' : '' ?>>Sí</option>
                                     <option value="NO" <?= ($empresa->aplica ?? '') === 'NO' ? 'selected' : '' ?>>No</option>
                                 </select>

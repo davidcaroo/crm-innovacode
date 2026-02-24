@@ -72,7 +72,7 @@
                         <div class="col-6">
                             <div class="form-group mb-3">
                                 <label style="font-size:0.82rem;font-weight:600;color:#475569;">Etapa de Venta</label>
-                                <select name="etapa_venta" class="form-control form-control-sm">
+                                <select name="etapa_venta" class="form-control form-control-sm" style="color:#2d3a4a;background-color:#fff;">
                                     <option value="prospectado" selected>Prospectado</option>
                                     <option value="contactado">Contactado</option>
                                     <option value="negociacion">Negociación</option>
@@ -84,7 +84,7 @@
                         <div class="col-6">
                             <div class="form-group mb-3">
                                 <label style="font-size:0.82rem;font-weight:600;color:#475569;">¿Aplica?</label>
-                                <select name="aplica" class="form-control form-control-sm">
+                                <select name="aplica" class="form-control form-control-sm" style="color:#2d3a4a;background-color:#fff;">
                                     <option value="SI">Sí</option>
                                     <option value="NO">No</option>
                                 </select>

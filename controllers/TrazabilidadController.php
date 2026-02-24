@@ -11,7 +11,7 @@ class TrazabilidadController extends BaseController
         $empresaModel = new Empresa();
         $empresa = $empresaModel->obtener($empresa_id, $usuario_id);
         if (!$empresa) {
-            $this->redirect(BASE_URL . '/index.php?controller=empresa&action=index&error=auth');
+            $this->redirect(url('empresa/index'));
             exit;
         }
         return $empresa;
@@ -21,7 +21,7 @@ class TrazabilidadController extends BaseController
     {
         $empresa_id = $this->get('empresa_id');
         if (!$empresa_id) {
-            $this->redirect(BASE_URL . '/index.php?controller=empresa&action=index');
+            $this->redirect(url('empresa/index'));
             return;
         }
 
@@ -64,7 +64,7 @@ class TrazabilidadController extends BaseController
             $empresaModel = new Empresa();
             $empresaModel->actualizarEtapa($data['empresa_id'], $data['etapa_venta']);
 
-            $this->redirect(BASE_URL . '/index.php?controller=trazabilidad&action=index&empresa_id=' . $data['empresa_id']);
+            $this->redirect(url('trazabilidad/index', ['empresa_id' => $data['empresa_id']]));
         } else {
             $empresaModel = new Empresa();
             $empresa      = $empresaModel->obtener($empresa_id); // Ya validado arriba

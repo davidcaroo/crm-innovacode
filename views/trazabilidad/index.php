@@ -30,7 +30,7 @@ $etapaColors = ['prospectado' => 'badge-prospectado', 'contactado' => 'badge-con
             <span class="mdi mdi-plus"></span> Nueva Actividad
         </a>
         <a href="<?php echo url('empresa/index'); ?>"
-            class="btn btn-outline-secondary btn-sm">
+            class="btn btn-sm font-weight-bold text-white" style="background-color:#7c3aed;">
             <span class="mdi mdi-arrow-left"></span> Empresas
         </a>
     </div>
