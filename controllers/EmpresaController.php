@@ -1,5 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/Empresa.php';
+require_once __DIR__ . '/../models/Configuracion.php';
+require_once __DIR__ . '/../models/Mailer.php';
 require_once __DIR__ . '/BaseController.php';
 
 class EmpresaController extends BaseController
@@ -7,7 +9,7 @@ class EmpresaController extends BaseController
     public function index()
     {
         $empresaModel = new Empresa();
-        if ($_SESSION['usuario_rol'] === 'admin') {
+        if (in_array($_SESSION['usuario_rol'], ['admin', 'superadmin'])) {
             $empresas = $empresaModel->todasAdmin();
         } else {
             $empresas = $empresaModel->todasPorUsuario($_SESSION['usuario_id']);
@@ -43,8 +45,16 @@ class EmpresaController extends BaseController
     public function editar()
     {
         $id = $this->get('id');
+        $usuario_id = in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']) ? null : $_SESSION['usuario_id'];
+
         $empresaModel = new Empresa();
-        $empresa = $empresaModel->obtener($id);
+        $empresa = $empresaModel->obtener($id, $usuario_id);
+
+        if (!$empresa) {
+            $this->redirect(BASE_URL . '/index.php?controller=empresa&action=index&error=auth');
+            return;
+        }
+
         $this->view('empresas/editar', ['empresa' => $empresa]);
     }
 
@@ -52,6 +62,20 @@ class EmpresaController extends BaseController
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $this->post('id');
+            $usuario_id = in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']) ? null : $_SESSION['usuario_id'];
+
+            $empresaModel = new Empresa();
+
+            // Obtener estado anterior para comparar (valida propiedad)
+            $empresaAnterior = $empresaModel->obtener($id, $usuario_id);
+            if (!$empresaAnterior) {
+                $this->redirect(BASE_URL . '/index.php?controller=empresa&action=index&error=auth');
+                return;
+            }
+
+            $etapaAnterior = $empresaAnterior->etapa_venta ?? '';
+            $nuevaEtapa = $this->post('etapa_venta');
+
             $data = [
                 'razon_social' => $this->post('razon_social'),
                 'dpto' => $this->post('dpto'),
@@ -59,11 +83,28 @@ class EmpresaController extends BaseController
                 'actividad_economica' => $this->post('actividad_economica'),
                 'correo_comercial' => $this->post('correo_comercial'),
                 'aplica' => $this->post('aplica'),
-                'etapa_venta' => $this->post('etapa_venta'),
+                'etapa_venta' => $nuevaEtapa,
                 'observaciones' => $this->post('observaciones')
             ];
-            $empresaModel = new Empresa();
-            $empresaModel->actualizar($id, $data);
+
+            $empresaModel->actualizar($id, $data, $usuario_id);
+
+            // Verificar si cambió a "ganado"
+            if ($nuevaEtapa === 'ganado' && $etapaAnterior !== 'ganado') {
+                $vendedor = $_SESSION['usuario_nombre'] ?? 'Un vendedor';
+                $empresaNombre = $data['razon_social'];
+
+                $asunto = "¡Oportunidad Ganada! - $empresaNombre";
+                $cuerpo = "<h3>Venta Cerrada</h3>
+                           <p>El vendedor <b>$vendedor</b> ha marcado como <b>GANADA</b> la oportunidad de: <b>$empresaNombre</b>.</p>
+                           <p>¡Felicidades!</p>";
+
+                // Enviar a los administradores o al correo de configuración
+                $smtp = Configuracion::getSMTP();
+                $destinatario = $smtp['smtp_user'] ?: 'admin@servidor.com';
+                Mailer::enviar($destinatario, $asunto, $cuerpo);
+            }
+
             $this->redirect(BASE_URL . '/index.php?controller=empresa&action=index');
         }
     }
@@ -71,8 +112,11 @@ class EmpresaController extends BaseController
     public function eliminar()
     {
         $id = $this->get('id');
+        $usuario_id = in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']) ? null : $_SESSION['usuario_id'];
+
         $empresaModel = new Empresa();
-        $empresaModel->eliminar($id);
+        $empresaModel->eliminar($id, $usuario_id);
+
         $this->redirect(BASE_URL . '/index.php?controller=empresa&action=index');
     }
 
@@ -83,7 +127,7 @@ class EmpresaController extends BaseController
     {
         $empresaModel = new Empresa();
 
-        $todasEmpresas = ($_SESSION['usuario_rol'] === 'admin')
+        $todasEmpresas = (in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']))
             ? $empresaModel->todasAdmin()
             : $empresaModel->todasPorUsuario($_SESSION['usuario_id']);
 

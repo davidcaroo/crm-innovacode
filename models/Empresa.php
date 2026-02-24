@@ -39,19 +39,25 @@ class Empresa extends BaseModel
         return $stmt->fetchAll();
     }
 
-    public function obtener($id)
+    public function obtener($id, $usuario_id = null)
     {
         $sql = "SELECT * FROM empresas WHERE id = ?";
+        $params = [$id];
+
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = ?";
+            $params[] = $usuario_id;
+        }
+
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$id]);
+        $stmt->execute($params);
         return $stmt->fetch();
     }
 
-    public function actualizar($id, $data)
+    public function actualizar($id, $data, $usuario_id = null)
     {
         $sql = "UPDATE empresas SET razon_social=?, dpto=?, ciudad=?, actividad_economica=?, correo_comercial=?, aplica=?, etapa_venta=?, observaciones=? WHERE id=?";
-        $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
+        $params = [
             $data['razon_social'],
             $data['dpto'],
             $data['ciudad'],
@@ -61,14 +67,29 @@ class Empresa extends BaseModel
             $data['etapa_venta'],
             $data['observaciones'],
             $id
-        ]);
+        ];
+
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = ?";
+            $params[] = $usuario_id;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
     }
 
-    public function eliminar($id)
+    public function eliminar($id, $usuario_id = null)
     {
         $sql = "DELETE FROM empresas WHERE id = ?";
+        $params = [$id];
+
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = ?";
+            $params[] = $usuario_id;
+        }
+
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([$id]);
+        return $stmt->execute($params);
     }
 
     /**
@@ -127,55 +148,112 @@ class Empresa extends BaseModel
     }
 
     // Métodos para estadísticas del dashboard
-    public function count()
+    public function count($usuario_id = null)
     {
         $sql = "SELECT COUNT(*) as total FROM empresas";
-        $stmt = $this->db->query($sql);
+        if ($usuario_id) {
+            $sql .= " WHERE usuario_id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$usuario_id]);
+        } else {
+            $stmt = $this->db->query($sql);
+        }
         $result = $stmt->fetch();
         return $result->total ?? 0;
     }
 
-    public function contarPorDepartamento()
+    public function contarPorDepartamento($usuario_id = null)
     {
-        $sql = "SELECT dpto as departamento, COUNT(*) as conteo FROM empresas WHERE dpto IS NOT NULL AND dpto != '' GROUP BY dpto ORDER BY conteo DESC";
-        $stmt = $this->db->query($sql);
-        return $stmt->fetchAll();
+        $sql = "SELECT dpto as departamento, COUNT(*) as conteo FROM empresas WHERE dpto IS NOT NULL AND dpto != ''";
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = ?";
+        }
+        $sql .= " GROUP BY dpto ORDER BY conteo DESC";
+
+        if ($usuario_id) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$usuario_id]);
+            return $stmt->fetchAll();
+        }
+        return $this->db->query($sql)->fetchAll();
     }
 
-    public function contarPorActividadEconomica()
+    public function contarPorActividadEconomica($usuario_id = null)
     {
-        $sql = "SELECT actividad_economica, COUNT(*) as conteo FROM empresas WHERE actividad_economica IS NOT NULL AND actividad_economica != '' GROUP BY actividad_economica ORDER BY conteo DESC LIMIT 10";
-        $stmt = $this->db->query($sql);
-        return $stmt->fetchAll();
+        $sql = "SELECT actividad_economica, COUNT(*) as conteo FROM empresas WHERE actividad_economica IS NOT NULL AND actividad_economica != ''";
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = ?";
+        }
+        $sql .= " GROUP BY actividad_economica ORDER BY conteo DESC LIMIT 10";
+
+        if ($usuario_id) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$usuario_id]);
+            return $stmt->fetchAll();
+        }
+        return $this->db->query($sql)->fetchAll();
     }
 
-    public function contarPorEtapa()
+    public function contarPorEtapa($usuario_id = null)
     {
-        $sql = "SELECT etapa_venta, COUNT(*) as conteo FROM empresas GROUP BY etapa_venta";
-        $stmt = $this->db->query($sql);
-        return $stmt->fetchAll();
+        $sql = "SELECT etapa_venta, COUNT(*) as conteo FROM empresas";
+        if ($usuario_id) {
+            $sql .= " WHERE usuario_id = ?";
+        }
+        $sql .= " GROUP BY etapa_venta";
+
+        if ($usuario_id) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$usuario_id]);
+            return $stmt->fetchAll();
+        }
+        return $this->db->query($sql)->fetchAll();
     }
 
-    public function empresasGanadasPorMes($anio = null)
+    public function empresasGanadasPorMes($usuario_id = null)
     {
-        $sql = "SELECT MONTH(creado_en) as mes, COUNT(*) as total FROM empresas WHERE etapa_venta = 'ganado' GROUP BY MONTH(creado_en) ORDER BY mes";
-        $stmt = $this->db->query($sql);
-        return $stmt->fetchAll();
+        $sql = "SELECT MONTH(creado_en) as mes, COUNT(*) as total FROM empresas WHERE etapa_venta = 'ganado'";
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = ?";
+        }
+        $sql .= " GROUP BY MONTH(creado_en) ORDER BY mes";
+
+        if ($usuario_id) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$usuario_id]);
+            return $stmt->fetchAll();
+        }
+        return $this->db->query($sql)->fetchAll();
     }
 
-    public function contarUltimosDias($dias = 30)
+    public function contarUltimosDias($dias = 30, $usuario_id = null)
     {
         $sql = "SELECT COUNT(*) as total FROM empresas WHERE creado_en >= DATE_SUB(NOW(), INTERVAL ? DAY)";
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = ?";
+        }
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$dias]);
+        if ($usuario_id) {
+            $stmt->execute([$dias, $usuario_id]);
+        } else {
+            $stmt->execute([$dias]);
+        }
         $result = $stmt->fetch();
         return $result->total ?? 0;
     }
 
-    public function contarAnioActual()
+    public function contarAnioActual($usuario_id = null)
     {
         $sql = "SELECT COUNT(*) as total FROM empresas WHERE YEAR(creado_en) = YEAR(NOW())";
-        $stmt = $this->db->query($sql);
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = ?";
+        }
+        if ($usuario_id) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$usuario_id]);
+        } else {
+            $stmt = $this->db->query($sql);
+        }
         $result = $stmt->fetch();
         return $result->total ?? 0;
     }

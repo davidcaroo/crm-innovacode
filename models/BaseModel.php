@@ -25,6 +25,14 @@ abstract class BaseModel
     }
 
     /**
+     * Obtiene la conexión PDO de forma estática
+     */
+    public static function getDB()
+    {
+        return Database::getInstance()->getConnection();
+    }
+
+    /**
      * Obtener todos los registros de la tabla
      * 
      * @return array Array de objetos

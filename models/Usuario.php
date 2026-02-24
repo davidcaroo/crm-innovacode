@@ -38,7 +38,7 @@ class Usuario extends BaseModel
         $sql  = "SELECT u.id, u.nombre, u.email, u.rol, u.estado, u.creado_en, 
                         (SELECT COUNT(*) FROM empresas e WHERE e.usuario_id = u.id) as total_empresas
                  FROM usuarios u 
-                 ORDER BY u.creado_en DESC";
+                 ORDER BY (u.rol = 'superadmin') DESC, u.nombre ASC";
         return $this->db->query($sql)->fetchAll();
     }
 

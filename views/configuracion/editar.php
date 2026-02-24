@@ -25,7 +25,15 @@
                     <label for="smtp_pass">Contraseña SMTP</label>
                     <input type="password" class="form-control" name="smtp_pass" id="smtp_pass" value="" required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block mt-3">Guardar configuración</button>
+
+                <hr class="my-4">
+                <h5 class="mb-3 text-secondary">Preferencias de Notificación</h5>
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="notificaciones_ganado" name="notificaciones_ganado" <?= ($smtp['notificaciones_ganado'] ?? false) ? 'checked' : '' ?>>
+                    <label class="custom-control-label" for="notificaciones_ganado">Alertar por correo al "Ganar" una oportunidad</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block mt-4">Guardar configuración</button>
             </form>
         </div>
     </div>

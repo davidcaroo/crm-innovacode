@@ -67,12 +67,12 @@
                                             <i class="bi bi-eye"></i>
                                         </a>
                                     <?php endif; ?>
-                                    
+
                                     <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=editarUsuario&id=<?= $u->id ?>"
                                         class="btn btn-sm btn-light border" style="border-radius:6px; color:#475569;" title="Editar">
                                         <i class="bi bi-pencil"></i>
                                     </a>
-                                    
+
                                     <?php if ($u->id != $_SESSION['usuario_id']): ?>
                                         <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=eliminarUsuario&id=<?= $u->id ?>"
                                             class="btn btn-sm btn-light border text-danger" style="border-radius:6px;"

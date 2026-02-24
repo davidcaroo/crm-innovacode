@@ -26,22 +26,24 @@ class DashboardController extends BaseController
     public function index()
     {
         try {
+            $u_id = in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']) ? null : $_SESSION['usuario_id'];
+
             // Estadísticas de empresas
-            $totalEmpresas = $this->empresaModel->count();
-            $empresasUltimos30Dias = $this->empresaModel->contarUltimosDias(30);
-            $empresasAnioActual = $this->empresaModel->contarAnioActual();
+            $totalEmpresas = $this->empresaModel->count($u_id);
+            $empresasUltimos30Dias = $this->empresaModel->contarUltimosDias(30, $u_id);
+            $empresasAnioActual = $this->empresaModel->contarAnioActual($u_id);
 
             // Estadísticas de ventas (empresas ganadas)
-            $empresasGanadas = $this->empresaModel->empresasGanadasPorMes();
+            $empresasGanadas = $this->empresaModel->empresasGanadasPorMes($u_id);
             $totalVentas = 0;
             foreach ($empresasGanadas as $item) {
                 $totalVentas += $item->total;
             }
 
             // Datos para gráficos
-            $empresasPorDepartamento = $this->empresaModel->contarPorDepartamento();
-            $empresasPorActividad = $this->empresaModel->contarPorActividadEconomica();
-            $empresasPorEtapa = $this->empresaModel->contarPorEtapa();
+            $empresasPorDepartamento = $this->empresaModel->contarPorDepartamento($u_id);
+            $empresasPorActividad = $this->empresaModel->contarPorActividadEconomica($u_id);
+            $empresasPorEtapa = $this->empresaModel->contarPorEtapa($u_id);
 
             $this->view('dashboard/index', [
                 'totalEmpresas' => $totalEmpresas,

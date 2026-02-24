@@ -38,7 +38,7 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-                
+
                 <li class="sidebar-header-text mt-3 mb-2 px-4" style="font-size: 0.75rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;">
                     Gestión Comercial
                 </li>
@@ -62,9 +62,27 @@
                     </a>
                 </li>
 
+                <li class="sidebar-header-text mt-3 mb-2 px-4" style="font-size: 0.75rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;">
+                    Inteligencia de Negocio
+                </li>
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=reporte&action=index">
+                        <span class="mdi mdi-chart-line"></span>
+                        <span>Panel de Reportes</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=trazabilidad&action=historial">
+                        <span class="mdi mdi-clock-outline"></span>
+                        <span>Bitácora de Actividad</span>
+                    </a>
+                </li>
+
                 <?php if (isset($_SESSION['usuario_rol']) && in_array($_SESSION['usuario_rol'], ['admin', 'superadmin'])): ?>
                     <li class="sidebar-header-text mt-4 mb-2 px-4" style="font-size: 0.75rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;">
-                        Administración
+                        Configuración avanzada
                     </li>
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=lista">
@@ -102,7 +120,22 @@
         <!-- Contenido principal -->
         <?php $ctrl = isset($_GET['controller']) ? preg_replace('/[^a-z0-9_\-]/i', '', $_GET['controller']) : ''; ?>
         <main role="main" class="content-wrapper <?php echo $ctrl ? 'ctrl-' . $ctrl : ''; ?>">
-            
+
+            <?php if (isset($_SESSION['is_impersonating']) && $_SESSION['is_impersonating']): ?>
+                <div class="alert alert-warning shadow-sm border-0 d-flex justify-content-between align-items-center mb-4" style="border-radius:12px; border-left: 5px solid #d97706 !important;">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-person-bounding-box mr-3" style="font-size: 1.4rem;"></i>
+                        <div>
+                            <div style="font-size:0.85rem; font-weight:700; color:#92400e; text-transform:uppercase; letter-spacing:0.5px;">Modo Espectador Activo</div>
+                            <div style="font-size:0.95rem; color:#b45309;">Viendo el sistema como: <strong><?= htmlspecialchars($_SESSION['usuario_nombre']) ?></strong></div>
+                        </div>
+                    </div>
+                    <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=stopImpersonating" class="btn btn-sm btn-dark px-3" style="border-radius:8px; font-weight:700;">
+                        <i class="bi bi-x-circle mr-1"></i> Volver a mi Admin
+                    </a>
+                </div>
+            <?php endif; ?>
+
             <!-- Top Navbar -->
             <div class="top-navbar d-flex align-items-center justify-content-between">
                 <div class="navbar-left">
@@ -114,7 +147,7 @@
                         <?php echo date('d M, Y'); ?>
                     </h5>
                 </div>
-                
+
                 <div class="navbar-right d-flex align-items-center">
                     <div class="user-info-box d-flex align-items-center">
                         <div class="text-right mr-3 d-none d-md-block">
@@ -132,7 +165,7 @@
                 <div class="alert alert-warning shadow-sm border-0 d-flex justify-content-between align-items-center mb-4" style="border-radius:12px; border-left: 5px solid #d97706 !important;">
                     <div>
                         <i class="bi bi-person-bounding-box mr-2"></i>
-                        Viendo como: <strong><?= htmlspecialchars($_SESSION['usuario_nombre']) ?></strong> 
+                        Viendo como: <strong><?= htmlspecialchars($_SESSION['usuario_nombre']) ?></strong>
                         <span class="badge badge-warning ml-2" style="font-size:0.7rem; text-transform:uppercase;">Modo Espectador</span>
                     </div>
                     <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=stopImpersonating" class="btn btn-sm btn-dark" style="border-radius:8px; font-weight:700;">
@@ -140,6 +173,6 @@
                     </a>
                 </div>
             <?php endif; ?>
-    <?php else: ?>
-        <main role="main" class="login-wrapper">
-    <?php endif; ?>
+        <?php else: ?>
+            <main role="main" class="login-wrapper">
+            <?php endif; ?>

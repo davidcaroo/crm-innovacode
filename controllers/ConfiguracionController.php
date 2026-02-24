@@ -1,11 +1,14 @@
 <?php
 // controllers/ConfiguracionController.php (solo admin/superadmin)
+require_once __DIR__ . '/BaseController.php';
+require_once __DIR__ . '/../models/Configuracion.php';
+
 class ConfiguracionController extends BaseController
 {
     public function editar()
     {
         // Solo admin/superadmin
-        if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['rol'], ['admin', 'superadmin'])) {
+        if (!isset($_SESSION['usuario_id']) || !in_array($_SESSION['usuario_rol'], ['admin', 'superadmin'])) {
             header('Location: index.php');
             exit;
         }
@@ -15,7 +18,9 @@ class ConfiguracionController extends BaseController
             $port = intval($_POST['smtp_port'] ?? 0);
             $user = trim($_POST['smtp_user'] ?? '');
             $pass = trim($_POST['smtp_pass'] ?? '');
-            Configuracion::setSMTP($host, $port, $user, $pass);
+            $notif = isset($_POST['notificaciones_ganado']) ? true : false;
+
+            Configuracion::setSMTP($host, $port, $user, $pass, $notif);
             $mensaje = "Configuración actualizada correctamente.";
         }
         $smtp = Configuracion::getSMTP();

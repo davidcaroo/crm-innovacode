@@ -139,97 +139,97 @@ foreach ($empresasPorEtapa as $row) {
 
 <script>
     (function() {
-            const deptData = <?php echo json_encode(array_values(array_map(function ($d) {
-                                    return ['label' => $d->departamento, 'value' => (int)$d->conteo];
-                                }, $empresasPorDepartamento))); ?>;
-            const ganadas = <?php echo json_encode(array_values(array_map(function ($v) {
-                                return ['mes' => (int)$v->mes, 'total' => (int)$v->total];
-                            }, $empresasGanadas))); ?>;
-            const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-            const palette = ['#3b82f6', '#f59e0b', '#22c55e', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316', '#0ea5e9', '#ec4899', '#84cc16'];
+        const deptData = <?php echo json_encode(array_values(array_map(function ($d) {
+                                return ['label' => $d->departamento, 'value' => (int)$d->conteo];
+                            }, $empresasPorDepartamento))); ?>;
+        const ganadas = <?php echo json_encode(array_values(array_map(function ($v) {
+                            return ['mes' => (int)$v->mes, 'total' => (int)$v->total];
+                        }, $empresasGanadas))); ?>;
+        const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        const palette = ['#3b82f6', '#f59e0b', '#22c55e', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316', '#0ea5e9', '#ec4899', '#84cc16'];
 
-            const ctxDept = document.getElementById('graficaDepartamentos');
-            if (ctxDept && deptData.length) {
-                new Chart(ctxDept, {
-                    type: 'doughnut',
-                    data: {
-                        labels: deptData.map(d => d.label),
-                        datasets: [{
-                            data: deptData.map(d => d.value),
-                            backgroundColor: palette,
-                            borderWidth: 2,
-                            borderColor: '#fff'
-                        }]
-                    },
-                    options: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                boxWidth: 12,
-                                fontSize: 11
-                            }
-                        },
-                        cutoutPercentage: 50
-                    }
-                });
-            }
-
-            const ctxGan = document.getElementById('graficaEmpresasGanadas');
-            if (ctxGan) {
-                const vals = new Array(12).fill(0);
-                ganadas.forEach(g => {
-                    vals[g.mes - 1] = g.total;
-                });
-                new Chart(ctxGan, {
-                    type: 'bar',
-                    data: {
-                        labels: meses,
-                        datasets: [{
-                            label: 'Ganadas',
-                            data: vals,
-                            backgroundColor: 'rgba(34,197,94,0.75)',
-                            borderColor: '#15803d',
-                            borderWidth: 1,
-                            borderRadius: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true,
-                                    stepSize: 1,
-                                    fontColor: '#64748b'
-                                },
-                                gridLines: {
-                                    color: '#f1f5f9'
-                                }
-                            }],
-                            xAxes: [{
-                                ticks: {
-                                    fontColor: '#64748b'
-                                },
-                                gridLines: {
-                                    display: false
-                                }
-                            }]
-                        },
-                        legend: {
-                            display: false
-                        },
-                        tooltips: {
-                            backgroundColor: '#1e293b',
-                            titleFontSize: 13,
-                            bodyFontSize: 12,
-                            xPadding: 10,
-                            yPadding: 10,
-                            cornerRadius: 4,
-                            displayColors: false
+        const ctxDept = document.getElementById('graficaDepartamentos');
+        if (ctxDept && deptData.length) {
+            new Chart(ctxDept, {
+                type: 'doughnut',
+                data: {
+                    labels: deptData.map(d => d.label),
+                    datasets: [{
+                        data: deptData.map(d => d.value),
+                        backgroundColor: palette,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            fontSize: 11
                         }
+                    },
+                    cutoutPercentage: 50
+                }
+            });
+        }
+
+        const ctxGan = document.getElementById('graficaEmpresasGanadas');
+        if (ctxGan) {
+            const vals = new Array(12).fill(0);
+            ganadas.forEach(g => {
+                vals[g.mes - 1] = g.total;
+            });
+            new Chart(ctxGan, {
+                type: 'bar',
+                data: {
+                    labels: meses,
+                    datasets: [{
+                        label: 'Ganadas',
+                        data: vals,
+                        backgroundColor: 'rgba(34,197,94,0.75)',
+                        borderColor: '#15803d',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 1,
+                                fontColor: '#64748b'
+                            },
+                            gridLines: {
+                                color: '#f1f5f9'
+                            }
+                        }],
+                        xAxes: [{
+                            ticks: {
+                                fontColor: '#64748b'
+                            },
+                            gridLines: {
+                                display: false
+                            }
+                        }]
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        backgroundColor: '#1e293b',
+                        titleFontSize: 13,
+                        bodyFontSize: 12,
+                        xPadding: 10,
+                        yPadding: 10,
+                        cornerRadius: 4,
+                        displayColors: false
                     }
-                });
-            }
+                }
+            });
+        }
     })();
 </script>

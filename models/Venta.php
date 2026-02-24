@@ -1,4 +1,5 @@
 ﻿<?php
+
 /**
  * Modelo Venta - Ventas asociadas a Empresas (no clientes legacy)
  */
@@ -25,13 +26,26 @@ class Venta extends BaseModel
 
     /**
      * Obtener todas las ventas con datos de la empresa
+     * Filtra por usuario si no es admin
      */
-    public function obtenerConEmpresa()
+    public function obtenerConEmpresa($usuario_id = null)
     {
         $sql = "SELECT v.*, e.razon_social AS empresa_nombre, e.dpto AS departamento
                 FROM ventas v
-                INNER JOIN empresas e ON v.empresa_id = e.id
-                ORDER BY v.fecha DESC";
+                INNER JOIN empresas e ON v.empresa_id = e.id ";
+
+        if ($usuario_id) {
+            $sql .= " WHERE v.usuario_id = ? ";
+        }
+
+        $sql .= " ORDER BY v.fecha DESC";
+
+        if ($usuario_id) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$usuario_id]);
+            return $stmt->fetchAll();
+        }
+
         return $this->db->query($sql)->fetchAll();
     }
 
@@ -76,11 +90,19 @@ class Venta extends BaseModel
     }
 
     /**
-     * Eliminar una venta
+     * Eliminar una venta (Validando propiedad para evitar IDOR)
      */
-    public function delete($id)
+    public function delete($id, $usuario_id = null)
     {
-        $stmt = $this->db->prepare("DELETE FROM ventas WHERE id = ?");
-        return $stmt->execute([$id]);
+        $sql = "DELETE FROM ventas WHERE id = ?";
+        $params = [$id];
+
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = ?";
+            $params[] = $usuario_id;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute($params);
     }
 }

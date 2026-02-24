@@ -1,4 +1,5 @@
 ﻿<?php
+
 /**
  * VentaController - Gestiona ventas vinculadas a empresas ganadas
  */
@@ -20,10 +21,11 @@ class VentaController extends BaseController
     public function index()
     {
         try {
-            $ventas = $this->ventaModel->obtenerConEmpresa();
+            $usuario_id_filtro = in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']) ? null : $_SESSION['usuario_id'];
+            $ventas = $this->ventaModel->obtenerConEmpresa($usuario_id_filtro);
 
             // Solo empresas en etapa ganado pueden tener venta registrada
-            $todasEmpresas = ($_SESSION['usuario_rol'] === 'admin')
+            $todasEmpresas = (in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']))
                 ? $this->empresaModel->todasAdmin()
                 : $this->empresaModel->todasPorUsuario($_SESSION['usuario_id']);
 
@@ -62,7 +64,9 @@ class VentaController extends BaseController
     {
         try {
             $id = $this->validateId($this->get('id'));
-            $this->ventaModel->delete($id);
+            $usuario_id = in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']) ? null : $_SESSION['usuario_id'];
+
+            $this->ventaModel->delete($id, $usuario_id);
             $this->redirect('index.php?controller=venta&action=index');
         } catch (Exception $e) {
             $this->error($e->getMessage());
