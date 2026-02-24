@@ -22,8 +22,13 @@ define('VIEWS_PATH', BASE_PATH . '/views');
 define('MODELS_PATH', BASE_PATH . '/models');
 define('CONTROLLERS_PATH', BASE_PATH . '/controllers');
 
-// URL base (ajustar según tu configuración)
-define('BASE_URL', 'http://localhost/crm-php.com');
+// URL base — dinámica según entorno
+$_protocol  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$_host      = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$_base_path = (strpos($_host, 'localhost') !== false) ? '/crm-php.com' : '';
+define('BASE_URL',      $_protocol . '://' . $_host . $_base_path);
+define('APP_BASE_PATH', $_base_path); // usado por el Router
+unset($_protocol, $_host, $_base_path);
 
 // Configuración de la aplicación
 define('APP_NAME', 'CRM By Innovacode Tech');
@@ -33,19 +38,35 @@ define('APP_VERSION', '2.0.0');
 // ⚠️ CAMBIAR en producción por una clave de 32 bytes segura y aleatoria
 define('ENCRYPTION_KEY', 'CRM_Bahari_S3cr3t_K3y_2026_32ch!!');
 
-// Modo de desarrollo (cambiar a false en producción)
-define('DEBUG_MODE', true);
+// Modo de desarrollo: false automáticamente en producción
+define('DEBUG_MODE', ($_SERVER['HTTP_HOST'] ?? '') === 'localhost');
 
 // Configurar reporte de errores según el modo
 if (DEBUG_MODE) {
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
+    error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+    ini_set('display_errors', 0); // No mostrar en pantalla para no romper UI
+    ini_set('log_errors', 1);
+    ini_set('error_log', BASE_PATH . '/logs/error.log');
 } else {
     error_reporting(0);
     ini_set('display_errors', 0);
     ini_set('log_errors', 1);
     ini_set('error_log', BASE_PATH . '/logs/error.log');
 }
+
+// Handler personalizado para errores PHP (opcional, para debugging)
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+    if (!(error_reporting() & $errno)) {
+        return false;
+    }
+    $errorMsg = "[" . date('Y-m-d H:i:s') . "] PHP Error [$errno]: $errstr in $errfile on line $errline";
+    error_log($errorMsg);
+    if (DEBUG_MODE) {
+        // En debug, mostrar en comentario HTML oculto
+        echo "<!-- DEBUG: $errorMsg -->";
+    }
+    return true;
+});
 
 // Datos maestros
 define('DEPARTAMENTOS', [
@@ -59,7 +80,7 @@ define('DEPARTAMENTOS', [
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_httponly', 1);
     ini_set('session.use_only_cookies', 1);
-    ini_set('session.cookie_secure', 0); // Cambiar a 1 si usas HTTPS
+    ini_set('session.cookie_secure', (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 1 : 0);
 }
 
 // Charset por defecto
