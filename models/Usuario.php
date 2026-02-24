@@ -70,4 +70,47 @@ class Usuario extends BaseModel
         $stmt = $this->db->prepare("DELETE FROM usuarios WHERE id = ?");
         return $stmt->execute([$id]);
     }
+
+    /* ============================
+       Recuperación de contraseña
+       ============================ */
+
+    /**
+     * Guarda el token de recuperación (pre-hasheado) y su expiración para el usuario con ese email.
+     * Retorna el id del usuario, o false si no existe.
+     */
+    public function setRecoveryToken($email, $tokenHashed, $expira)
+    {
+        $usuario = $this->buscarPorEmail($email);
+        if (!$usuario) {
+            return false;
+        }
+        $sql  = "UPDATE usuarios SET recovery_token = ?, recovery_expira = ? WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$tokenHashed, $expira, $usuario->id]);
+        return $usuario->id;
+    }
+
+    /**
+     * Busca un usuario por token hasheado que no haya expirado.
+     */
+    public function findByRecoveryToken($tokenHashed)
+    {
+        $sql  = "SELECT * FROM usuarios 
+                 WHERE recovery_token = ? AND recovery_expira > NOW() 
+                 LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$tokenHashed]);
+        return $stmt->fetch();
+    }
+
+    /**
+     * Limpia el token de recuperación una vez usado.
+     */
+    public function clearRecoveryToken($id)
+    {
+        $sql  = "UPDATE usuarios SET recovery_token = NULL, recovery_expira = NULL WHERE id = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$id]);
+    }
 }

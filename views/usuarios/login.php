@@ -32,6 +32,14 @@
                     </div>
                 <?php endif; ?>
 
+                <?php if (!empty($_SESSION['flash_exito'])): ?>
+                    <div class="alert py-2 px-3 mb-3" style="font-size:0.9rem;border-radius:8px;background:#ecfdf5;border:1px solid #6ee7b7;color:#065f46;">
+                        <i class="bi bi-check-circle-fill" style="color:#059669;"></i>
+                        <?= htmlspecialchars($_SESSION['flash_exito']) ?>
+                    </div>
+                    <?php unset($_SESSION['flash_exito']); ?>
+                <?php endif; ?>
+
                 <form method="post" autocomplete="off">
                     <div class="form-group mb-3">
                         <label for="email" style="font-size:0.88rem;font-weight:600;color:#475569;">
