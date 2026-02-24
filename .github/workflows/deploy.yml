@@ -14,25 +14,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       
-      - name: Start ssh-agent and add key (manual, with CRLF cleanup and PEM conversion)
+      - name: Diagnose key format
         run: |
-          set -euo pipefail
-          echo "Starting ssh-agent"
-          eval "$(ssh-agent -s)"
+          printf "%s" "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > /tmp/deploy_key_diag
+          FIRST=$(head -1 /tmp/deploy_key_diag)
+          echo "=== KEY FIRST LINE: $FIRST ==="
+          if echo "$FIRST" | grep -q "BEGIN"; then
+            echo "RESULT: OK — Parece clave PRIVADA válida"
+          elif echo "$FIRST" | grep -q "ssh-rsa\|ssh-ed25519\|ecdsa-sha2"; then
+            echo "RESULT: ERROR — Esto es una clave PÚBLICA, no privada. Cambia el Secret SSH_PRIVATE_KEY."
+            exit 1
+          else
+            echo "RESULT: DESCONOCIDO — contenido inesperado en el secret"
+            exit 1
+          fi
+        shell: bash
 
-          # Write secret to file and remove possible CRLF (Windows line endings)
-          echo "Writing private key to /tmp/deploy_key (CRLF removed)"
+      - name: Start ssh-agent and add key
+        run: |
+          eval "$(ssh-agent -s)"
+          echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> $GITHUB_ENV
+          echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> $GITHUB_ENV
           printf "%s" "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' > /tmp/deploy_key
           chmod 600 /tmp/deploy_key
-
-          # Try to add key; if ssh-add fails (libcrypto error), attempt to convert to PEM and retry
-          if ssh-add /tmp/deploy_key; then
-            echo "Key added to ssh-agent"
-          else
-            echo "ssh-add failed, attempting to convert key to PEM format and retry"
-            ssh-keygen -p -m PEM -f /tmp/deploy_key -N "" || true
-            ssh-add /tmp/deploy_key
-          fi
+          ssh-add /tmp/deploy_key
+          echo "Clave privada añadida al agente correctamente"
         shell: bash
 
       - name: Add host to known_hosts
