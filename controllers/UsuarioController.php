@@ -171,6 +171,11 @@ class UsuarioController extends BaseController
         $id           = $this->get('id');
         $usuarioModel = new Usuario();
         $usuario      = $usuarioModel->obtener($id);
+        // Proteger al superadmin: nadie puede editar su perfil excepto él mismo
+        if ($usuario && $usuario->rol === 'superadmin' && $_SESSION['usuario_id'] != $id) {
+            $this->redirect(url('usuario/lista', ['error' => 'superadmin_protected']));
+            return;
+        }
         $this->view('usuarios/editar', ['usuario' => $usuario]);
     }
 
@@ -183,28 +188,42 @@ class UsuarioController extends BaseController
         }
         $id           = $this->post('id');
         $usuarioModel = new Usuario();
-        $rol          = $this->post('rol');
-        $estado       = $this->post('estado') ?: 'activo';
-
+        // Proteger al superadmin: nadie puede modificar su cuenta excepto él mismo
+        $objetivo = $usuarioModel->obtener($id);
+        if ($objetivo && $objetivo->rol === 'superadmin' && $_SESSION['usuario_id'] != $id) {
+            $this->redirect(url('usuario/lista', ['error' => 'superadmin_protected']));
+            return;
+        }
+        $rol    = $this->post('rol');
+        $estado = $this->post('estado') ?: 'activo';
+        // Preservar siempre el rol superadmin aunque alguien manipule el formulario
+        if ($objetivo && $objetivo->rol === 'superadmin') {
+            $rol = 'superadmin';
+        }
         $usuarioModel->actualizar($id, $this->post('nombre'), $this->post('email'), $rol ?: 'usuario', $estado);
 
         $nueva = $this->post('password');
         if ($nueva) {
             $usuarioModel->cambiarPassword($id, $nueva);
         }
-        $this->redirect(BASE_URL . '/index.php?controller=usuario&action=lista');
+        $this->redirect(url('usuario/lista', ['success' => 'user_updated']));
     }
 
     public function eliminarUsuario()
     {
         $this->requireAdmin();
         $id = $this->get('id');
-        // Proteger al superadmin y al usuario actual
         if ($id && $id != $_SESSION['usuario_id']) {
             $usuarioModel = new Usuario();
+            // Proteger al superadmin: nunca puede ser eliminado
+            $objetivo = $usuarioModel->obtener($id);
+            if ($objetivo && $objetivo->rol === 'superadmin') {
+                $this->redirect(url('usuario/lista', ['error' => 'superadmin_protected']));
+                return;
+            }
             $usuarioModel->eliminar($id);
         }
-        $this->redirect(BASE_URL . '/index.php?controller=usuario&action=lista');
+        $this->redirect(url('usuario/lista', ['success' => 'user_deleted']));
     }
 
     /* ============================

@@ -68,12 +68,14 @@
                                         </a>
                                     <?php endif; ?>
 
-                                    <a href="<?php echo url('usuario/editarUsuario', ['id' => $u->id]); ?>"
-                                        class="btn btn-sm btn-light border" style="border-radius:6px; color:#475569;" title="Editar">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
+                                    <?php if (!($u->rol === 'superadmin' && $u->id != $_SESSION['usuario_id'])): ?>
+                                        <a href="<?php echo url('usuario/editarUsuario', ['id' => $u->id]); ?>"
+                                            class="btn btn-sm btn-light border" style="border-radius:6px; color:#475569;" title="Editar">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    <?php endif; ?>
 
-                                    <?php if ($u->id != $_SESSION['usuario_id']): ?>
+                                    <?php if ($u->id != $_SESSION['usuario_id'] && $u->rol !== 'superadmin'): ?>
                                         <a href="#"
                                             class="btn btn-sm btn-light border text-danger" style="border-radius:6px;"
                                             title="Eliminar"
