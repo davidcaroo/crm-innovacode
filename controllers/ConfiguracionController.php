@@ -36,7 +36,12 @@ class ConfiguracionController extends BaseController
         $tab = in_array($_GET['tab'] ?? '', ['smtp', 'integraciones', 'notificaciones']) ? $_GET['tab'] : 'smtp';
 
         $this->view('configuracion/index', compact(
-            'smtp', 'integraciones', 'eventos', 'prefsRoles', 'roles', 'tab'
+            'smtp',
+            'integraciones',
+            'eventos',
+            'prefsRoles',
+            'roles',
+            'tab'
         ));
     }
 

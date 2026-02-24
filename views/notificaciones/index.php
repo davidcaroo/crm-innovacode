@@ -37,29 +37,29 @@ $iconosTipo = [
                 $fecha = date('d M Y, H:i', strtotime($notif->creado_en));
                 $url   = !empty($notif->url_accion) ? $notif->url_accion : '#';
             ?>
-            <a href="<?= htmlspecialchars($url) ?>"
-               class="list-group-item list-group-item-action d-flex align-items-start py-3 px-4"
-               style="border:none;border-bottom:1px solid #f1f5f9;<?= !$notif->leida ? 'background:#f8faff;' : '' ?>">
-                <!-- Icono -->
-                <div class="mr-3 mt-1 flex-shrink-0" style="width:40px;height:40px;border-radius:10px;background:<?= $meta['bg'] ?>;display:flex;align-items:center;justify-content:center;">
-                    <span class="mdi <?= $meta['icono'] ?>" style="font-size:1.3rem;color:<?= $meta['color'] ?>;"></span>
-                </div>
-                <!-- Texto -->
-                <div class="flex-grow-1">
-                    <div style="font-weight:<?= !$notif->leida ? '700' : '500' ?>;color:#1e293b;font-size:.93rem;">
-                        <?= htmlspecialchars($notif->titulo) ?>
-                        <?php if (!$notif->leida): ?>
-                            <span class="badge badge-primary ml-1" style="font-size:.65rem;border-radius:6px;">Nueva</span>
+                <a href="<?= htmlspecialchars($url) ?>"
+                    class="list-group-item list-group-item-action d-flex align-items-start py-3 px-4"
+                    style="border:none;border-bottom:1px solid #f1f5f9;<?= !$notif->leida ? 'background:#f8faff;' : '' ?>">
+                    <!-- Icono -->
+                    <div class="mr-3 mt-1 flex-shrink-0" style="width:40px;height:40px;border-radius:10px;background:<?= $meta['bg'] ?>;display:flex;align-items:center;justify-content:center;">
+                        <span class="mdi <?= $meta['icono'] ?>" style="font-size:1.3rem;color:<?= $meta['color'] ?>;"></span>
+                    </div>
+                    <!-- Texto -->
+                    <div class="flex-grow-1">
+                        <div style="font-weight:<?= !$notif->leida ? '700' : '500' ?>;color:#1e293b;font-size:.93rem;">
+                            <?= htmlspecialchars($notif->titulo) ?>
+                            <?php if (!$notif->leida): ?>
+                                <span class="badge badge-primary ml-1" style="font-size:.65rem;border-radius:6px;">Nueva</span>
+                            <?php endif; ?>
+                        </div>
+                        <?php if (!empty($notif->mensaje)): ?>
+                            <div style="font-size:.83rem;color:#64748b;margin-top:2px;"><?= htmlspecialchars($notif->mensaje) ?></div>
                         <?php endif; ?>
+                        <div style="font-size:.78rem;color:#94a3b8;margin-top:4px;">
+                            <span class="mdi mdi-clock-outline mr-1"></span><?= $fecha ?>
+                        </div>
                     </div>
-                    <?php if (!empty($notif->mensaje)): ?>
-                        <div style="font-size:.83rem;color:#64748b;margin-top:2px;"><?= htmlspecialchars($notif->mensaje) ?></div>
-                    <?php endif; ?>
-                    <div style="font-size:.78rem;color:#94a3b8;margin-top:4px;">
-                        <span class="mdi mdi-clock-outline mr-1"></span><?= $fecha ?>
-                    </div>
-                </div>
-            </a>
+                </a>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>

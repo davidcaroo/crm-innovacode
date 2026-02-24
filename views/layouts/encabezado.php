@@ -158,18 +158,18 @@
                 <div class="navbar-right d-flex align-items-center">
                     <!-- Campana de notificaciones -->
                     <?php
-                        require_once MODELS_PATH . '/Notificacion.php';
-                        $notifModel   = new Notificacion();
-                        $noLeidas     = $notifModel->getNoLeidas($_SESSION['usuario_id']);
-                        $countNoLeidas = count($noLeidas);
+                    require_once MODELS_PATH . '/Notificacion.php';
+                    $notifModel   = new Notificacion();
+                    $noLeidas     = $notifModel->getNoLeidas($_SESSION['usuario_id']);
+                    $countNoLeidas = count($noLeidas);
                     ?>
                     <div class="dropdown mr-3">
                         <button class="btn btn-light shadow-sm position-relative" id="campanaBtn" data-toggle="dropdown" aria-expanded="false"
-                                style="border-radius:10px;width:42px;height:42px;border:1px solid #e2e8f0;padding:0;display:flex;align-items:center;justify-content:center;">
-                            <i class="mdi mdi-bell-outline" style="font-size:1.4rem;color:#1e40af;"></i>
+                            style="border-radius:10px;width:42px;height:42px;border:1px solid #e2e8f0;padding:0;display:flex;align-items:center;justify-content:center;">
+                            <i class="bi bi-bell-fill" style="font-size:1.3rem;color:#f59e0b;"></i>
                             <?php if ($countNoLeidas > 0): ?>
                                 <span id="campanaBadge" class="position-absolute"
-                                      style="top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:50%;width:18px;height:18px;font-size:.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;">
+                                    style="top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:50%;width:18px;height:18px;font-size:.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;">
                                     <?= min($countNoLeidas, 9) ?><?= $countNoLeidas > 9 ? '+' : '' ?>
                                 </span>
                             <?php else: ?>
@@ -177,7 +177,7 @@
                             <?php endif; ?>
                         </button>
                         <div class="dropdown-menu dropdown-menu-right shadow-lg border-0 p-0"
-                             style="min-width:340px;border-radius:14px;overflow:hidden;margin-top:8px;">
+                            style="min-width:340px;border-radius:14px;overflow:hidden;margin-top:8px;">
                             <!-- Header dropdown -->
                             <div class="d-flex align-items-center justify-content-between px-4 py-3" style="background:#1e40af;color:#fff;">
                                 <span style="font-weight:700;font-size:.95rem;"><i class="mdi mdi-bell-outline mr-1"></i> Notificaciones</span>
@@ -217,7 +217,7 @@
                             <!-- Footer -->
                             <div class="text-center py-3" style="background:#f8fafc;">
                                 <a href="<?= BASE_URL ?>/index.php?controller=notificacion&action=index"
-                                   style="font-weight:700;font-size:.85rem;color:#1e40af;text-decoration:none;">
+                                    style="font-weight:700;font-size:.85rem;color:#1e40af;text-decoration:none;">
                                     <i class="mdi mdi-bell-outline mr-1"></i> Ver todas las notificaciones
                                 </a>
                             </div>
