@@ -25,10 +25,10 @@
                 <form action="<?php echo BASE_URL; ?>/index.php?controller=venta&action=guardar" method="post">
                     <div class="form-group mb-2">
                         <label class="mb-1"><small class="font-weight-bold text-uppercase" style="color:#64748b;font-size:0.75rem;">Empresa (Ganada)</small></label>
-                        <select required name="empresa_id" class="form-control form-control-sm">
-                            <option value="">-- Seleccione empresa --</option>
+                        <select required name="empresa_id" class="form-control form-control-sm" style="background:#fff;color:#1e40af;font-weight:600;">
+                            <option value="" style="color:#64748b;">-- Seleccione empresa --</option>
                             <?php foreach ($empresasGanadas as $emp): ?>
-                                <option value="<?php echo $emp->id; ?>">
+                                <option value="<?php echo $emp->id; ?>" style="color:#1e40af;background:#e0e7ff;font-weight:600;">
                                     <?php echo htmlspecialchars($emp->razon_social); ?> - <?php echo htmlspecialchars($emp->dpto ?? ''); ?>
                                 </option>
                             <?php endforeach; ?>

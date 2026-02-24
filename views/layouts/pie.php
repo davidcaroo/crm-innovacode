@@ -2,7 +2,7 @@
 
     <?php $ctrl = isset($_GET['controller']) ? preg_replace('/[^a-z0-9_\-]/i', '', $_GET['controller']) : ''; ?>
     <footer class="footer <?php echo $ctrl ? 'ctrl-' . $ctrl : ''; ?>">
-        <span>CRM By Innovacode Tech &copy; <?php echo date('Y'); ?> | <a href="https://innovacode-tech.vercel.app/" target="_blank" style="color:#2563eb;text-decoration:none;">Ayuda y soporte</a></span>
+        <span>CRM By Innovacode Tech &copy; <?php echo date('Y'); ?> | <a href="<?php echo BASE_URL; ?>/index.php?controller=soporte&action=index" style="color:#2563eb;text-decoration:none;">Ayuda y soporte</a></span>
     </footer>
 
     <!-- Scripts -->

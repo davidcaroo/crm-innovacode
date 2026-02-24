@@ -20,9 +20,9 @@
 
 <body>
     <?php if (isset($_SESSION['usuario_id'])): ?>
-        <!-- Toggle Button para móviles -->
-        <button class="btn btn-primary sidebar-toggle shadow-sm" id="sidebarToggle" aria-label="Abrir menú">
-            <span class="mdi mdi-menu"></span>
+        <!-- Toggle Button para móviles (Fuera de navbar si es necesario) -->
+        <button class="btn sidebar-toggle shadow-lg" id="sidebarToggle" aria-label="Abrir menú" style="background-color: #1e40af; color: white; border-radius: 8px; width: 45px; height: 45px; display: none; align-items: center; justify-content: center; border: none; z-index: 9999;">
+            <i class="mdi mdi-menu" style="font-size: 1.8rem;"></i>
         </button>
 
         <!-- Sidebar -->
@@ -109,8 +109,8 @@
                 </li>
             </ul>
             <div class="sidebar-footer">
-                <a class="sidebar-link text-center sidebar-cta" href="https://parzibyte.me#contacto" target="_blank">
-                    <span class="mdi mdi-handshake-outline"></span>
+                <a class="sidebar-link text-center sidebar-cta" href="<?php echo BASE_URL; ?>/index.php?controller=soporte&action=index">
+                    <span class="mdi mdi-help-circle-outline"></span>
                     <small>Ayuda y soporte</small>
                 </a>
             </div>
@@ -138,9 +138,9 @@
 
             <!-- Top Navbar -->
             <div class="top-navbar d-flex align-items-center justify-content-between">
-                <div class="navbar-left">
-                    <button class="btn btn-link d-md-none p-0 text-dark mr-3" id="sidebarToggleMobile">
-                        <i class="mdi mdi-menu" style="font-size: 1.5rem;"></i>
+                <div class="navbar-left d-flex align-items-center">
+                    <button class="btn d-md-none mr-3 shadow-sm" id="sidebarToggleMobile" style="border-radius: 8px; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background-color: #1e40af; border: none; padding: 0;">
+                        <i class="mdi mdi-menu" style="font-size: 1.8rem; color: #ffffff;"></i>
                     </button>
                     <h5 class="mb-0 d-none d-sm-block text-muted" style="font-weight: 500; font-size: 0.9rem;">
                         <span class="mdi mdi-calendar-check mr-1"></span>
@@ -160,19 +160,6 @@
                     </div>
                 </div>
             </div>
-
-            <?php if (isset($_SESSION['is_impersonating']) && $_SESSION['is_impersonating']): ?>
-                <div class="alert alert-warning shadow-sm border-0 d-flex justify-content-between align-items-center mb-4" style="border-radius:12px; border-left: 5px solid #d97706 !important;">
-                    <div>
-                        <i class="bi bi-person-bounding-box mr-2"></i>
-                        Viendo como: <strong><?= htmlspecialchars($_SESSION['usuario_nombre']) ?></strong>
-                        <span class="badge badge-warning ml-2" style="font-size:0.7rem; text-transform:uppercase;">Modo Espectador</span>
-                    </div>
-                    <a href="<?php echo BASE_URL; ?>/index.php?controller=usuario&action=stopImpersonating" class="btn btn-sm btn-dark" style="border-radius:8px; font-weight:700;">
-                        <i class="bi bi-x-circle"></i> Salir y volver a Admin
-                    </a>
-                </div>
-            <?php endif; ?>
         <?php else: ?>
             <main role="main" class="login-wrapper">
             <?php endif; ?>

@@ -5,7 +5,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="h3 mb-0 text-gray-800"><i class="mdi mdi-chart-areaspline mr-2 text-primary"></i>Panel de Inteligencia y Reportes</h2>
         <div>
-            <button onclick="window.print()" class="btn btn-sm btn-outline-secondary shadow-sm"><i class="mdi mdi-printer mr-1"></i>Imprimir Reporte</button>
+            <button onclick="window.print()" class="btn btn-sm btn-success shadow-sm" style="font-weight:600; border-radius:8px;">
+                <i class="mdi mdi-printer mr-1" style="font-size:1.2rem;"></i>Imprimir Reporte
+            </button>
         </div>
     </div>
 
