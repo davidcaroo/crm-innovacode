@@ -31,7 +31,7 @@ abstract class BaseController
         $viewFile = VIEWS_PATH . '/' . $viewName . '.php';
 
         if (file_exists($viewFile)) {
-            require_once $viewFile;
+            require $viewFile;
         } else {
             die("Vista no encontrada: {$viewName}");
         }
@@ -55,7 +55,7 @@ abstract class BaseController
         $viewFile = VIEWS_PATH . '/' . $viewName . '.php';
 
         if (file_exists($viewFile)) {
-            require_once $viewFile;
+            require $viewFile;
         } else {
             die("Vista parcial no encontrada: {$viewName}");
         }

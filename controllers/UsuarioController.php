@@ -200,9 +200,10 @@ class UsuarioController extends BaseController
                 // Token plano (64 chars hexadecimales = 256 bits de entropía)
                 $tokenPlano  = bin2hex(random_bytes(32));
                 $tokenHashed = hash('sha256', $tokenPlano);
-                $expira      = date('Y-m-d H:i:s', time() + 3600); // 1 hora
+                // $expira se calcula en MySQL (DATE_ADD(NOW(), INTERVAL 24 HOUR))
+                // para evitar desfase de timezone entre PHP y MySQL
 
-                $usuarioModel->setRecoveryToken($email, $tokenHashed, $expira);
+                $usuarioModel->setRecoveryToken($email, $tokenHashed, null);
 
                 $enlace = BASE_URL . '/index.php?controller=usuario&action=resetear&token=' . urlencode($tokenPlano);
 
@@ -221,7 +222,7 @@ class UsuarioController extends BaseController
       </a>
     </p>
     <p style="color:#64748b;font-size:0.88rem;">
-      Este enlace expira en <strong>1 hora</strong>.<br>
+      Este enlace expira en <strong>24 horas</strong>.<br>
       Si no solicitaste este cambio, ignora este correo.
     </p>
     <hr style="border:none;border-top:1px solid #e4e8f0;margin:24px 0;">

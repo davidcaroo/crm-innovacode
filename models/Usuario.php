@@ -79,15 +79,17 @@ class Usuario extends BaseModel
      * Guarda el token de recuperación (pre-hasheado) y su expiración para el usuario con ese email.
      * Retorna el id del usuario, o false si no existe.
      */
-    public function setRecoveryToken($email, $tokenHashed, $expira)
+    public function setRecoveryToken($email, $tokenHashed, $expira = null)
     {
         $usuario = $this->buscarPorEmail($email);
         if (!$usuario) {
             return false;
         }
-        $sql  = "UPDATE usuarios SET recovery_token = ?, recovery_expira = ? WHERE id = ?";
+        // Usamos DATE_ADD(NOW(), ...) directo en MySQL para evitar
+        // desfase entre timezone de PHP y MySQL (común en XAMPP)
+        $sql  = "UPDATE usuarios SET recovery_token = ?, recovery_expira = DATE_ADD(NOW(), INTERVAL 24 HOUR) WHERE id = ?";
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([$tokenHashed, $expira, $usuario->id]);
+        $stmt->execute([$tokenHashed, $usuario->id]);
         return $usuario->id;
     }
 

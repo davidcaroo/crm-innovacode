@@ -1,29 +1,89 @@
-# crm
-CRM de clientes con Dashboard general y por cliente
+# CRM - Sistema de Gestión de Clientes
 
-# Instalación
-Necesitas MySQL y PHP, preferiblemente en sus versiones de MySQL.
-Aquí un tutorial usando XAMPP: https://parzibyte.me/blog/2017/12/11/configurar-instalar-php-7-apache-server-mysql-windows/
+Sistema de gestión de relaciones con clientes (CRM) desarrollado en PHP con MySQL, que incluye dashboard general y vista detallada por cliente.
 
+## Características
 
-*Nota*: para las operaciones SQL puedes usar la consola o phpmyadmin
+- 📊 Dashboard general con estadísticas
+- 👥 Gestión de clientes
+- 📈 Visualización de datos por cliente
+- 🎯 Interfaz intuitiva y responsive
+- 🔍 Búsqueda y filtrado de clientes
 
-1. Copia todos estos archivos a tu carpeta pública, si estás en Windows con XAMPP, es en C:\xampp\htdocs\crm (si no existe, crea la carpeta)
-2. Crea la base de datos en MySQL
-3. Importa el archivo esquema.sql a la base de datos, ya sea copiando y pegando o importando
-4. Configura las credenciales de tu base de datos en el archivo __funciones.php__ dentro de la función `obtenerBD`
-5. Configura en ese mismo archivo la zona horaria, por defecto está para México
-6. Visita tu proyecto en http://localhost/crm
+## Requisitos Previos
 
-Nota: si cambiaste el nombre de tu proyecto o tu sistema operativo es distinto, los pasos podrían cambiar
+- **PHP 7.0+** (recomendado 7.4 o superior)
+- **MySQL 5.7+** o **MariaDB 10.2+**
+- **Apache 2.4+** (incluido en XAMPP)
+- **XAMPP** (opcional, para desarrollo local)
 
-# Créditos
-<div>Icons made by <a href="https://www.flaticon.com/authors/dimitry-miroliubov" title="Dimitry Miroliubov">Dimitry Miroliubov</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+## Instalación
 
-<div>Icons made by <a href="https://www.flaticon.com/authors/icongeek26" title="Icongeek26">Icongeek26</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+### 1. Preparar el entorno
 
-<div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+En Windows con XAMPP:
+- Copia todos los archivos a `C:\xampp\htdocs\crm-php.com`
+- Si la carpeta no existe, créala manualmente
 
-<div>Icons made by <a href="https://www.flaticon.com/authors/iconixar" title="iconixar">iconixar</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+En Linux/macOS:
+- Copia los archivos al directorio raíz web de tu servidor (generalmente `/var/www/html/`)
 
-<div>Icons made by <a href="https://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+### 2. Configurar la base de datos
+
+- Abre phpMyAdmin (http://localhost/phpmyadmin) o usa la consola MySQL
+- Crea una nueva base de datos con el nombre deseado
+- Importa el archivo `esquema.sql`:
+  - En phpMyAdmin: selecciona la BD → Importar → selecciona `esquema.sql`
+  - En consola: `mysql -u root -p nombre_bd < esquema.sql`
+
+### 3. Configurar credenciales
+
+Edita el archivo `__funciones.php`:
+```php
+// Busca la función obtenerBD() y actualiza:
+$host = 'localhost';
+$usuario = 'root';
+$contrasena = '';
+$base_datos = 'nombre_bd';
+```
+
+### 4. Configurar zona horaria
+
+En el mismo archivo `__funciones.php`, ajusta la zona horaria según tu ubicación:
+```php
+date_default_timezone_set('America/Mexico_City'); // Cambia según tu zona
+```
+
+### 5. Acceder al proyecto
+
+Abre tu navegador y ve a:
+- **Windows con XAMPP**: http://localhost/crm-php.com
+- **Linux/macOS**: http://tudominio/crm-php.com (o la ruta configurada)
+
+## Estructura de Carpetas
+
+```
+crm-php.com/
+├── index.php          # Página principal
+├── __funciones.php    # Funciones y configuración
+├── esquema.sql        # Estructura de la base de datos
+├── css/               # Estilos
+├── js/                # Scripts
+├── img/               # Imágenes e iconos
+└── README.md          # Este archivo
+```
+
+## Solución de Problemas
+
+**Error de conexión a base de datos:**
+- Verifica que MySQL está ejecutándose
+- Comprueba las credenciales en `__funciones.php`
+- Asegúrate de que la base de datos existe
+
+**Página en blanco:**
+- Revisa los logs de error de PHP
+- Comprueba que la zona horaria está correcta
+- Verifica los permisos de los archivos
+
+**Ruta incorrecta:**
+- Si el proyecto está en otra carpeta, actualiza las rutas en los archivos
