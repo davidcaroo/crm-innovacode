@@ -85,10 +85,3 @@ ini_set('session.cookie_samesite', 'Strict');
 ini_set('upload_max_filesize', '10M');
 ini_set('post_max_size', '10M');
 ini_set('max_execution_time', '300');
-
-// ===============================
-// VERIFICACIÓN DE CREDENCIALES
-// ===============================
-if (DB_HOST === 'TU_HOST_AQUI' || DB_PASS === 'TU_PASSWORD_AQUI') {
-    die('ERROR: Las credenciales de la base de datos no han sido configuradas correctamente.');
-}
