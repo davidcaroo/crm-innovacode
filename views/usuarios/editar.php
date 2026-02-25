@@ -38,9 +38,9 @@
                             <div class="form-group mb-3">
                                 <label style="font-size:0.82rem;font-weight:600;color:#475569;">Rol en el Sistema</label>
                                 <select name="rol" class="form-control form-control-sm shadow-sm">
-                                    <option value="usuario" <?= $usuario->rol === 'usuario' ? 'selected' : '' ?>>Usuario Operativo</option>
-                                    <option value="admin" <?= $usuario->rol === 'admin' ? 'selected' : '' ?>>Administrador Local</option>
-                                    <option value="superadmin" <?= $usuario->rol === 'superadmin' ? 'selected' : '' ?>>Superadmin (Global)</option>
+                                    <option value="usuario" <?= (!isset($usuario->rol) || $usuario->rol === 'usuario') ? 'selected' : '' ?>>Usuario Operativo</option>
+                                    <option value="admin" <?= (isset($usuario->rol) && $usuario->rol === 'admin') ? 'selected' : '' ?>>Administrador Local</option>
+                                    <option value="superadmin" <?= (isset($usuario->rol) && $usuario->rol === 'superadmin') ? 'selected' : '' ?>>Superadmin (Global)</option>
                                 </select>
                             </div>
                         </div>
@@ -48,8 +48,8 @@
                             <div class="form-group mb-3">
                                 <label style="font-size:0.82rem;font-weight:600;color:#475569;">Estado de la Cuenta</label>
                                 <select name="estado" class="form-control form-control-sm shadow-sm">
-                                    <option value="activo" <?= ($usuario->estado ?? 'activo') === 'activo' ? 'selected' : '' ?>>Activo</option>
-                                    <option value="inactivo" <?= ($usuario->estado ?? 'activo') === 'inactivo' ? 'selected' : '' ?>>Inactivo</option>
+                                    <option value="activo" <?= (!isset($usuario->estado) || $usuario->estado === 'activo') ? 'selected' : '' ?>>Activo</option>
+                                    <option value="inactivo" <?= (isset($usuario->estado) && $usuario->estado === 'inactivo') ? 'selected' : '' ?>>Inactivo</option>
                                 </select>
                             </div>
                         </div>

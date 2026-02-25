@@ -79,11 +79,11 @@
                             <div class="form-group mb-3">
                                 <label style="font-size:0.82rem;font-weight:600;color:#475569;">Etapa de Venta</label>
                                 <select name="etapa_venta" class="form-control form-control-sm" style="color:#2d3a4a;background-color:#fff;">
-                                    <option value="prospectado" <?= ($empresa->etapa_venta ?? '') === 'prospectado' ? 'selected' : '' ?>>Prospectado</option>
-                                    <option value="contactado" <?= ($empresa->etapa_venta ?? '') === 'contactado'  ? 'selected' : '' ?>>Contactado</option>
-                                    <option value="negociacion" <?= ($empresa->etapa_venta ?? '') === 'negociacion' ? 'selected' : '' ?>>Negociación</option>
-                                    <option value="ganado" <?= ($empresa->etapa_venta ?? '') === 'ganado'      ? 'selected' : '' ?>>Ganado</option>
-                                    <option value="perdido" <?= ($empresa->etapa_venta ?? '') === 'perdido'     ? 'selected' : '' ?>>Perdido</option>
+                                    <option value="prospectado" <?= (!isset($empresa->etapa_venta) || $empresa->etapa_venta === 'prospectado') ? 'selected' : '' ?>>Prospectado</option>
+                                    <option value="contactado" <?= (isset($empresa->etapa_venta) && $empresa->etapa_venta === 'contactado')  ? 'selected' : '' ?>>Contactado</option>
+                                    <option value="negociacion" <?= (isset($empresa->etapa_venta) && $empresa->etapa_venta === 'negociacion') ? 'selected' : '' ?>>Negociación</option>
+                                    <option value="ganado" <?= (isset($empresa->etapa_venta) && $empresa->etapa_venta === 'ganado')      ? 'selected' : '' ?>>Ganado</option>
+                                    <option value="perdido" <?= (isset($empresa->etapa_venta) && $empresa->etapa_venta === 'perdido')     ? 'selected' : '' ?>>Perdido</option>
                                 </select>
                             </div>
                         </div>
@@ -91,8 +91,8 @@
                             <div class="form-group mb-3">
                                 <label style="font-size:0.82rem;font-weight:600;color:#475569;">¿Aplica?</label>
                                 <select name="aplica" class="form-control form-control-sm" style="color:#2d3a4a;background-color:#fff;">
-                                    <option value="SI" <?= ($empresa->aplica ?? '') === 'SI' ? 'selected' : '' ?>>Sí</option>
-                                    <option value="NO" <?= ($empresa->aplica ?? '') === 'NO' ? 'selected' : '' ?>>No</option>
+                                    <option value="SI" <?= (!isset($empresa->aplica) || $empresa->aplica === 'SI') ? 'selected' : '' ?>>Sí</option>
+                                    <option value="NO" <?= (isset($empresa->aplica) && $empresa->aplica === 'NO') ? 'selected' : '' ?>>No</option>
                                 </select>
                             </div>
                         </div>

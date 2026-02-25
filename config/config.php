@@ -6,7 +6,7 @@
  */
 
 // Zona horaria
-date_default_timezone_set("America/Mexico_City");
+date_default_timezone_set("America/Bogota");
 
 // Configuración de base de datos
 define('DB_HOST', 'localhost');
