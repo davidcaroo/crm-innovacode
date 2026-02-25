@@ -11,7 +11,7 @@ class EmpresaController extends BaseController
     {
         $empresaModel = new Empresa();
         $buscar = $this->get('buscar');
-        
+
         // Si hay término de búsqueda, buscar; si no, obtener todas
         if (!empty($buscar)) {
             $usuario_id = in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']) ? null : $_SESSION['usuario_id'];
@@ -23,7 +23,7 @@ class EmpresaController extends BaseController
                 $empresas = $empresaModel->todasPorUsuario($_SESSION['usuario_id']);
             }
         }
-        
+
         $this->view('empresas/index', ['empresas' => $empresas, 'buscar' => $buscar ?? '']);
     }
 

@@ -40,16 +40,15 @@
                             <i class="bi bi-search text-muted"></i>
                         </span>
                     </div>
-                    <input 
-                        type="text" 
-                        name="buscar" 
+                    <input
+                        type="text"
+                        name="buscar"
                         id="inputBuscar"
-                        class="form-control border-left-0" 
-                        placeholder="Buscar por nombre, departamento o ciudad..." 
+                        class="form-control border-left-0"
+                        placeholder="Buscar por nombre, departamento o ciudad..."
                         value="<?php echo htmlspecialchars($buscar); ?>"
                         style="border-radius:0 8px 8px 0; border-left:0; padding-left:0;"
-                        autocomplete="off"
-                    >
+                        autocomplete="off">
                 </div>
             </div>
             <?php if (!empty($buscar)): ?>
@@ -140,34 +139,34 @@
 
 <!-- JavaScript para búsqueda en tiempo real -->
 <script>
-// Búsqueda automática con debounce
-let timeoutBusqueda = null;
-const inputBuscar = document.getElementById('inputBuscar');
-const formBuscar = document.getElementById('formBuscar');
+    // Búsqueda automática con debounce
+    let timeoutBusqueda = null;
+    const inputBuscar = document.getElementById('inputBuscar');
+    const formBuscar = document.getElementById('formBuscar');
 
-if (inputBuscar) {
-    inputBuscar.addEventListener('input', function() {
-        clearTimeout(timeoutBusqueda);
-        
-        timeoutBusqueda = setTimeout(function() {
-            formBuscar.submit();
-        }, 500); // Esperar 500ms después de que el usuario deje de escribir
+    if (inputBuscar) {
+        inputBuscar.addEventListener('input', function() {
+            clearTimeout(timeoutBusqueda);
+
+            timeoutBusqueda = setTimeout(function() {
+                formBuscar.submit();
+            }, 500); // Esperar 500ms después de que el usuario deje de escribir
+        });
+
+        // Focus automático en el campo de búsqueda al cargar
+        if (inputBuscar.value === '') {
+            inputBuscar.focus();
+        }
+    }
+
+    // Atajo de teclado: Ctrl/Cmd + K para enfocar búsqueda
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            inputBuscar.focus();
+            inputBuscar.select();
+        }
     });
-    
-    // Focus automático en el campo de búsqueda al cargar
-    if (inputBuscar.value === '') {
-        inputBuscar.focus();
-    }
-}
-
-// Atajo de teclado: Ctrl/Cmd + K para enfocar búsqueda
-document.addEventListener('keydown', function(e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        inputBuscar.focus();
-        inputBuscar.select();
-    }
-});
 </script>
 
 <?php // Footer included from BaseController 

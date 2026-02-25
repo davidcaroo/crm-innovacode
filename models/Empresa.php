@@ -45,19 +45,19 @@ class Empresa extends BaseModel
     public function buscar($termino, $usuario_id = null)
     {
         $termino = '%' . $termino . '%';
-        
+
         $sql = "SELECT * FROM empresas 
                 WHERE (razon_social LIKE ? OR dpto LIKE ? OR ciudad LIKE ?)";
         $params = [$termino, $termino, $termino];
-        
+
         // Filtrar por usuario si no es admin
         if ($usuario_id) {
             $sql .= " AND usuario_id = ?";
             $params[] = $usuario_id;
         }
-        
+
         $sql .= " ORDER BY creado_en DESC";
-        
+
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
