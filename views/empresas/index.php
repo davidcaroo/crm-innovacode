@@ -4,7 +4,7 @@
 <div class="page-header">
     <div>
         <h2 class="page-title"><span class="mdi mdi-domain"></span> Empresas</h2>
-        <span class="page-subtitle"><?php echo count($empresas); ?> empresa<?php echo count($empresas) != 1 ? 's' : ''; ?> registrada<?php echo count($empresas) != 1 ? 's' : ''; ?></span>
+        <span class="page-subtitle"><?php echo count($empresas); ?> empresa<?php echo count($empresas) != 1 ? 's' : ''; ?> <?php echo !empty($buscar) ? 'encontrada' . (count($empresas) != 1 ? 's' : '') : 'registrada' . (count($empresas) != 1 ? 's' : ''); ?></span>
     </div>
     <div class="d-flex" style="gap:8px;">
         <a href="<?php echo url('empresa/importar'); ?>"
@@ -29,6 +29,38 @@
     </div>
 <?php endif; ?>
 
+<!-- Barra de Búsqueda -->
+<div class="card shadow-sm border-0 mb-3">
+    <div class="card-body py-3 px-4">
+        <form method="GET" action="<?php echo url('empresa/index'); ?>" id="formBuscar" class="d-flex align-items-center" style="gap:12px;">
+            <div class="flex-grow-1">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-white border-right-0" style="border-radius:8px 0 0 8px;">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                    </div>
+                    <input 
+                        type="text" 
+                        name="buscar" 
+                        id="inputBuscar"
+                        class="form-control border-left-0" 
+                        placeholder="Buscar por nombre, departamento o ciudad..." 
+                        value="<?php echo htmlspecialchars($buscar); ?>"
+                        style="border-radius:0 8px 8px 0; border-left:0; padding-left:0;"
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
+            <?php if (!empty($buscar)): ?>
+                <a href="<?php echo url('empresa/index'); ?>" class="btn btn-outline-secondary" style="border-radius:8px;">
+                    <i class="bi bi-x-circle"></i> Limpiar
+                </a>
+            <?php endif; ?>
+        </form>
+    </div>
+</div>
+
 <div class="card shadow-sm border-0">
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -49,7 +81,12 @@
                         <tr>
                             <td colspan="7" class="text-center text-muted py-5">
                                 <span class="mdi mdi-domain-off" style="font-size:2.5rem;display:block;margin-bottom:10px;color:#cbd5e1;"></span>
-                                No hay empresas registradas aun.
+                                <?php if (!empty($buscar)): ?>
+                                    <strong>No se encontraron empresas con el término "<?php echo htmlspecialchars($buscar); ?>"</strong>
+                                    <br><small>Intenta con otro término de búsqueda</small>
+                                <?php else: ?>
+                                    No hay empresas registradas aun.
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php else: ?>
@@ -100,6 +137,38 @@
         </div>
     </div>
 </div>
+
+<!-- JavaScript para búsqueda en tiempo real -->
+<script>
+// Búsqueda automática con debounce
+let timeoutBusqueda = null;
+const inputBuscar = document.getElementById('inputBuscar');
+const formBuscar = document.getElementById('formBuscar');
+
+if (inputBuscar) {
+    inputBuscar.addEventListener('input', function() {
+        clearTimeout(timeoutBusqueda);
+        
+        timeoutBusqueda = setTimeout(function() {
+            formBuscar.submit();
+        }, 500); // Esperar 500ms después de que el usuario deje de escribir
+    });
+    
+    // Focus automático en el campo de búsqueda al cargar
+    if (inputBuscar.value === '') {
+        inputBuscar.focus();
+    }
+}
+
+// Atajo de teclado: Ctrl/Cmd + K para enfocar búsqueda
+document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        inputBuscar.focus();
+        inputBuscar.select();
+    }
+});
+</script>
 
 <?php // Footer included from BaseController 
 ?>
