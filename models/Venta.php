@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * Modelo Venta - Ventas asociadas a Empresas (no clientes legacy)

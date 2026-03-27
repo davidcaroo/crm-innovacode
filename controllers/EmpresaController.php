@@ -3,6 +3,7 @@ require_once __DIR__ . '/../models/Empresa.php';
 require_once __DIR__ . '/../models/Configuracion.php';
 require_once __DIR__ . '/../models/Mailer.php';
 require_once __DIR__ . '/../models/Notificacion.php';
+require_once __DIR__ . '/../models/Trazabilidad.php';
 require_once __DIR__ . '/BaseController.php';
 
 class EmpresaController extends BaseController
@@ -93,7 +94,16 @@ class EmpresaController extends BaseController
             }
 
             $etapaAnterior = $empresaAnterior->etapa_venta ?? '';
+            $aplicaNueva = strtoupper(trim((string)$this->post('aplica')));
+            if ($aplicaNueva !== 'NO') {
+                $aplicaNueva = 'SI';
+            }
+
             $nuevaEtapa = $this->post('etapa_venta');
+            if ($aplicaNueva === 'NO') {
+                // Regla de negocio: si la empresa no aplica, queda en perdido.
+                $nuevaEtapa = 'perdido';
+            }
 
             $data = [
                 'razon_social' => $this->post('razon_social'),
@@ -101,12 +111,54 @@ class EmpresaController extends BaseController
                 'ciudad' => $this->post('ciudad'),
                 'actividad_economica' => $this->post('actividad_economica'),
                 'correo_comercial' => $this->post('correo_comercial'),
-                'aplica' => $this->post('aplica'),
+                'aplica' => $aplicaNueva,
                 'etapa_venta' => $nuevaEtapa,
                 'observaciones' => $this->post('observaciones')
             ];
 
+            $etapaLabels = [
+                'prospectado' => 'Prospectado',
+                'contactado' => 'Contactado',
+                'negociacion' => 'Negociacion',
+                'ganado' => 'Ganado',
+                'perdido' => 'Perdido',
+            ];
+
+            $aplicaAnterior = strtoupper(trim((string)($empresaAnterior->aplica ?? '')));
+            $obsAnterior = trim((string)($empresaAnterior->observaciones ?? ''));
+            $obsNueva = trim((string)($data['observaciones'] ?? ''));
+
+            $detalleCambios = [];
+            if ($nuevaEtapa !== $etapaAnterior) {
+                $etapaAnteriorLabel = $etapaLabels[$etapaAnterior] ?? ucfirst((string)$etapaAnterior);
+                $etapaNuevaLabel = $etapaLabels[$nuevaEtapa] ?? ucfirst((string)$nuevaEtapa);
+                $detalleCambios[] = "Cambio de etapa: {$etapaAnteriorLabel} -> {$etapaNuevaLabel}";
+            }
+
+            if ($aplicaNueva !== $aplicaAnterior) {
+                $detalleCambios[] = "Cambio de aplica: " . ($aplicaAnterior ?: 'N/A') . " -> " . ($aplicaNueva ?: 'N/A');
+            }
+
+            if ($obsNueva !== $obsAnterior) {
+                if ($obsNueva !== '') {
+                    $detalleCambios[] = "Observacion comercial: {$obsNueva}";
+                } else {
+                    $detalleCambios[] = "Observacion comercial eliminada.";
+                }
+            }
+
             $empresaModel->actualizar($id, $data, $usuario_id);
+
+            if (!empty($detalleCambios)) {
+                $trazabilidadModel = new Trazabilidad();
+                $trazabilidadModel->registrar([
+                    'empresa_id' => $id,
+                    'usuario_id' => $_SESSION['usuario_id'],
+                    'etapa_venta' => $nuevaEtapa,
+                    'tipo_actividad' => 'nota',
+                    'observaciones' => "Actualizacion comercial de empresa.\n- " . implode("\n- ", $detalleCambios),
+                ]);
+            }
 
             // Verificar si cambió a "ganado"
             if ($nuevaEtapa === 'ganado' && $etapaAnterior !== 'ganado') {

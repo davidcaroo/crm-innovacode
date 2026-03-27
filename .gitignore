@@ -39,6 +39,7 @@ temp/
 # Dependency directories
 node_modules/
 vendor/
+startbootstrap-sb-admin-gh-pages/
 
 # Backup files
 *.sql.backup

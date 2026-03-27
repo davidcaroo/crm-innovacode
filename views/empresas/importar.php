@@ -1,11 +1,11 @@
 <div class="page-header">
     <div>
-        <h2 class="page-title"><span class="mdi mdi-upload"></span> Importación Masiva</h2>
+        <h2 class="page-title"><i class="fa-solid fa-file-import"></i> Importación Masiva</h2>
         <span class="page-subtitle">Carga de empresas mediante archivo CSV (Separado por comas o punto y coma)</span>
     </div>
     <div>
         <a href="<?php echo url('empresa/index'); ?>" class="btn btn-sm btn-outline-secondary">
-            <span class="mdi mdi-arrow-left"></span> Volver
+            <i class="fa-solid fa-arrow-left"></i> Volver
         </a>
     </div>
 </div>
@@ -14,7 +14,7 @@
     <div class="col-md-6 mb-4">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-                <h5 class="card-title" style="font-weight:700;">Instrucciones de Carga</h5>
+                <h5 class="card-title fw-bold">Instrucciones de Carga</h5>
                 <p class="text-muted small">Para garantizar que la importación sea exitosa, asegúrese de que su archivo CSV cumpla con el siguiente orden de columnas:</p>
 
                 <div class="bg-light p-3 rounded" style="border: 1px dashed #cbd5e1;">
@@ -30,7 +30,7 @@
                 </ul>
 
                 <div class="alert alert-info py-2 px-3 border-0 mt-3" style="font-size: 0.82rem;">
-                    <span class="mdi mdi-information-outline"></span>
+                    <i class="fa-solid fa-circle-info"></i>
                     El sistema detectará automáticamente si el separador es coma (,) o punto y coma (;).
                 </div>
             </div>
@@ -40,11 +40,11 @@
     <div class="col-md-6 mb-4">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-                <h5 class="card-title" style="font-weight:700;">Seleccionar Archivo</h5>
+                <h5 class="card-title fw-bold">Seleccionar Archivo</h5>
 
                 <?php if (isset($_GET['error'])): ?>
                     <div class="alert alert-danger py-2 px-3 border-0 mb-3" style="font-size: 0.85rem;">
-                        <span class="mdi mdi-alert-circle"></span>
+                        <i class="fa-solid fa-triangle-exclamation"></i>
                         <?php
                         if ($_GET['error'] == 'upload') echo "Error al subir el archivo.";
                         elseif ($_GET['error'] == 'db') echo "Error al procesar los datos en el sistema.";
@@ -55,13 +55,13 @@
                 <?php endif; ?>
 
                 <form action="<?php echo url('empresa/procesarImportacion'); ?>" method="POST" enctype="multipart/form-data">
-                    <div class="form-group mb-4 mt-3">
-                        <label for="archivo_csv" class="form-label" style="font-weight: 600; font-size: 0.85rem; color: #475569;">Archivo CSV (.csv)</label>
+                    <div class="mb-4 mt-3">
+                        <label for="archivo_csv" class="form-label fw-semibold small">Archivo CSV (.csv)</label>
                         <input type="file" name="archivo_csv" id="archivo_csv" class="form-control" accept=".csv" required style="border-radius: 8px; padding: 10px;">
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100 shadow-sm" style="border-radius: 8px; font-weight: 600;">
-                        <span class="mdi mdi-database-import"></span> Iniciar Importación
+                        <i class="fa-solid fa-database"></i> Iniciar Importación
                     </button>
                 </form>
             </div>

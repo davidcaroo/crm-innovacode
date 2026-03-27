@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 /**
  * VentaController - Gestiona ventas vinculadas a empresas ganadas

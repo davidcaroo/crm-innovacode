@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // models/Mailer.php
 require_once __DIR__ . '/Configuracion.php';
 

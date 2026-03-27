@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>500 - Error del Servidor</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <style>
         body {
             background-color: #fff5f5;
@@ -77,7 +77,7 @@
 
 <body>
     <div class="error-card">
-        <div class="error-icon"><span class="mdi mdi-alert-circle-outline"></span></div>
+        <div class="error-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
         <h2 class="error-title">Error Interno del Sistema</h2>
         <p class="error-text">Algo salió mal en nuestros servidores. Ya hemos sido notificados y estamos trabajando en ello.</p>
 
@@ -91,7 +91,7 @@
         <?php endif; ?>
 
         <a href="<?php echo BASE_URL; ?>/index.php" class="btn-home">
-            <span class="mdi mdi-view-dashboard"></span> Volver al Dashboard
+            <i class="fa-solid fa-gauge-high"></i> Volver al Dashboard
         </a>
     </div>
 </body>

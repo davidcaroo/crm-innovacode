@@ -1,91 +1,92 @@
-﻿<?php
+<?php
 // Layout incluido desde BaseController::view()
 ?>
 
-<div class="page-header">
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
     <div>
-        <h2 class="page-title"><span class="mdi mdi-cash-multiple"></span> Ventas</h2>
-        <span class="page-subtitle">
+        <h1 class="h3 mb-1 text-gray-800"><i class="fas fa-cash-register text-primary mr-2"></i>Ventas</h1>
+        <p class="mb-0 small text-muted">
             <?php echo count($ventas); ?> venta<?php echo count($ventas) != 1 ? 's' : ''; ?> registrada<?php echo count($ventas) != 1 ? 's' : ''; ?>
             <?php if ($totalVentas > 0): ?>
-                &nbsp;&mdash;&nbsp;<span style="color:#15803d;font-weight:700;">Total: $<?php echo number_format($totalVentas, 2); ?></span>
+                &nbsp;-&nbsp;<span class="text-success font-weight-bold">Total: $<?php echo number_format($totalVentas, 2); ?></span>
             <?php endif; ?>
-        </span>
+        </p>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-12 col-md-5 mb-3">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body" style="padding:20px;">
-                <div class="d-flex align-items-center mb-3">
-                    <span class="mdi mdi-plus-circle-outline" style="font-size:1.5rem;color:#1e40af;margin-right:8px;"></span>
-                    <h5 class="mb-0" style="color:#1e40af;font-weight:700;">Registrar Venta</h5>
-                </div>
+    <div class="col-12 col-md-5 mb-4">
+        <div class="card shadow mb-4 h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-plus-circle mr-2"></i>Registrar Venta</h6>
+            </div>
+            <div class="card-body p-4">
                 <form action="<?php echo url('venta/guardar'); ?>" method="post">
-                    <div class="form-group mb-2">
-                        <label class="mb-1"><small class="font-weight-bold text-uppercase" style="color:#64748b;font-size:0.75rem;">Empresa (Ganada)</small></label>
-                        <select required name="empresa_id" class="form-control form-control-sm" style="background:#fff;color:#1e40af;font-weight:600;">
-                            <option value="" style="color:#64748b;">-- Seleccione empresa --</option>
+                    <div class="form-group">
+                        <label class="small font-weight-bold text-gray-700">Empresa (Ganada)</label>
+                        <select required name="empresa_id" class="form-control form-control-sm">
+                            <option value="">-- Seleccione empresa --</option>
                             <?php foreach ($empresasGanadas as $emp): ?>
-                                <option value="<?php echo $emp->id; ?>" style="color:#1e40af;background:#e0e7ff;font-weight:600;">
+                                <option value="<?php echo $emp->id; ?>">
                                     <?php echo htmlspecialchars($emp->razon_social); ?> - <?php echo htmlspecialchars($emp->dpto ?? ''); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
                         <?php if (empty($empresasGanadas)): ?>
-                            <small class="d-block mt-1" style="color:#f59e0b;">
-                                <span class="mdi mdi-alert"></span>
+                            <small class="d-block mt-1 text-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
                                 No hay empresas en etapa <strong>Ganado</strong>.
                                 <a href="<?php echo url('empresa/index'); ?>">Editar empresas</a>
                             </small>
                         <?php endif; ?>
                     </div>
-                    <div class="form-group mb-2">
-                        <label class="mb-1"><small class="font-weight-bold text-uppercase" style="color:#64748b;font-size:0.75rem;">Monto</small></label>
+
+                    <div class="form-group">
+                        <label class="small font-weight-bold text-gray-700">Monto</label>
                         <div class="input-group input-group-sm">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" style="background:#f8fafc;border-color:#e2e8f0;">$</span>
+                                <span class="input-group-text">$</span>
                             </div>
                             <input required type="number" step="0.01" min="0"
                                 class="form-control form-control-sm" placeholder="0.00" name="monto">
                         </div>
                     </div>
-                    <div class="form-group mb-3">
-                        <label class="mb-1"><small class="font-weight-bold text-uppercase" style="color:#64748b;font-size:0.75rem;">Fecha</small></label>
+
+                    <div class="form-group mb-4">
+                        <label class="small font-weight-bold text-gray-700">Fecha</label>
                         <input required type="date" value="<?php echo date('Y-m-d'); ?>"
                             class="form-control form-control-sm" name="fecha">
                     </div>
-                    <button type="submit" class="btn btn-success btn-block" style="padding:8px;font-weight:600;">
-                        <span class="mdi mdi-content-save"></span> Registrar Venta
+
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-save fa-sm text-white-50 mr-1"></i> Registrar Venta
                     </button>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="col-12 col-md-7 mb-3">
-        <div class="card border-0 shadow-sm">
+    <div class="col-12 col-md-7 mb-4">
+        <div class="card shadow mb-4 h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-history mr-2"></i>Historial de Ventas</h6>
+            </div>
             <div class="card-body p-0">
-                <div class="px-3 pt-3 pb-2 d-flex align-items-center" style="border-bottom:1px solid #e4e8f0;">
-                    <span class="mdi mdi-history" style="font-size:1.3rem;color:#1e40af;margin-right:8px;"></span>
-                    <h5 class="mb-0" style="color:#1e40af;font-weight:700;">Historial de Ventas</h5>
-                </div>
                 <?php if (empty($ventas)): ?>
                     <div class="text-center text-muted py-5">
-                        <span class="mdi mdi-cart-off" style="font-size:2.5rem;display:block;margin-bottom:8px;color:#cbd5e1;"></span>
+                        <i class="fas fa-shopping-cart fa-2x d-block mb-2 text-secondary"></i>
                         No hay ventas registradas aun.
                     </div>
                 <?php else: ?>
                     <div class="table-responsive">
-                        <table class="table table-hover mb-0">
+                        <table class="table table-bordered table-hover mb-0">
                             <thead>
                                 <tr>
                                     <th>Empresa</th>
                                     <th>Dpto</th>
                                     <th>Monto</th>
                                     <th>Fecha</th>
-                                    <th></th>
+                                    <th class="text-right pr-3"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -93,14 +94,14 @@
                                     <tr>
                                         <td class="font-weight-bold"><?php echo htmlspecialchars($v->empresa_nombre); ?></td>
                                         <td><small class="text-muted"><?php echo htmlspecialchars($v->departamento ?? '-'); ?></small></td>
-                                        <td class="font-weight-bold" style="color:#15803d;">$<?php echo number_format($v->monto, 2); ?></td>
+                                        <td class="font-weight-bold text-success">$<?php echo number_format($v->monto, 2); ?></td>
                                         <td><small class="text-muted"><?php echo htmlspecialchars($v->fecha); ?></small></td>
-                                        <td>
+                                        <td class="text-right pr-3">
                                             <a href="#"
                                                 class="btn btn-sm btn-outline-danger"
                                                 onclick="return confirmarEliminacion('<?php echo url('venta/eliminar', ['id' => $v->id]); ?>', '¿Eliminar esta venta por $<?php echo number_format($v->monto, 2); ?>?')"
-                                                style="padding:3px 8px;font-size:0.8rem;border-radius:6px;">
-                                                <i class="bi bi-trash"></i>
+                                                title="Eliminar venta">
+                                                <i class="fas fa-trash-alt fa-sm"></i>
                                             </a>
                                         </td>
                                     </tr>

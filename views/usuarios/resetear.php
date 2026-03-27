@@ -1,14 +1,13 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="es">
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title><?php echo defined('APP_NAME') ? APP_NAME : 'CRM'; ?> &ndash; Nueva contraseña</title>
-    <link href="<?php echo BASE_URL; ?>/public/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.4.55/materialdesignicons.min.css">
-    <link href="<?php echo BASE_URL; ?>/public/estilo.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?php echo defined('APP_NAME') ? APP_NAME : 'CRM'; ?> - Nueva contraseña</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link href="<?php echo BASE_URL; ?>/public/css/sb-admin-custom.css" rel="stylesheet">
     <style>
         .strength-bar {
             height: 4px;
@@ -19,99 +18,104 @@
     </style>
 </head>
 
-<body style="background:#f0f2f8;">
-    <div class="login-wrapper">
-        <div class="card shadow w-100" style="max-width:440px;border-radius:16px;border:1px solid #e4e8f0;">
-            <div class="card-body p-4">
+<body class="crm-login-bg">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-5">
+                            <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                <div class="card-body p-4">
 
-                <div class="text-center mb-4">
-                    <span class="mdi mdi-shield-key-outline" style="font-size:2.6rem;color:#2563eb;"></span>
-                    <h4 class="mt-2 mb-0" style="color:#1e40af;font-weight:700;">Nueva contraseña</h4>
-                    <?php if ($usuario): ?>
-                        <small class="text-muted">Hola, <strong><?= htmlspecialchars($usuario->nombre) ?></strong>. Elige una contraseña segura.</small>
-                    <?php else: ?>
-                        <small class="text-muted">Restablece el acceso a tu cuenta</small>
-                    <?php endif; ?>
-                </div>
+                                    <div class="text-center mb-4">
+                                        <i class="fa-solid fa-shield-halved fa-2x text-primary"></i>
+                                        <h4 class="mt-2 mb-0 crm-login-brand">Nueva contraseña</h4>
+                                        <?php if ($usuario): ?>
+                                            <small class="text-muted">Hola, <strong><?= htmlspecialchars($usuario->nombre) ?></strong>. Elige una contraseña segura.</small>
+                                        <?php else: ?>
+                                            <small class="text-muted">Restablece el acceso a tu cuenta</small>
+                                        <?php endif; ?>
+                                    </div>
 
-                <?php if (!empty($error)): ?>
-                    <div class="alert alert-danger py-2 px-3 mb-3" style="font-size:0.9rem;border-radius:8px;">
-                        <span class="mdi mdi-alert-circle-outline"></span>
-                        <?= htmlspecialchars($error) ?>
-                        <?php if (!$usuario): ?>
-                            &nbsp;<a href="<?php echo url('usuario/recuperar'); ?>" class="alert-link">Solicitar nuevo enlace</a>
-                        <?php endif; ?>
+                                    <?php if (!empty($error)): ?>
+                                        <div class="alert alert-danger mb-3" role="alert">
+                                            <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                                            <?= htmlspecialchars($error) ?>
+                                            <?php if (!$usuario): ?>
+                                                &nbsp;<a href="<?php echo url('usuario/recuperar'); ?>" class="alert-link">Solicitar nuevo enlace</a>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <?php if ($usuario): ?>
+                                        <form method="post" autocomplete="off" id="formReset">
+                                            <input type="hidden" name="token" value="<?= htmlspecialchars($tokenPlano) ?>">
+
+                                            <div class="mb-3">
+                                                <label for="password" class="crm-form-label">Nueva contraseña</label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" name="password" id="password"
+                                                        required minlength="8" placeholder="Mínimo 8 caracteres"
+                                                        oninput="updateStrength(this.value)">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePwd('password',this)" tabindex="-1" aria-label="Mostrar u ocultar contraseña">
+                                                        <i class="fa-regular fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <div class="mt-1" style="background:#e4e8f0;border-radius:2px;height:4px;">
+                                                    <div class="strength-bar" id="strengthBar"></div>
+                                                </div>
+                                                <small id="strengthLabel" class="text-muted" style="font-size:0.78rem;"></small>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="password_confirma" class="crm-form-label">Confirmar contraseña</label>
+                                                <div class="input-group">
+                                                    <input type="password" class="form-control" name="password_confirma" id="password_confirma"
+                                                        required minlength="8" placeholder="Repite la contraseña">
+                                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePwd('password_confirma',this)" tabindex="-1" aria-label="Mostrar u ocultar confirmación">
+                                                        <i class="fa-regular fa-eye"></i>
+                                                    </button>
+                                                </div>
+                                                <small id="matchLabel" style="font-size:0.78rem;"></small>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary w-100 mt-1">
+                                                <i class="fa-solid fa-circle-check me-1"></i> Guardar nueva contraseña
+                                            </button>
+                                        </form>
+                                    <?php endif; ?>
+
+                                    <div class="text-center mt-3">
+                                        <a href="<?php echo url('usuario/login'); ?>"
+                                            class="small text-muted">
+                                            <i class="fa-solid fa-arrow-left me-1"></i> Volver al inicio de sesión
+                                        </a>
+                                    </div>
+
+                                </div>
+                                <div class="card-footer text-center py-3">
+                                    <div class="small text-muted">CRM By Innovacode Tech &copy; <?php echo date('Y'); ?></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                <?php endif; ?>
-
-                <?php if ($usuario): ?>
-                    <form method="post" autocomplete="off" id="formReset">
-                        <input type="hidden" name="token" value="<?= htmlspecialchars($tokenPlano) ?>">
-
-                        <div class="form-group mb-3">
-                            <label for="password" style="font-size:0.88rem;font-weight:600;color:#475569;">Nueva contraseña</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" name="password" id="password"
-                                    required minlength="8" placeholder="Mínimo 8 caracteres"
-                                    oninput="updateStrength(this.value)">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePwd('password',this)" tabindex="-1">
-                                        <i class="bi bi-eye" id="eyeIcon1"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="mt-1" style="background:#e4e8f0;border-radius:2px;height:4px;">
-                                <div class="strength-bar" id="strengthBar"></div>
-                            </div>
-                            <small id="strengthLabel" class="text-muted" style="font-size:0.78rem;"></small>
-                        </div>
-
-                        <div class="form-group mb-3">
-                            <label for="password_confirma" style="font-size:0.88rem;font-weight:600;color:#475569;">Confirmar contraseña</label>
-                            <div class="input-group">
-                                <input type="password" class="form-control" name="password_confirma" id="password_confirma"
-                                    required minlength="8" placeholder="Repite la contraseña">
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button" onclick="togglePwd('password_confirma',this)" tabindex="-1">
-                                        <i class="bi bi-eye" id="eyeIcon2"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <small id="matchLabel" style="font-size:0.78rem;"></small>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary btn-block mt-1"
-                            style="padding:10px;font-weight:600;letter-spacing:0.3px;border-radius:8px;">
-                            <span class="mdi mdi-check-circle-outline"></span> Guardar nueva contraseña
-                        </button>
-                    </form>
-                <?php endif; ?>
-
-                <div class="text-center mt-3">
-                    <a href="<?php echo url('usuario/login'); ?>"
-                        class="text-muted" style="font-size:0.88rem;">
-                        <i class="bi bi-arrow-left"></i> Volver al inicio de sesión
-                    </a>
                 </div>
-
-            </div>
-            <div class="card-footer text-center text-muted py-2"
-                style="border-radius:0 0 16px 16px;background:#f8fafc;font-size:0.82rem;">
-                CRM By Innovacode Tech &copy; <?php echo date('Y'); ?>
-            </div>
+            </main>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function togglePwd(id, btn) {
             var input = document.getElementById(id);
             var icon = btn.querySelector('i');
             if (input.type === 'password') {
                 input.type = 'text';
-                icon.className = 'bi bi-eye-slash';
+                icon.className = 'fa-regular fa-eye-slash';
             } else {
                 input.type = 'password';
-                icon.className = 'bi bi-eye';
+                icon.className = 'fa-regular fa-eye';
             }
         }
 
@@ -156,8 +160,6 @@
             bar.style.background = lv.bg;
             label.textContent = val.length ? lv.text : '';
             label.style.color = lv.bg;
-
-            // check match
             checkMatch();
         }
 
@@ -178,7 +180,6 @@
             }
         }
 
-        // Bind confirm field
         document.addEventListener('DOMContentLoaded', function() {
             var p2 = document.getElementById('password_confirma');
             if (p2) p2.addEventListener('input', checkMatch);

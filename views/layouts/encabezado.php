@@ -3,234 +3,233 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <?php if (isset($_SESSION['usuario_id'])): ?>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/gh/StartBootstrap/startbootstrap-sb-admin-2@gh-pages/css/sb-admin-2.min.css" rel="stylesheet" crossorigin="anonymous">
+        <link href="<?php echo BASE_URL; ?>/public/css/sb-admin2-crm.css?v=20260327d" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap4.min.css" crossorigin="anonymous">
+    <?php else: ?>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+        <link href="<?php echo BASE_URL; ?>/public/estilo.css?v=20260327c" rel="stylesheet">
+        <link href="<?php echo BASE_URL; ?>/public/css/sb-admin-custom.css?v=20260327c" rel="stylesheet">
+    <?php endif; ?>
+
     <meta name="description" content="<?php echo APP_NAME; ?>">
     <title><?php echo APP_NAME; ?></title>
-
-    <!-- CSS de Bootstrap -->
-    <link href="<?php echo BASE_URL; ?>/public/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Material Design Icons -->
-    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.4.55/materialdesignicons.min.css">
-    <!-- Estilos propios -->
-    <link href="<?php echo BASE_URL; ?>/public/estilo.css" rel="stylesheet">
-    <!-- layout manejado por public/estilo.css -->
 </head>
 
-<body>
+<body id="page-top">
     <?php if (isset($_SESSION['usuario_id'])): ?>
-        <!-- Toggle Button para móviles (Fuera de navbar si es necesario) -->
-        <button class="btn sidebar-toggle shadow-lg" id="sidebarToggle" aria-label="Abrir menú" style="background-color: #1e40af; color: white; border-radius: 8px; width: 45px; height: 45px; display: none; align-items: center; justify-content: center; border: none; z-index: 9999;">
-            <i class="bi bi-list" style="font-size: 1.8rem; line-height:1;"></i>
-        </button>
+        <?php
+        require_once MODELS_PATH . '/Notificacion.php';
+        $notifModel    = new Notificacion();
+        $noLeidas      = $notifModel->getNoLeidas($_SESSION['usuario_id']);
+        $countNoLeidas = count($noLeidas);
+        $iconosTipoNav = [
+            'venta_ganada'     => ['icono' => 'fas fa-dollar-sign',  'color' => 'text-success'],
+            'empresa_creada'   => ['icono' => 'fas fa-building',      'color' => 'text-primary'],
+            'cambio_etapa'     => ['icono' => 'fas fa-random',        'color' => 'text-info'],
+            'credito_aprobado' => ['icono' => 'fas fa-credit-card',   'color' => 'text-warning'],
+        ];
+        $ultimas5 = array_slice($noLeidas, 0, 5);
+        $currentPath = strtolower((string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? ''));
+        $activeDashboard = preg_match('#/(dashboard|)$#', $currentPath) || strpos($currentPath, '/dashboard') !== false;
+        $activePipeline = strpos($currentPath, '/empresa/pipeline') !== false || strpos($currentPath, '/empresas/pipeline') !== false;
+        $activeEmpresas = strpos($currentPath, '/empresa/index') !== false || strpos($currentPath, '/empresas') !== false;
+        $activeVentas = strpos($currentPath, '/venta/index') !== false;
+        $activeReportes = strpos($currentPath, '/reporte/index') !== false;
+        $activeTrazabilidad = strpos($currentPath, '/trazabilidad') !== false;
+        $activeNotificaciones = strpos($currentPath, '/notificacion') !== false;
+        $activeUsuarios = strpos($currentPath, '/usuario/lista') !== false;
+        $activeConfiguracion = strpos($currentPath, '/configuracion') !== false;
+        $activeSoporte = strpos($currentPath, '/soporte/index') !== false;
+        ?>
 
-        <!-- Sidebar -->
-        <nav class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h4 class="text-primary">CRM By Innovacode Tech</h4>
-                <small class="text-muted">Versión 1.0</small>
-            </div>
-            <ul class="sidebar-menu">
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo url('dashboard/index'); ?>">
-                        <span class="mdi mdi-desktop-mac-dashboard"></span>
+        <div id="wrapper">
+            <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?php echo url('dashboard/index'); ?>">
+                    <div class="sidebar-brand-icon rotate-n-15">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <div class="sidebar-brand-text mx-3"><?php echo APP_NAME; ?></div>
+                </a>
+
+                <hr class="sidebar-divider my-0">
+
+                <li class="nav-item <?php echo $activeDashboard ? 'active' : ''; ?>">
+                    <a class="nav-link" href="<?php echo url('dashboard/index'); ?>">
+                        <i class="fas fa-tachometer-alt fa-fw mr-2"></i>
                         <span>Dashboard</span>
                     </a>
                 </li>
 
-                <li class="sidebar-header-text mt-3 mb-2 px-4" style="font-size: 0.75rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;">
-                    Gestión Comercial
-                </li>
+                <hr class="sidebar-divider">
 
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo url('empresa/pipeline'); ?>">
-                        <span class="mdi mdi-view-column"></span>
+                <div class="sidebar-heading">Gestión</div>
+
+                <li class="nav-item <?php echo $activePipeline ? 'active' : ''; ?>">
+                    <a class="nav-link" href="<?php echo url('empresa/pipeline'); ?>">
+                        <i class="fas fa-columns fa-fw mr-2"></i>
                         <span>Pipeline Comercial</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo url('empresa/index'); ?>">
-                        <span class="mdi mdi-domain"></span>
+
+                <li class="nav-item <?php echo $activeEmpresas ? 'active' : ''; ?>">
+                    <a class="nav-link" href="<?php echo url('empresa/index'); ?>">
+                        <i class="fas fa-building fa-fw mr-2"></i>
                         <span>Mis Empresas</span>
                     </a>
                 </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo url('venta/index'); ?>">
-                        <span class="mdi mdi-store"></span>
+
+                <li class="nav-item <?php echo $activeVentas ? 'active' : ''; ?>">
+                    <a class="nav-link" href="<?php echo url('venta/index'); ?>">
+                        <i class="fas fa-dollar-sign fa-fw mr-2"></i>
                         <span>Cierre de Ventas</span>
                     </a>
                 </li>
 
-                <li class="sidebar-header-text mt-3 mb-2 px-4" style="font-size: 0.75rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;">
-                    Inteligencia de Negocio
-                </li>
-
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo url('reporte/index'); ?>">
-                        <span class="mdi mdi-chart-line"></span>
+                <li class="nav-item <?php echo $activeReportes ? 'active' : ''; ?>">
+                    <a class="nav-link" href="<?php echo url('reporte/index'); ?>">
+                        <i class="fas fa-chart-line fa-fw mr-2"></i>
                         <span>Panel de Reportes</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo url('trazabilidad/historial'); ?>">
-                        <span class="mdi mdi-clock-outline" style="color: #28a745; font-weight: bold;"></span>
-                        <span style="color: #28a745; font-weight: bold;">Bitácora de Actividad</span>
+                <li class="nav-item <?php echo $activeTrazabilidad ? 'active' : ''; ?>">
+                    <a class="nav-link" href="<?php echo url('trazabilidad/historial'); ?>">
+                        <i class="fas fa-history fa-fw mr-2"></i>
+                        <span>Bitácora de Actividad</span>
+                    </a>
+                </li>
+
+                <li class="nav-item <?php echo $activeNotificaciones ? 'active' : ''; ?>">
+                    <a class="nav-link" href="<?php echo url('notificacion/index'); ?>">
+                        <i class="fas fa-bell fa-fw mr-2"></i>
+                        <span>Notificaciones</span>
                     </a>
                 </li>
 
                 <?php if (isset($_SESSION['usuario_rol']) && in_array($_SESSION['usuario_rol'], ['admin', 'superadmin'])): ?>
-                    <li class="sidebar-header-text mt-4 mb-2 px-4" style="font-size: 0.75rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;">
-                        Configuración avanzada
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="<?php echo url('usuario/lista'); ?>">
-                            <span class="mdi mdi-account-group"></span>
+                    <hr class="sidebar-divider">
+                    <div class="sidebar-heading">Administración</div>
+
+                    <li class="nav-item <?php echo $activeUsuarios ? 'active' : ''; ?>">
+                        <a class="nav-link" href="<?php echo url('usuario/lista'); ?>">
+                            <i class="fas fa-users-cog fa-fw mr-2"></i>
                             <span>Gestión de Usuarios</span>
                         </a>
                     </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="<?php echo url('configuracion/index'); ?>">
-                            <span class="mdi mdi-cog"></span>
+                    <li class="nav-item <?php echo $activeConfiguracion ? 'active' : ''; ?>">
+                        <a class="nav-link" href="<?php echo url('configuracion/index'); ?>">
+                            <i class="fas fa-cog fa-fw mr-2"></i>
                             <span>Configuración</span>
                         </a>
                     </li>
                 <?php endif; ?>
 
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo url('notificacion/index'); ?>">
-                        <span class="mdi mdi-bell-outline"></span>
-                        <span>Notificaciones</span>
+                <hr class="sidebar-divider d-none d-md-block">
+
+                <li class="nav-item <?php echo $activeSoporte ? 'active' : ''; ?>">
+                    <a class="nav-link" href="<?php echo url('soporte/index'); ?>">
+                        <i class="fas fa-question-circle fa-fw mr-2"></i>
+                        <span>Ayuda y soporte</span>
                     </a>
                 </li>
 
-                <li class="sidebar-header-text mt-4 mb-2 px-4" style="font-size: 0.75rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px;">
-                    Sistema
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="<?php echo url('usuario/logout'); ?>">
-                        <span class="mdi mdi-logout"></span>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?php echo url('usuario/logout'); ?>">
+                        <i class="fas fa-sign-out-alt fa-fw mr-2"></i>
                         <span>Cerrar sesión</span>
                     </a>
                 </li>
+
+                <div class="text-center d-none d-md-inline mt-2">
+                    <button class="rounded-circle border-0" id="sidebarToggle"></button>
+                </div>
+
             </ul>
-            <div class="sidebar-footer">
-                <a class="sidebar-link text-center sidebar-cta" href="<?php echo url('soporte/index'); ?>">
-                    <span class="mdi mdi-help-circle-outline"></span>
-                    <small>Ayuda y soporte</small>
-                </a>
-            </div>
-        </nav>
-        <!-- Overlay para cerrar sidebar en móviles -->
-        <div class="sidebar-overlay" id="sidebarOverlay"></div>
-        <!-- Contenido principal -->
-        <?php $ctrl = isset($_GET['controller']) ? preg_replace('/[^a-z0-9_\-]/i', '', $_GET['controller']) : ''; ?>
-        <main role="main" class="content-wrapper <?php echo $ctrl ? 'ctrl-' . $ctrl : ''; ?>">
 
-            <?php if (isset($_SESSION['is_impersonating']) && $_SESSION['is_impersonating']): ?>
-                <div class="alert alert-warning shadow-sm border-0 d-flex justify-content-between align-items-center mb-4" style="border-radius:12px; border-left: 5px solid #d97706 !important;">
-                    <div class="d-flex align-items-center">
-                        <i class="bi bi-person-bounding-box mr-3" style="font-size: 1.4rem;"></i>
-                        <div>
-                            <div style="font-size:0.85rem; font-weight:700; color:#92400e; text-transform:uppercase; letter-spacing:0.5px;">Modo Espectador Activo</div>
-                            <div style="font-size:0.95rem; color:#b45309;">Viendo el sistema como: <strong><?= htmlspecialchars($_SESSION['usuario_nombre']) ?></strong></div>
-                        </div>
-                    </div>
-                    <a href="<?php echo url('usuario/stopImpersonating'); ?>" class="btn btn-sm btn-dark px-3" style="border-radius:8px; font-weight:700;">
-                        <i class="bi bi-x-circle mr-1"></i> Volver a mi Admin
-                    </a>
-                </div>
-            <?php endif; ?>
-
-            <!-- Top Navbar -->
-            <div class="top-navbar d-flex align-items-center justify-content-between">
-                <div class="navbar-left d-flex align-items-center">
-                    <button class="btn d-md-none mr-3 shadow-sm" id="sidebarToggleMobile" style="border-radius: 8px; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; background-color: #1e40af; border: none; padding: 0;">
-                        <i class="bi bi-list" style="font-size: 1.8rem; color: #ffffff; line-height:1;"></i>
-                    </button>
-                </div>
-
-                <div class="navbar-right d-flex align-items-center">
-                    <!-- Campana de notificaciones -->
-                    <?php
-                    require_once MODELS_PATH . '/Notificacion.php';
-                    $notifModel   = new Notificacion();
-                    $noLeidas     = $notifModel->getNoLeidas($_SESSION['usuario_id']);
-                    $countNoLeidas = count($noLeidas);
-                    ?>
-                    <div class="dropdown mr-3">
-                        <button class="btn btn-light shadow-sm position-relative" id="campanaBtn" data-toggle="dropdown" aria-expanded="false"
-                            style="border-radius:10px;width:42px;height:42px;border:1px solid #e2e8f0;padding:0;display:flex;align-items:center;justify-content:center;">
-                            <i class="bi bi-bell-fill" style="font-size:1.3rem;color:#f59e0b;"></i>
-                            <?php if ($countNoLeidas > 0): ?>
-                                <span id="campanaBadge" class="position-absolute"
-                                    style="top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:50%;width:18px;height:18px;font-size:.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #fff;">
-                                    <?= min($countNoLeidas, 9) ?><?= $countNoLeidas > 9 ? '+' : '' ?>
-                                </span>
-                            <?php else: ?>
-                                <span id="campanaBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#ef4444;color:#fff;border-radius:50%;width:18px;height:18px;font-size:.65rem;font-weight:800;border:2px solid #fff;align-items:center;justify-content:center;"></span>
-                            <?php endif; ?>
+            <div id="content-wrapper" class="d-flex flex-column">
+                <div id="content">
+                    <nav class="navbar navbar-expand navbar-dark bg-gradient-primary topbar mb-0 static-top shadow">
+                        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                            <i class="fa fa-bars"></i>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-right shadow-lg border-0 p-0"
-                            style="min-width:340px;border-radius:14px;overflow:hidden;margin-top:8px;">
-                            <!-- Header dropdown -->
-                            <div class="d-flex align-items-center justify-content-between px-4 py-3" style="background:#1e40af;color:#fff;">
-                                <span style="font-weight:700;font-size:.95rem;"><i class="mdi mdi-bell-outline mr-1"></i> Notificaciones</span>
-                                <?php if ($countNoLeidas > 0): ?>
-                                    <span class="badge" style="background:rgba(255,255,255,.25);color:#fff;border-radius:8px;font-size:.75rem;"><?= $countNoLeidas ?> nueva<?= $countNoLeidas !== 1 ? 's' : '' ?></span>
-                                <?php endif; ?>
-                            </div>
-                            <!-- Lista últimas 5 -->
-                            <?php
-                            $iconosTipoNav = [
-                                'venta_ganada'     => ['icono' => 'mdi-cash-check',         'color' => '#15803d'],
-                                'empresa_creada'   => ['icono' => 'mdi-domain',              'color' => '#1e40af'],
-                                'cambio_etapa'     => ['icono' => 'mdi-arrow-right-circle',  'color' => '#7c3aed'],
-                                'credito_aprobado' => ['icono' => 'mdi-credit-card-check',   'color' => '#b45309'],
-                            ];
-                            $ultimas5 = array_slice($noLeidas, 0, 5);
-                            ?>
-                            <?php if (empty($ultimas5)): ?>
-                                <div class="text-center py-4 text-muted" style="font-size:.88rem;">
-                                    <i class="mdi mdi-bell-sleep-outline d-block mb-2" style="font-size:1.8rem;color:#cbd5e1;"></i>
-                                    Sin notificaciones nuevas
-                                </div>
-                            <?php else: ?>
-                                <?php foreach ($ultimas5 as $nf):
-                                    $m   = $iconosTipoNav[$nf->tipo] ?? ['icono' => 'mdi-bell', 'color' => '#64748b'];
-                                    $url = !empty($nf->url_accion) ? $nf->url_accion : url('notificacion/index');
-                                ?>
-                                    <a href="<?= htmlspecialchars($url) ?>" class="dropdown-item d-flex align-items-start px-4 py-3" style="border-bottom:1px solid #f1f5f9;white-space:normal;">
-                                        <span class="mdi <?= $m['icono'] ?> mr-3 mt-1 flex-shrink-0" style="font-size:1.2rem;color:<?= $m['color'] ?>;"></span>
-                                        <div>
-                                            <div style="font-weight:700;font-size:.88rem;color:#1e293b;"><?= htmlspecialchars($nf->titulo) ?></div>
-                                            <div style="font-size:.75rem;color:#94a3b8;"><?= date('d M, H:i', strtotime($nf->creado_en)) ?></div>
-                                        </div>
-                                    </a>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                            <!-- Footer -->
-                            <div class="text-center py-3" style="background:#f8fafc;">
-                                <a href="<?= url('notificacion/index') ?>"
-                                    style="font-weight:700;font-size:.85rem;color:#1e40af;text-decoration:none;">
-                                    <i class="mdi mdi-bell-outline mr-1"></i> Ver todas las notificaciones
-                                </a>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="user-info-box d-flex align-items-center">
-                        <div class="text-right mr-3 d-none d-md-block">
-                            <div class="user-name-top"><?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></div>
-                            <div class="user-role-top text-uppercase"><?php echo htmlspecialchars($_SESSION['usuario_rol']); ?></div>
-                        </div>
-                        <div class="user-avatar-top shadow-sm">
-                            <?php echo strtoupper(substr($_SESSION['usuario_nombre'], 0, 1)); ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <?php else: ?>
-            <main role="main" class="login-wrapper">
-            <?php endif; ?>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item dropdown no-arrow mx-1">
+                                <a class="nav-link dropdown-toggle" href="#" id="campanaBtn" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-bell fa-fw"></i>
+                                    <?php if ($countNoLeidas > 0): ?>
+                                        <span id="campanaBadge" class="badge badge-danger badge-counter"><?= min($countNoLeidas, 9) ?><?= $countNoLeidas > 9 ? '+' : '' ?></span>
+                                    <?php else: ?>
+                                        <span id="campanaBadge" class="badge badge-danger badge-counter" style="display:none;"></span>
+                                    <?php endif; ?>
+                                </a>
+                                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="campanaBtn">
+                                    <h6 class="dropdown-header">
+                                        Notificaciones
+                                    </h6>
+                                    <?php if (empty($ultimas5)): ?>
+                                        <span class="dropdown-item text-center small text-gray-500">Sin notificaciones nuevas</span>
+                                    <?php else: ?>
+                                        <?php foreach ($ultimas5 as $nf):
+                                            $m = $iconosTipoNav[$nf->tipo] ?? ['icono' => 'far fa-bell', 'color' => 'text-muted'];
+                                            $url = !empty($nf->url_accion) ? $nf->url_accion : url('notificacion/index');
+                                        ?>
+                                            <a href="<?= htmlspecialchars($url) ?>" class="dropdown-item d-flex align-items-center">
+                                                <div class="mr-3">
+                                                    <div class="icon-circle bg-light">
+                                                        <i class="<?= $m['icono'] ?> <?= $m['color'] ?>"></i>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="small text-gray-500"><?= date('d M, H:i', strtotime($nf->creado_en)) ?></div>
+                                                    <span class="font-weight-bold"><?= htmlspecialchars($nf->titulo) ?></span>
+                                                </div>
+                                            </a>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                    <a class="dropdown-item text-center small text-gray-500" href="<?= url('notificacion/index') ?>">Ver todas</a>
+                                </div>
+                            </li>
+
+                            <div class="topbar-divider d-none d-sm-block"></div>
+
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="mr-2 d-none d-lg-inline text-white small"><?php echo htmlspecialchars($_SESSION['usuario_nombre']); ?></span>
+                                    <span class="img-profile rounded-circle d-inline-flex align-items-center justify-content-center bg-primary text-white" style="width:2rem;height:2rem;">
+                                        <?php echo strtoupper(substr($_SESSION['usuario_nombre'], 0, 1)); ?>
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                                    <span class="dropdown-item-text small text-gray-600"><?php echo htmlspecialchars($_SESSION['usuario_rol']); ?></span>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="<?php echo url('usuario/logout'); ?>">
+                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Cerrar sesión
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <div class="container-fluid">
+                        <?php if (isset($_SESSION['is_impersonating']) && $_SESSION['is_impersonating']): ?>
+                            <div class="alert alert-warning d-flex justify-content-between align-items-center" role="alert">
+                                <div>
+                                    <strong>Modo espectador activo.</strong>
+                                    Viendo el sistema como <?= htmlspecialchars($_SESSION['usuario_nombre']) ?>.
+                                </div>
+                                <a href="<?php echo url('usuario/stopImpersonating'); ?>" class="btn btn-sm btn-dark">Volver a mi Admin</a>
+                            </div>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        <main role="main" class="login-wrapper">
+                        <?php endif; ?>

@@ -31,7 +31,7 @@ define('APP_BASE_PATH', $_base_path); // usado por el Router
 unset($_protocol, $_host, $_base_path);
 
 // Configuración de la aplicación
-define('APP_NAME', 'CRM By Innovacode Tech');
+define('APP_NAME', 'CRM Innovacode Tech');
 define('APP_VERSION', '2.0.0');
 
 // Clave de cifrado para secretos (API keys, contraseñas SMTP, etc.)

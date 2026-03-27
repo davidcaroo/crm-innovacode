@@ -1,76 +1,90 @@
 <?php
 // views/trazabilidad/global.php
 ?>
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="h3 mb-0 text-gray-800"><i class="mdi mdi-history mr-2" style="color: #28a745; font-weight: bold;"></i>Historial de Actividad Global</h2>
-        <div class="d-flex" style="gap:8px;">
-            <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modalExportar">
-                <i class="bi bi-download"></i> Exportar a CSV
-            </button>
-        </div>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h1 class="h3 mb-1 text-gray-800">
+            <i class="fas fa-history text-primary mr-2"></i> Historial de Actividad Global
+        </h1>
+        <p class="mb-0 text-gray-500 small">Seguimiento consolidado de interacciones por empresa y vendedor</p>
     </div>
+    <button type="button" class="btn btn-sm btn-success shadow-sm" data-toggle="modal" data-target="#modalExportar">
+        <i class="fas fa-file-csv fa-sm text-white-50 mr-1"></i> Exportar a CSV
+    </button>
+</div>
 
-    <div class="card shadow mb-4">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover" id="tablaActividad">
-                    <thead class="thead-light">
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">
+            <i class="fas fa-stream mr-2"></i> Actividad Consolidada
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="tablaActividad" width="100%" cellspacing="0">
+                <thead class="thead-light">
+                    <tr>
+                        <th><i class="fas fa-clock fa-xs mr-1"></i> Fecha</th>
+                        <th><i class="fas fa-building fa-xs mr-1"></i> Empresa</th>
+                        <th><i class="fas fa-user fa-xs mr-1"></i> Vendedor</th>
+                        <th><i class="fas fa-clipboard-list fa-xs mr-1"></i> Actividad</th>
+                        <th><i class="fas fa-flag fa-xs mr-1"></i> Etapa</th>
+                        <th><i class="fas fa-comment-dots fa-xs mr-1"></i> Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($historial as $h): ?>
                         <tr>
-                            <th>Fecha</th>
-                            <th>Empresa</th>
-                            <th>Vendedor</th>
-                            <th>Actividad</th>
-                            <th>Etapa</th>
-                            <th>Observaciones</th>
+                            <td class="small"><?= date('d/m/Y H:i', strtotime($h->fecha)) ?></td>
+                            <td>
+                                <a href="<?php echo url('trazabilidad/index', ['empresa_id' => $h->empresa_id]); ?>" class="font-weight-bold text-decoration-none">
+                                    <?= htmlspecialchars($h->empresa) ?>
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge badge-pill badge-light text-dark border px-2 py-1">
+                                    <i class="fas fa-user mr-1"></i><?= htmlspecialchars($h->usuario) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <?php
+                                $tipoRaw = strtolower((string)($h->tipo_actividad ?? 'nota'));
+                                $tipoNorm = ['reunión' => 'reunion'][$tipoRaw] ?? $tipoRaw;
+                                $tipos = [
+                                    'llamada' => ['fas fa-phone', 'Llamada'],
+                                    'correo' => ['fas fa-envelope', 'Correo'],
+                                    'reunion' => ['fas fa-handshake', 'Reunion'],
+                                    'visita' => ['fas fa-map-marker-alt', 'Visita'],
+                                    'estudio_necesidades' => ['fas fa-search', 'Estudio de Necesidades'],
+                                    'oferta_servicio' => ['fas fa-file-signature', 'Oferta de Servicio'],
+                                    'nota' => ['fas fa-sticky-note', 'Nota'],
+                                ];
+                                $metaTipo = $tipos[$tipoNorm] ?? ['fas fa-circle', ucwords(str_replace('_', ' ', $tipoNorm))];
+                                ?>
+                                <i class="<?= $metaTipo[0] ?> mr-1 text-info"></i>
+                                <?= htmlspecialchars($metaTipo[1]) ?>
+                            </td>
+                            <td>
+                                <?php
+                                $badgeClass = 'badge-secondary';
+                                if ($h->etapa_venta == 'ganado') $badgeClass = 'badge-success';
+                                if ($h->etapa_venta == 'perdido') $badgeClass = 'badge-danger';
+                                if ($h->etapa_venta == 'negociacion') $badgeClass = 'badge-warning';
+                                if ($h->etapa_venta == 'prospectado') $badgeClass = 'badge-info';
+                                if ($h->etapa_venta == 'contactado') $badgeClass = 'badge-primary';
+                                ?>
+                                <span class="badge badge-pill <?= $badgeClass ?>"><?= ucfirst($h->etapa_venta) ?></span>
+                            </td>
+                            <td class="small text-muted"><?= htmlspecialchars($h->observaciones) ?></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($historial as $h): ?>
-                            <tr>
-                                <td class="small"><?= date('d/m/Y H:i', strtotime($h->fecha)) ?></td>
-                                <td>
-                                    <a href="<?php echo url('trazabilidad/index', ['empresa_id' => $h->empresa_id]); ?>" class="font-weight-bold">
-                                        <?= htmlspecialchars($h->empresa) ?>
-                                    </a>
-                                </td>
-                                <td>
-                                    <span class="badge badge-light p-2 text-dark">
-                                        <i class="mdi mdi-account mr-1"></i><?= htmlspecialchars($h->usuario) ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <?php
-                                    $icon = 'mdi-message-text';
-                                    if ($h->tipo_actividad == 'llamada') $icon = 'mdi-phone';
-                                    if ($h->tipo_actividad == 'correo') $icon = 'mdi-email';
-                                    if ($h->tipo_actividad == 'reunion') $icon = 'mdi-account-group';
-                                    ?>
-                                    <i class="mdi <?= $icon ?> mr-1 text-info"></i>
-                                    <?= ucfirst($h->tipo_actividad) ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $badgeClass = 'badge-secondary';
-                                    if ($h->etapa_venta == 'ganado') $badgeClass = 'badge-success';
-                                    if ($h->etapa_venta == 'perdido') $badgeClass = 'badge-danger';
-                                    if ($h->etapa_venta == 'negociacion') $badgeClass = 'badge-warning';
-                                    if ($h->etapa_venta == 'prospectado') $badgeClass = 'badge-info';
-                                    if ($h->etapa_venta == 'contactado') $badgeClass = 'badge-primary';
-                                    ?>
-                                    <span class="badge <?= $badgeClass ?>"><?= ucfirst($h->etapa_venta) ?></span>
-                                </td>
-                                <td class="small text-muted"><?= htmlspecialchars($h->observaciones) ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                        <?php if (empty($historial)): ?>
-                            <tr>
-                                <td colspan="6" class="text-center py-4 text-muted">No hay actividad registrada aún.</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
-            </div>
+                    <?php endforeach; ?>
+                    <?php if (empty($historial)): ?>
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No hay actividad registrada aún.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -80,47 +94,49 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalExportarLabel"><i class="bi bi-download"></i> Exportar Trazabilidad</h5>
+                <h5 class="modal-title" id="modalExportarLabel"><i class="fas fa-file-csv mr-1"></i> Exportar Trazabilidad</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <form id="formExportar" method="GET" action="<?php echo url('trazabilidad/exportar'); ?>">
-                    <div class="form-group">
-                        <label class="font-weight-bold">Filtros Opcionales</label>
+                    <div class="mb-2">
+                        <label class="small font-weight-bold text-gray-700">Filtros Opcionales</label>
                         <p class="text-muted small">Deja los campos vacíos para exportar todo el historial</p>
                     </div>
 
-                    <div class="form-group">
-                        <label for="fecha_inicio">Fecha Inicio</label>
-                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio">
+                    <div class="mb-3">
+                        <label for="fecha_inicio" class="small font-weight-bold text-gray-700">Fecha Inicio</label>
+                        <input type="date" class="form-control form-control-sm" id="fecha_inicio" name="fecha_inicio">
                     </div>
 
-                    <div class="form-group">
-                        <label for="fecha_fin">Fecha Fin</label>
-                        <input type="date" class="form-control" id="fecha_fin" name="fecha_fin">
+                    <div class="mb-3">
+                        <label for="fecha_fin" class="small font-weight-bold text-gray-700">Fecha Fin</label>
+                        <input type="date" class="form-control form-control-sm" id="fecha_fin" name="fecha_fin">
                     </div>
 
-                    <div class="form-group">
-                        <label for="tipo_actividad">Tipo de Actividad</label>
-                        <select class="form-control" id="tipo_actividad" name="tipo_actividad">
+                    <div class="mb-0">
+                        <label for="tipo_actividad" class="small font-weight-bold text-gray-700">Tipo de Actividad</label>
+                        <select class="form-control form-control-sm" id="tipo_actividad" name="tipo_actividad">
                             <option value="">-- Todas --</option>
                             <option value="llamada">Llamada</option>
                             <option value="correo">Correo</option>
                             <option value="reunion">Reunión</option>
                             <option value="visita">Visita</option>
+                            <option value="estudio_necesidades">Estudio de Necesidades</option>
+                            <option value="oferta_servicio">Oferta de Servicio</option>
                             <option value="nota">Nota</option>
                         </select>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
-                <a href="<?php echo url('trazabilidad/exportar'); ?>" class="btn btn-outline-success">
-                    <i class="bi bi-file-earmark-arrow-down"></i> Exportar Todo
+                <a href="<?php echo url('trazabilidad/exportar'); ?>" class="btn btn-outline-success btn-sm">
+                    <i class="fas fa-file-csv fa-sm mr-1"></i> Exportar Todo
                 </a>
-                <button type="button" class="btn btn-success" onclick="document.getElementById('formExportar').submit();">
-                    <i class="bi bi-funnel"></i> Exportar con Filtros
+                <button type="button" class="btn btn-success btn-sm" onclick="document.getElementById('formExportar').submit();">
+                    <i class="fas fa-filter fa-sm text-white-50 mr-1"></i> Exportar con Filtros
                 </button>
             </div>
         </div>

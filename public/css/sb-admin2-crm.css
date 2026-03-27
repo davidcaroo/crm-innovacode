@@ -1,0 +1,113 @@
+/* Minimal bridge styles for CRM behavior on top of official SB Admin 2 */
+
+/* Force-remove any unexpected top gap in authenticated shell */
+html,
+body,
+body#page-top {
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fc !important;
+}
+
+#wrapper {
+    min-height: 100vh;
+    margin-top: 0 !important;
+}
+
+#wrapper #content-wrapper {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    background-color: #f8f9fc !important;
+}
+
+#content {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    background-color: #f8f9fc !important;
+}
+
+.topbar {
+    margin-top: 0 !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+}
+
+#wrapper #content-wrapper {
+    overflow-x: hidden;
+}
+
+#content .container-fluid {
+    padding-top: 1.5rem;
+}
+
+.sidebar .nav-item .nav-link {
+    padding: 0.75rem 1rem;
+}
+
+.sidebar .sidebar-brand .sidebar-brand-text {
+    font-size: 1.02rem;
+}
+
+.sidebar .sidebar-card {
+    padding: 0.85rem 1rem;
+}
+
+.dropdown-list {
+    width: 20rem;
+}
+
+.table td,
+.table th {
+    vertical-align: middle;
+}
+
+.table td {
+    font-size: 0.82rem;
+}
+
+.badge.badge-pill {
+    font-size: 0.72rem;
+}
+
+.card .card-body {
+    overflow: visible;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.page-title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #4e73df;
+}
+
+.page-subtitle {
+    display: block;
+    margin-top: 0.15rem;
+    font-size: 0.8rem;
+    color: #858796;
+}
+
+.gap-1 {
+    gap: 0.25rem;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.gap-3 {
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .dropdown-list {
+        width: 18rem;
+    }
+}

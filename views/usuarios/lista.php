@@ -1,86 +1,86 @@
-﻿<?php // Layout included from BaseController 
+<?php // Layout included from BaseController 
 ?>
 
-<div class="page-header">
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
     <div>
-        <h2 class="page-title"><span class="mdi mdi-account-group"></span> Usuarios del Sistema</h2>
-        <span class="page-subtitle"><?php echo count($usuarios); ?> usuario<?php echo count($usuarios) != 1 ? 's' : ''; ?> en total</span>
+        <h1 class="h3 mb-1 text-gray-800"><i class="fas fa-users text-primary mr-2"></i> Usuarios del Sistema</h1>
+        <p class="mb-0 text-gray-500 small"><?php echo count($usuarios); ?> usuario<?php echo count($usuarios) != 1 ? 's' : ''; ?> en total</p>
     </div>
-    <a href="<?php echo url('usuario/crearUsuario'); ?>" class="btn btn-primary btn-sm">
-        <span class="mdi mdi-plus"></span> Nuevo Usuario
+    <a href="<?php echo url('usuario/crearUsuario'); ?>" class="btn btn-sm btn-primary shadow-sm">
+        <i class="fas fa-user-plus fa-sm text-white-50 mr-1"></i> Nuevo Usuario
     </a>
 </div>
 
-<div class="card border-0 shadow-sm">
+<div class="card shadow mb-4">
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
-                <thead>
+            <table class="table table-bordered table-hover mb-0" id="tablaUsuarios" width="100%" cellspacing="0">
+                <thead class="thead-light">
                     <tr>
                         <th>Nombre / Email</th>
                         <th>Rol</th>
                         <th>Estado</th>
                         <th>Progreso</th>
                         <th>Creado</th>
-                        <th class="text-right">Acciones</th>
+                        <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($usuarios as $u): ?>
                         <tr>
                             <td>
-                                <div style="font-weight:700; color:#1e293b;"><?= htmlspecialchars($u->nombre) ?></div>
-                                <div style="font-size:0.75rem; color:#64748b;"><?= htmlspecialchars($u->email) ?></div>
+                                <div class="font-weight-bold text-dark"><?= htmlspecialchars($u->nombre) ?></div>
+                                <div class="small text-muted"><?= htmlspecialchars($u->email) ?></div>
                             </td>
                             <td>
                                 <?php if ($u->rol === 'superadmin'): ?>
-                                    <span class="badge badge-dark" style="font-size:0.7rem; padding:4px 8px;">Superadmin</span>
+                                    <span class="badge badge-pill badge-dark">Superadmin</span>
                                 <?php elseif ($u->rol === 'admin'): ?>
-                                    <span class="badge badge-primary" style="font-size:0.7rem; padding:4px 8px;">Admin</span>
+                                    <span class="badge badge-pill badge-primary">Admin</span>
                                 <?php else: ?>
-                                    <span class="badge badge-light border" style="font-size:0.7rem; padding:4px 8px;">Usuario</span>
+                                    <span class="badge badge-pill badge-light text-dark border">Usuario</span>
                                 <?php endif; ?>
                             </td>
                             <td>
                                 <?php if (($u->estado ?? 'activo') === 'activo'): ?>
-                                    <span class="text-success" style="font-size:0.8rem; font-weight:700;">
-                                        <i class="bi bi-circle-fill" style="font-size:0.5rem;"></i> Activo
+                                    <span class="text-success small font-weight-bold">
+                                        <i class="fas fa-circle fa-xs mr-1"></i> Activo
                                     </span>
                                 <?php else: ?>
-                                    <span class="text-danger" style="font-size:0.8rem; font-weight:700;">
-                                        <i class="bi bi-circle-fill" style="font-size:0.5rem;"></i> Inactivo
+                                    <span class="text-danger small font-weight-bold">
+                                        <i class="fas fa-circle fa-xs mr-1"></i> Inactivo
                                     </span>
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <div style="font-size:0.8rem; font-weight:700; color:#1e40af;">
-                                    <?= $u->total_empresas ?? 0 ?> <span style="font-weight:400; color:#64748b;">empresas</span>
+                                <div class="small font-weight-bold text-primary">
+                                    <?= $u->total_empresas ?? 0 ?> <span class="font-weight-normal text-muted">empresas</span>
                                 </div>
                             </td>
                             <td><small class="text-muted"><?= htmlspecialchars(date('d/m/Y', strtotime($u->creado_en))) ?></small></td>
-                            <td class="text-right">
-                                <div class="d-flex justify-content-end" style="gap:5px;">
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
                                     <?php if ($_SESSION['usuario_rol'] === 'superadmin' && $u->id != $_SESSION['usuario_id']): ?>
                                         <a href="<?php echo url('usuario/impersonate', ['id' => $u->id]); ?>"
-                                            class="btn btn-sm btn-info text-white" style="border-radius:6px; font-weight:700;"
+                                            class="btn btn-sm btn-outline-info"
                                             title="Espectar (Entrar como este usuario)">
-                                            <i class="bi bi-eye"></i>
+                                            <i class="fas fa-eye fa-sm"></i>
                                         </a>
                                     <?php endif; ?>
 
                                     <?php if (!($u->rol === 'superadmin' && $u->id != $_SESSION['usuario_id'])): ?>
                                         <a href="<?php echo url('usuario/editarUsuario', ['id' => $u->id]); ?>"
-                                            class="btn btn-sm btn-light border" style="border-radius:6px; color:#475569;" title="Editar">
-                                            <i class="bi bi-pencil"></i>
+                                            class="btn btn-sm btn-outline-primary" title="Editar">
+                                            <i class="fas fa-edit fa-sm"></i>
                                         </a>
                                     <?php endif; ?>
 
                                     <?php if ($u->id != $_SESSION['usuario_id'] && $u->rol !== 'superadmin'): ?>
                                         <a href="#"
-                                            class="btn btn-sm btn-light border text-danger" style="border-radius:6px;"
+                                            class="btn btn-sm btn-outline-danger"
                                             title="Eliminar"
                                             onclick="return confirmarEliminacion('<?php echo url('usuario/eliminarUsuario', ['id' => $u->id]); ?>', '¿Eliminar al usuario <?php echo htmlspecialchars($u->nombre); ?>?')">
-                                            <i class="bi bi-trash"></i>
+                                            <i class="fas fa-trash-alt fa-sm"></i>
                                         </a>
                                     <?php endif; ?>
                                 </div>

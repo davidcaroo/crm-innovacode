@@ -155,6 +155,18 @@ class TrazabilidadController extends BaseController
 
         // Escribir datos
         foreach ($datos as $fila) {
+            $tipoRaw = strtolower((string)($fila->tipo_actividad ?? ''));
+            $tipoLabelMap = [
+                'llamada' => 'Llamada',
+                'correo' => 'Correo',
+                'reunion' => 'Reunion',
+                'visita' => 'Visita',
+                'estudio_necesidades' => 'Estudio de Necesidades',
+                'oferta_servicio' => 'Oferta de Servicio',
+                'nota' => 'Nota',
+            ];
+            $tipoLabel = $tipoLabelMap[$tipoRaw] ?? ucwords(str_replace('_', ' ', $tipoRaw));
+
             $row = [
                 $fila->id,
                 $fila->fecha_formateada,
@@ -168,7 +180,7 @@ class TrazabilidadController extends BaseController
                 $fila->usuario_id,
                 $fila->usuario,
                 ucfirst($fila->rol_usuario ?? ''),
-                ucfirst($fila->tipo_actividad ?? ''),
+                $tipoLabel,
                 ucfirst($fila->etapa_en_actividad ?? ''),
                 $fila->observaciones ?? '',
                 $fila->dias_transcurridos
