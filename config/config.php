@@ -131,6 +131,7 @@ function url(string $route, array $params = []): string
         'venta/eliminar'                => '/ventas/:id/eliminar',
         // Reportes
         'reporte/index'                 => '/reportes',
+        'reporte/exportarGlobalExcel'   => '/reportes/exportar-global',
         // Trazabilidad
         'trazabilidad/historial'        => '/trazabilidad',
         'trazabilidad/index'            => '/trazabilidad/:empresa_id',

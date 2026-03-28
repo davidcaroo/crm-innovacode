@@ -48,6 +48,7 @@ return [
 
     // ── REPORTES ────────────────────────────────────────────
     'GET  /reportes'                           => ['reporte', 'index'],
+    'GET  /reportes/exportar-global'           => ['reporte', 'exportarGlobalExcel'],
 
     // ── TRAZABILIDAD ────────────────────────────────────────
     'GET  /trazabilidad'                        => ['trazabilidad', 'historial'],

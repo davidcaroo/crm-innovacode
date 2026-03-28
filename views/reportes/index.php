@@ -2,8 +2,9 @@
 // views/reportes/index.php
 $ganados = 0;
 foreach ($stats['conversion'] as $c) {
-    if ($c->etapa_venta == 'ganado') {
-        $ganados = $c->cantidad;
+    $etapa = strtolower(trim((string)$c->etapa_venta));
+    if (in_array($etapa, ['ganado', 'ganada'], true)) {
+        $ganados += (int)$c->cantidad;
     }
 }
 
@@ -13,14 +14,21 @@ foreach ($stats['ventas_mes'] as $v) {
 }
 
 $act = 0;
-foreach ($stats['actividades'] as $a) {
-    $act += $a->cantidad;
+foreach ($stats['conversion'] as $c) {
+    $etapa = strtolower(trim((string)$c->etapa_venta));
+    if (in_array($etapa, ['contactado', 'contactada'], true)) {
+        $act += (int)$c->cantidad;
+    }
 }
 
 $totalEmp = 0;
 foreach ($stats['conversion'] as $c) {
     $totalEmp += $c->cantidad;
 }
+
+$esAdminGlobal = isset($esAdminGlobal) ? (bool)$esAdminGlobal : false;
+$reporteGlobal = isset($reporteGlobal) ? $reporteGlobal : [];
+$filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '', 'fecha_fin' => ''];
 ?>
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <div>
@@ -38,7 +46,7 @@ foreach ($stats['conversion'] as $c) {
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Oportunidades Ganadas</div>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Gestiones Ganadas</div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $ganados; ?></div>
                     </div>
                     <div class="col-auto">
@@ -161,6 +169,82 @@ foreach ($stats['conversion'] as $c) {
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
+<?php if ($esAdminGlobal): ?>
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-wrap align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Reporte Global Comercial por Usuario</h6>
+                    <a class="btn btn-success btn-sm" href="<?php echo url('reporte/exportarGlobalExcel', ['fecha_inicio' => $filtrosGlobal['fecha_inicio'], 'fecha_fin' => $filtrosGlobal['fecha_fin']]); ?>">
+                        <i class="fas fa-file-excel mr-1"></i> Exportar XLSX
+                    </a>
+                </div>
+                <div class="card-body">
+                    <form method="GET" action="<?php echo url('reporte/index'); ?>" class="form-row align-items-end mb-3">
+                        <div class="col-md-3 mb-2">
+                            <label class="small font-weight-bold text-muted">Fecha inicio</label>
+                            <input type="date" name="fecha_inicio" class="form-control" value="<?php echo htmlspecialchars($filtrosGlobal['fecha_inicio']); ?>">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label class="small font-weight-bold text-muted">Fecha fin</label>
+                            <input type="date" name="fecha_fin" class="form-control" value="<?php echo htmlspecialchars($filtrosGlobal['fecha_fin']); ?>">
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fas fa-filter mr-1"></i> Filtrar
+                            </button>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="<?php echo url('reporte/index'); ?>" class="btn btn-outline-secondary btn-block">
+                                <i class="fas fa-undo mr-1"></i> Limpiar
+                            </a>
+                        </div>
+                    </form>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover mb-0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Email</th>
+                                    <th>Rol</th>
+                                    <th>Gestiones realizadas</th>
+                                    <th>Perdidas</th>
+                                    <th>Negociacion con oferta</th>
+                                    <th>Contactado</th>
+                                    <th>Contactado con estudio</th>
+                                    <th>Prospectado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if (empty($reporteGlobal)): ?>
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted">No hay datos para el rango seleccionado.</td>
+                                    </tr>
+                                <?php else: ?>
+                                    <?php foreach ($reporteGlobal as $row): ?>
+                                        <tr>
+                                            <td class="font-weight-bold"><?php echo htmlspecialchars($row->usuario); ?></td>
+                                            <td><?php echo htmlspecialchars($row->email); ?></td>
+                                            <td><span class="badge badge-info"><?php echo htmlspecialchars($row->rol); ?></span></td>
+                                            <td><?php echo (int)$row->gestiones_realizadas; ?></td>
+                                            <td><?php echo (int)$row->perdidas; ?></td>
+                                            <td><?php echo (int)$row->negociacion_con_oferta; ?></td>
+                                            <td><?php echo (int)$row->contactado_total; ?></td>
+                                            <td><?php echo (int)$row->contactado_con_estudio; ?></td>
+                                            <td><?php echo (int)$row->prospectado; ?></td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
