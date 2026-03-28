@@ -25,7 +25,7 @@
 
                 <ul class="mt-3 small text-muted">
                     <li><strong>razon_social:</strong> Nombre de la empresa (Obligatorio).</li>
-                    <li><strong>etapa_venta:</strong> prospectado, contactado, negociacion, ganado, perdido.</li>
+                    <li><strong>etapa_venta:</strong> prospectado, contactado, negociacion, seguimiento, ganado, perdido.</li>
                     <li>El archivo debe estar codificado en <strong>UTF-8</strong> para reconocer tildes y caracteres especiales.</li>
                 </ul>
 

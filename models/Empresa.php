@@ -168,6 +168,7 @@ class Empresa extends BaseModel
 
                 if (strpos($etapa_raw, 'ganad') !== false || strpos($etapa_raw, 'cierre') !== false) $etapa = 'ganado';
                 elseif (strpos($etapa_raw, 'perdid') !== false || strpos($etapa_raw, 'no ') !== false) $etapa = 'perdido';
+                elseif (strpos($etapa_raw, 'seguim') !== false) $etapa = 'seguimiento';
                 elseif (strpos($etapa_raw, 'negocia') !== false) $etapa = 'negociacion';
                 elseif (strpos($etapa_raw, 'contac') !== false) $etapa = 'contactado';
 

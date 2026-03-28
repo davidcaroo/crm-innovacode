@@ -256,7 +256,7 @@ class EmpresaController extends BaseController
             : $empresaModel->todasPorUsuario($_SESSION['usuario_id']);
 
         // Agrupar por etapa
-        $etapas = ['prospectado' => [], 'contactado' => [], 'negociacion' => [], 'ganado' => [], 'perdido' => []];
+        $etapas = ['prospectado' => [], 'contactado' => [], 'negociacion' => [], 'seguimiento' => [], 'ganado' => [], 'perdido' => []];
         foreach ($todasEmpresas as $emp) {
             $etapa = $emp->etapa_venta ?? 'prospectado';
             if (!isset($etapas[$etapa])) $etapa = 'prospectado';

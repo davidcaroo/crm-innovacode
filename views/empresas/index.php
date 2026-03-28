@@ -83,8 +83,8 @@
                                 <td>
                                     <?php
                                     $etapa = strtolower($e->etapa_venta ?? 'prospectado');
-                                    $labels = ['prospectado' => 'Prospectado', 'contactado' => 'Contactado', 'negociacion' => 'Negociación', 'ganado' => 'Ganado', 'perdido' => 'Perdido'];
-                                    $badgeMap = ['prospectado' => 'info', 'contactado' => 'warning', 'negociacion' => 'primary', 'ganado' => 'success', 'perdido' => 'danger'];
+                                    $labels = ['prospectado' => 'Prospectado', 'contactado' => 'Contactado', 'negociacion' => 'Negociación', 'seguimiento' => 'Seguimiento', 'ganado' => 'Ganado', 'perdido' => 'Perdido'];
+                                    $badgeMap = ['prospectado' => 'info', 'contactado' => 'warning', 'negociacion' => 'primary', 'seguimiento' => 'secondary', 'ganado' => 'success', 'perdido' => 'danger'];
                                     $estadoFlujo = $estadosTrazabilidad[(int)$e->id] ?? [
                                         'tiene_estudio_necesidades' => false,
                                         'tiene_oferta_servicios' => false,
@@ -102,7 +102,7 @@
                                     <?php if ($contactoEfectivo || $tieneEstudio): ?>
                                         <div class="mt-1">
                                             <?php if ($contactoEfectivo): ?>
-                                                <span class="badge badge-success mr-1">Contacto efectivo e interesado</span>
+                                                <span class="badge badge-success mr-1">Contacto interesado</span>
                                             <?php endif; ?>
                                             <?php if ($tieneOferta): ?>
                                                 <span class="badge badge-primary">Oferta de servicios</span>

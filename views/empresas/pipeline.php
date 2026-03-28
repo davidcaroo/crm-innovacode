@@ -4,8 +4,9 @@
 <?php
 $etapasConfig = [
     'prospectado' => ['label' => 'Investigación previa',  'icon' => 'fas fa-search'],
-    'contactado'  => ['label' => 'Contacto efectivo e interesado',   'icon' => 'fas fa-phone'],
+    'contactado'  => ['label' => 'Contacto interesado',   'icon' => 'fas fa-phone'],
     'negociacion' => ['label' => 'Negociacion',  'icon' => 'fas fa-handshake'],
+    'seguimiento' => ['label' => 'Seguimiento',  'icon' => 'fas fa-eye'],
     'ganado'      => ['label' => 'Ganado',       'icon' => 'fas fa-trophy'],
     'perdido'     => ['label' => 'Perdido',      'icon' => 'fas fa-times-circle'],
 ];
@@ -67,7 +68,7 @@ $total = array_sum(array_map('count', $etapas));
                                     <?php if ($contactoEfectivo || $tieneEstudio): ?>
                                         <div class="mb-1">
                                             <?php if ($contactoEfectivo): ?>
-                                                <span class="badge badge-success mr-1">Contacto efectivo e interesado</span>
+                                                <span class="badge badge-success mr-1">Contacto interesado</span>
                                             <?php endif; ?>
                                             <?php if ($tieneOferta): ?>
                                                 <span class="badge badge-primary">Oferta de servicios</span>

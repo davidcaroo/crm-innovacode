@@ -1,6 +1,6 @@
 <?php
-$etapasOrden  = ['prospectado', 'contactado', 'negociacion', 'ganado', 'perdido'];
-$etapasLabel  = ['Prospectado', 'Contactado', 'Negociacion', 'Ganado', 'Perdido'];
+$etapasOrden  = ['prospectado', 'contactado', 'negociacion', 'seguimiento', 'ganado', 'perdido'];
+$etapasLabel  = ['Prospectado', 'Contactado', 'Negociacion', 'Seguimiento', 'Ganado', 'Perdido'];
 $etapaConteos = [];
 foreach ($etapasOrden as $e) {
     $etapaConteos[$e] = 0;

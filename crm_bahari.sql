@@ -93,7 +93,7 @@ CREATE TABLE `empresas` (
   `actividad_economica` varchar(100) DEFAULT NULL,
   `correo_comercial` varchar(100) DEFAULT NULL,
   `aplica` varchar(10) DEFAULT NULL,
-  `etapa_venta` enum('prospectado','contactado','negociacion','ganado','perdido') DEFAULT 'prospectado',
+  `etapa_venta` enum('prospectado','contactado','negociacion','seguimiento','ganado','perdido') DEFAULT 'prospectado',
   `observaciones` text DEFAULT NULL,
   `usuario_id` int(11) DEFAULT NULL,
   `creado_en` datetime DEFAULT current_timestamp()
@@ -231,7 +231,7 @@ CREATE TABLE `trazabilidad` (
   `id` int(11) NOT NULL,
   `empresa_id` int(11) NOT NULL,
   `usuario_id` int(11) NOT NULL,
-  `etapa_venta` enum('prospectado','contactado','negociacion','ganado','perdido') DEFAULT NULL,
+  `etapa_venta` enum('prospectado','contactado','negociacion','seguimiento','ganado','perdido') DEFAULT NULL,
   `tipo_actividad` enum('llamada','correo','reunion','visita','nota') NOT NULL DEFAULT 'nota',
   `fecha` datetime DEFAULT current_timestamp(),
   `observaciones` text DEFAULT NULL

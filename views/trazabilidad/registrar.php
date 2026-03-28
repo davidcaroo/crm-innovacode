@@ -44,7 +44,7 @@
                         <label class="small font-weight-bold text-gray-700">Nueva Etapa</label>
                         <select id="etapa_venta" name="etapa_venta" class="form-control form-control-sm" required>
                             <?php
-                            $etapas = ['prospectado' => 'Prospectado', 'contactado' => 'Contactado', 'negociacion' => 'Negociacion', 'ganado' => 'Ganado', 'perdido' => 'Perdido'];
+                            $etapas = ['prospectado' => 'Prospectado', 'contactado' => 'Contactado', 'negociacion' => 'Negociacion', 'seguimiento' => 'Seguimiento', 'ganado' => 'Ganado', 'perdido' => 'Perdido'];
                             $etapaActual = isset($empresa) ? $empresa->etapa_venta : '';
                             foreach ($etapas as $val => $label):
                             ?>
