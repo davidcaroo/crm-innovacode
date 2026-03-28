@@ -272,6 +272,22 @@ class Empresa extends BaseModel
         return $this->db->query($sql)->fetchAll();
     }
 
+    public function empresasPerdidasPorMes($usuario_id = null)
+    {
+        $sql = "SELECT MONTH(creado_en) as mes, COUNT(*) as total FROM empresas WHERE LOWER(TRIM(etapa_venta)) IN ('perdido', 'perdida')";
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = ?";
+        }
+        $sql .= " GROUP BY MONTH(creado_en) ORDER BY mes";
+
+        if ($usuario_id) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$usuario_id]);
+            return $stmt->fetchAll();
+        }
+        return $this->db->query($sql)->fetchAll();
+    }
+
     public function contarUltimosDias($dias = 30, $usuario_id = null)
     {
         $sql = "SELECT COUNT(*) as total FROM empresas WHERE creado_en >= DATE_SUB(NOW(), INTERVAL ? DAY)";
@@ -288,6 +304,38 @@ class Empresa extends BaseModel
         return $result->total ?? 0;
     }
 
+    /**
+     * Cuenta gestiones en los últimos N días.
+     * Una gestión válida debe cumplir:
+     * - Empresa con etapa actual contactado/contactada
+     * - Empresa con aplica SI/SÍ
+     * - Registro de trazabilidad en el periodo con etapa contactado/contactada
+     */
+    public function contarGestionesUltimosDias($dias = 30, $usuario_id = null)
+    {
+        $sql = "SELECT COUNT(DISTINCT e.id) as total
+                                FROM empresas e
+                                INNER JOIN trazabilidad t ON t.empresa_id = e.id
+                                WHERE t.fecha >= DATE_SUB(NOW(), INTERVAL ? DAY)
+                                    AND LOWER(TRIM(e.etapa_venta)) IN ('contactado', 'contactada')
+                                    AND LOWER(TRIM(t.etapa_venta)) IN ('contactado', 'contactada')
+                                    AND UPPER(TRIM(COALESCE(e.aplica, ''))) IN ('SI', 'SÍ')";
+
+        if ($usuario_id) {
+            $sql .= " AND e.usuario_id = ?";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        if ($usuario_id) {
+            $stmt->execute([$dias, $usuario_id]);
+        } else {
+            $stmt->execute([$dias]);
+        }
+
+        $result = $stmt->fetch();
+        return $result->total ?? 0;
+    }
+
     public function contarAnioActual($usuario_id = null)
     {
         $sql = "SELECT COUNT(*) as total FROM empresas WHERE YEAR(creado_en) = YEAR(NOW())";
@@ -300,6 +348,50 @@ class Empresa extends BaseModel
         } else {
             $stmt = $this->db->query($sql);
         }
+        $result = $stmt->fetch();
+        return $result->total ?? 0;
+    }
+
+    /**
+     * Cuenta gestiones del año en curso (suma equivalente al total mensual del año).
+     */
+    public function contarGestionesAnioActual($usuario_id = null)
+    {
+        $sql = "SELECT COUNT(*) as total
+                FROM empresas
+                WHERE YEAR(creado_en) = YEAR(NOW())
+                  AND LOWER(TRIM(etapa_venta)) IN ('contactado', 'contactada')
+                  AND UPPER(TRIM(COALESCE(aplica, ''))) IN ('SI', 'SÍ')";
+
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$usuario_id]);
+        } else {
+            $stmt = $this->db->query($sql);
+        }
+
+        $result = $stmt->fetch();
+        return $result->total ?? 0;
+    }
+
+    /**
+     * Cuenta empresas/gestiones ganadas por estado de pipeline actual.
+     */
+    public function contarGestionesGanadas($usuario_id = null)
+    {
+        $sql = "SELECT COUNT(*) as total
+                FROM empresas
+                WHERE LOWER(TRIM(etapa_venta)) IN ('ganado', 'ganada')";
+
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = ?";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$usuario_id]);
+        } else {
+            $stmt = $this->db->query($sql);
+        }
+
         $result = $stmt->fetch();
         return $result->total ?? 0;
     }

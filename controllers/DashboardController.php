@@ -30,15 +30,13 @@ class DashboardController extends BaseController
 
             // Estadísticas de empresas
             $totalEmpresas = $this->empresaModel->count($u_id);
-            $empresasUltimos30Dias = $this->empresaModel->contarUltimosDias(30, $u_id);
-            $empresasAnioActual = $this->empresaModel->contarAnioActual($u_id);
+            $empresasUltimos30Dias = $this->empresaModel->contarGestionesUltimosDias(30, $u_id);
+            $empresasAnioActual = $this->empresaModel->contarGestionesAnioActual($u_id);
 
-            // Estadísticas de ventas (empresas ganadas)
-            $empresasGanadas = $this->empresaModel->empresasGanadasPorMes($u_id);
-            $totalVentas = 0;
-            foreach ($empresasGanadas as $item) {
-                $totalVentas += $item->total;
-            }
+            // Gráfica global: ganadas por mes de todos los usuarios
+            $empresasGanadas = $this->empresaModel->empresasGanadasPorMes(null);
+            $empresasPerdidas = $this->empresaModel->empresasPerdidasPorMes(null);
+            $totalVentas = $this->empresaModel->contarGestionesGanadas($u_id);
 
             // Datos para gráficos
             $empresasPorDepartamento = $this->empresaModel->contarPorDepartamento($u_id);
@@ -53,7 +51,8 @@ class DashboardController extends BaseController
                 'empresasPorDepartamento' => $empresasPorDepartamento,
                 'empresasPorActividad' => $empresasPorActividad,
                 'empresasPorEtapa' => $empresasPorEtapa,
-                'empresasGanadas' => $empresasGanadas
+                'empresasGanadas' => $empresasGanadas,
+                'empresasPerdidas' => $empresasPerdidas
             ]);
         } catch (Exception $e) {
             $this->error($e->getMessage());
