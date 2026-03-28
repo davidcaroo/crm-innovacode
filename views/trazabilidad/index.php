@@ -55,8 +55,13 @@ $etapaColors = [
             <?php else: ?>
                 <?php foreach ($historial as $h): ?>
                     <?php
-                    $tipoRaw = strtolower((string)($h->tipo_actividad ?? 'nota'));
-                    $tipoNorm = ['reunión' => 'reunion'][$tipoRaw] ?? $tipoRaw;
+                    $tipoRaw = strtolower(trim((string)($h->tipo_actividad ?? 'nota')));
+                    $tipoNorm = [
+                        'reunión' => 'reunion',
+                        'estudio de necesidades' => 'estudio_necesidades',
+                        'oferta de servicio' => 'oferta_servicio',
+                        'oferta de servicios' => 'oferta_servicio',
+                    ][$tipoRaw] ?? $tipoRaw;
                     $iconos = [
                         'correo'  => ['fas fa-envelope', 'bg-primary', 'primary'],
                         'llamada' => ['fas fa-phone', 'bg-success', 'success'],

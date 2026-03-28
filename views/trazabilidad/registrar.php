@@ -29,7 +29,7 @@
 
                     <div class="form-group">
                         <label class="small font-weight-bold text-gray-700">Tipo de Actividad</label>
-                        <select name="tipo_actividad" class="form-control form-control-sm" required>
+                        <select id="tipo_actividad" name="tipo_actividad" class="form-control form-control-sm" required>
                             <option value="llamada">Llamada</option>
                             <option value="correo">Correo</option>
                             <option value="reunion">Reunion</option>
@@ -42,7 +42,7 @@
 
                     <div class="form-group">
                         <label class="small font-weight-bold text-gray-700">Nueva Etapa</label>
-                        <select name="etapa_venta" class="form-control form-control-sm" required>
+                        <select id="etapa_venta" name="etapa_venta" class="form-control form-control-sm" required>
                             <?php
                             $etapas = ['prospectado' => 'Prospectado', 'contactado' => 'Contactado', 'negociacion' => 'Negociacion', 'ganado' => 'Ganado', 'perdido' => 'Perdido'];
                             $etapaActual = isset($empresa) ? $empresa->etapa_venta : '';
@@ -68,6 +68,23 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var tipoActividad = document.getElementById('tipo_actividad');
+        var etapaVenta = document.getElementById('etapa_venta');
+
+        if (!tipoActividad || !etapaVenta) {
+            return;
+        }
+
+        tipoActividad.addEventListener('change', function() {
+            if ((tipoActividad.value || '').toLowerCase() === 'oferta_servicio') {
+                etapaVenta.value = 'negociacion';
+            }
+        });
+    });
+</script>
 
 <?php // Footer included from BaseController 
 ?>

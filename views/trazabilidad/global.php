@@ -48,8 +48,13 @@
                             </td>
                             <td>
                                 <?php
-                                $tipoRaw = strtolower((string)($h->tipo_actividad ?? 'nota'));
-                                $tipoNorm = ['reunión' => 'reunion'][$tipoRaw] ?? $tipoRaw;
+                                $tipoRaw = strtolower(trim((string)($h->tipo_actividad ?? 'nota')));
+                                $tipoNorm = [
+                                    'reunión' => 'reunion',
+                                    'estudio de necesidades' => 'estudio_necesidades',
+                                    'oferta de servicio' => 'oferta_servicio',
+                                    'oferta de servicios' => 'oferta_servicio',
+                                ][$tipoRaw] ?? $tipoRaw;
                                 $tipos = [
                                     'llamada' => ['fas fa-phone', 'Llamada'],
                                     'correo' => ['fas fa-envelope', 'Correo'],

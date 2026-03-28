@@ -52,6 +52,55 @@ class Trazabilidad extends BaseModel
     }
 
     /**
+     * Retorna estados de flujo por empresa para pintar badges en listados.
+     * @param array $empresaIds
+     * @return array [empresa_id => ['tiene_estudio_necesidades' => bool, 'tiene_oferta_servicios' => bool]]
+     */
+    public function obtenerEstadosFlujoEmpresas($empresaIds = [])
+    {
+        $ids = array_values(array_filter(array_map('intval', (array)$empresaIds), function ($id) {
+            return $id > 0;
+        }));
+
+        if (empty($ids)) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $sql = "SELECT
+                    empresa_id,
+                    MAX(CASE WHEN LOWER(tipo_actividad) IN ('estudio_necesidades', 'estudio de necesidades') THEN 1 ELSE 0 END) AS tiene_estudio_necesidades,
+                    MAX(CASE WHEN LOWER(tipo_actividad) IN ('oferta_servicio', 'oferta de servicio', 'oferta de servicios') THEN 1 ELSE 0 END) AS tiene_oferta_servicios
+                FROM trazabilidad
+                WHERE empresa_id IN ($placeholders)
+                GROUP BY empresa_id";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($ids);
+        $rows = $stmt->fetchAll();
+
+        $estadoPorEmpresa = [];
+        foreach ($ids as $id) {
+            $estadoPorEmpresa[$id] = [
+                'tiene_estudio_necesidades' => false,
+                'tiene_oferta_servicios' => false,
+            ];
+        }
+
+        foreach ($rows as $row) {
+            $empresaId = (int)($row->empresa_id ?? 0);
+            if ($empresaId > 0) {
+                $estadoPorEmpresa[$empresaId] = [
+                    'tiene_estudio_necesidades' => ((int)($row->tiene_estudio_necesidades ?? 0) === 1),
+                    'tiene_oferta_servicios' => ((int)($row->tiene_oferta_servicios ?? 0) === 1),
+                ];
+            }
+        }
+
+        return $estadoPorEmpresa;
+    }
+
+    /**
      * Obtiene historial completo para exportación (sin límite de registros)
      * @param array $filtros ['usuario_id', 'empresa_id', 'fecha_inicio', 'fecha_fin', 'tipo_actividad']
      * @return array

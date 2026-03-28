@@ -25,7 +25,21 @@ class EmpresaController extends BaseController
             }
         }
 
-        $this->view('empresas/index', ['empresas' => $empresas, 'buscar' => $buscar ?? '']);
+        $empresaIds = array_map(function ($e) {
+            return (int)($e->id ?? 0);
+        }, $empresas);
+
+        $estadosTrazabilidad = [];
+        if (!empty($empresaIds)) {
+            $trazabilidadModel = new Trazabilidad();
+            $estadosTrazabilidad = $trazabilidadModel->obtenerEstadosFlujoEmpresas($empresaIds);
+        }
+
+        $this->view('empresas/index', [
+            'empresas' => $empresas,
+            'buscar' => $buscar ?? '',
+            'estadosTrazabilidad' => $estadosTrazabilidad,
+        ]);
     }
 
     public function crear()
@@ -36,14 +50,22 @@ class EmpresaController extends BaseController
     public function guardar()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $aplicaNueva = strtoupper(trim((string)$this->post('aplica')));
+            if (!in_array($aplicaNueva, ['SI', 'NO'], true)) {
+                $this->redirect(BASE_URL . '/index.php?controller=empresa&action=crear&error=aplica_required');
+                return;
+            }
+
+            $etapaNueva = ($aplicaNueva === 'NO') ? 'perdido' : 'contactado';
+
             $data = [
                 'razon_social' => $this->post('razon_social'),
                 'dpto' => $this->post('dpto'),
                 'ciudad' => $this->post('ciudad'),
                 'actividad_economica' => $this->post('actividad_economica'),
                 'correo_comercial' => $this->post('correo_comercial'),
-                'aplica' => $this->post('aplica'),
-                'etapa_venta' => $this->post('etapa_venta'),
+                'aplica' => $aplicaNueva,
+                'etapa_venta' => $etapaNueva,
                 'observaciones' => $this->post('observaciones'),
                 'usuario_id' => $_SESSION['usuario_id']
             ];
@@ -94,15 +116,28 @@ class EmpresaController extends BaseController
             }
 
             $etapaAnterior = $empresaAnterior->etapa_venta ?? '';
-            $aplicaNueva = strtoupper(trim((string)$this->post('aplica')));
-            if ($aplicaNueva !== 'NO') {
-                $aplicaNueva = 'SI';
+            $aplicaInput = strtoupper(trim((string)$this->post('aplica')));
+            if (in_array($aplicaInput, ['SI', 'NO'], true)) {
+                $aplicaNueva = $aplicaInput;
+            } else {
+                $aplicaNueva = strtoupper(trim((string)($empresaAnterior->aplica ?? '')));
+                if (!in_array($aplicaNueva, ['SI', 'NO'], true)) {
+                    $aplicaNueva = '';
+                }
             }
 
-            $nuevaEtapa = $this->post('etapa_venta');
+            $nuevaEtapa = $etapaAnterior;
             if ($aplicaNueva === 'NO') {
                 // Regla de negocio: si la empresa no aplica, queda en perdido.
                 $nuevaEtapa = 'perdido';
+            } elseif ($aplicaNueva === 'SI') {
+                // Regla de negocio: al confirmar que aplica, pasa a contactado.
+                // Se evita degradar etapas avanzadas ya trabajadas.
+                if (in_array($etapaAnterior, ['negociacion', 'ganado'], true)) {
+                    $nuevaEtapa = $etapaAnterior;
+                } else {
+                    $nuevaEtapa = 'contactado';
+                }
             }
 
             $data = [
@@ -228,7 +263,20 @@ class EmpresaController extends BaseController
             $etapas[$etapa][] = $emp;
         }
 
-        $this->view('empresas/pipeline', ['etapas' => $etapas]);
+        $empresaIds = array_map(function ($e) {
+            return (int)($e->id ?? 0);
+        }, $todasEmpresas);
+
+        $estadosTrazabilidad = [];
+        if (!empty($empresaIds)) {
+            $trazabilidadModel = new Trazabilidad();
+            $estadosTrazabilidad = $trazabilidadModel->obtenerEstadosFlujoEmpresas($empresaIds);
+        }
+
+        $this->view('empresas/pipeline', [
+            'etapas' => $etapas,
+            'estadosTrazabilidad' => $estadosTrazabilidad,
+        ]);
     }
 
     public function importar()

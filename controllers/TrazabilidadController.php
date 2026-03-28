@@ -50,11 +50,35 @@ class TrazabilidadController extends BaseController
         $this->validarPropiedadEmpresa($empresa_id);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $tipoActividadRaw = trim((string)$this->post('tipo_actividad'));
+            $tipoActividadNorm = strtolower($tipoActividadRaw);
+            $tipoActividadMap = [
+                'llamada' => 'llamada',
+                'correo' => 'correo',
+                'reunion' => 'reunion',
+                'reunión' => 'reunion',
+                'visita' => 'visita',
+                'nota' => 'nota',
+                'estudio_necesidades' => 'Estudio de necesidades',
+                'estudio de necesidades' => 'Estudio de necesidades',
+                'oferta_servicio' => 'Oferta de servicios',
+                'oferta de servicio' => 'Oferta de servicios',
+                'oferta de servicios' => 'Oferta de servicios',
+            ];
+            $tipoActividad = $tipoActividadMap[$tipoActividadNorm] ?? 'nota';
+
+            $nuevaEtapa = $this->post('etapa_venta');
+
+            if ($tipoActividad === 'Oferta de servicios') {
+                // Regla de negocio: oferta enviada mueve la empresa a negociación.
+                $nuevaEtapa = 'negociacion';
+            }
+
             $data = [
                 'empresa_id'     => $this->post('empresa_id'),
                 'usuario_id'     => $_SESSION['usuario_id'],
-                'etapa_venta'    => $this->post('etapa_venta'),
-                'tipo_actividad' => $this->post('tipo_actividad'),
+                'etapa_venta'    => $nuevaEtapa,
+                'tipo_actividad' => $tipoActividad,
                 'observaciones'  => $this->post('observaciones'),
             ];
             $trazabilidadModel = new Trazabilidad();

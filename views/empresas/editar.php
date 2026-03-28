@@ -93,9 +93,11 @@
                         </div>
                         <div class="form-group col-md-5">
                             <label class="small font-weight-bold text-gray-700">¿Aplica?</label>
-                            <select id="aplica" name="aplica" class="form-control form-control-sm">
-                                <option value="SI" <?= (!isset($empresa->aplica) || $empresa->aplica === 'SI') ? 'selected' : '' ?>>Sí</option>
-                                <option value="NO" <?= (isset($empresa->aplica) && $empresa->aplica === 'NO') ? 'selected' : '' ?>>No</option>
+                            <?php $aplicaActual = strtoupper(trim((string)($empresa->aplica ?? ''))); ?>
+                            <select id="aplica" name="aplica" class="form-control form-control-sm" required>
+                                <option value="" <?= !in_array($aplicaActual, ['SI', 'NO'], true) ? 'selected' : '' ?>>Seleccionar...</option>
+                                <option value="SI" <?= $aplicaActual === 'SI' ? 'selected' : '' ?>>Sí</option>
+                                <option value="NO" <?= $aplicaActual === 'NO' ? 'selected' : '' ?>>No</option>
                             </select>
                         </div>
                     </div>
@@ -139,8 +141,16 @@
 
         function sincronizarEtapaConAplica() {
             var aplica = (aplicaSelect.value || '').toUpperCase();
+            var etapaActual = (etapaSelect.value || '').toLowerCase();
+            var etapaAvanzada = (etapaActual === 'negociacion' || etapaActual === 'ganado');
+
             if (aplica === 'NO') {
                 etapaSelect.value = 'perdido';
+                etapaSelect.setAttribute('disabled', 'disabled');
+            } else if (aplica === 'SI') {
+                if (!etapaAvanzada) {
+                    etapaSelect.value = 'contactado';
+                }
                 etapaSelect.setAttribute('disabled', 'disabled');
             } else {
                 etapaSelect.removeAttribute('disabled');

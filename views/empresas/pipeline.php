@@ -46,11 +46,37 @@ $total = array_sum(array_map('count', $etapas));
                         <div class="text-center text-muted py-3">Sin empresas</div>
                     <?php else: ?>
                         <?php foreach ($lista as $emp): ?>
+                            <?php
+                            $estadoFlujo = $estadosTrazabilidad[(int)$emp->id] ?? [
+                                'tiene_estudio_necesidades' => false,
+                                'tiene_oferta_servicios' => false,
+                            ];
+                            $contactoEfectivo = (
+                                strtolower((string)($emp->etapa_venta ?? '')) === 'contactado'
+                                && strtoupper(trim((string)($emp->aplica ?? ''))) === 'SI'
+                            );
+                            $tieneOferta = !empty($estadoFlujo['tiene_oferta_servicios']);
+                            $tieneEstudio = !empty($estadoFlujo['tiene_estudio_necesidades']);
+                            ?>
                             <div class="card shadow mb-2">
                                 <div class="card-body p-2">
                                     <div class="font-weight-bold text-primary mb-1" title="<?php echo htmlspecialchars($emp->razon_social); ?>">
                                         <?php echo htmlspecialchars(mb_strimwidth($emp->razon_social, 0, 30, '...')); ?>
                                     </div>
+
+                                    <?php if ($contactoEfectivo || $tieneEstudio): ?>
+                                        <div class="mb-1">
+                                            <?php if ($contactoEfectivo): ?>
+                                                <span class="badge badge-success mr-1">Contacto efectivo e interesado</span>
+                                            <?php endif; ?>
+                                            <?php if ($tieneOferta): ?>
+                                                <span class="badge badge-primary">Oferta de servicios</span>
+                                            <?php elseif ($tieneEstudio): ?>
+                                                <span class="badge badge-primary">Estudio de necesidades</span>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif; ?>
+
                                     <div class="small text-gray-600 mb-1">
                                         <?php if ($emp->ciudad): ?><i class="fas fa-map-marker-alt"></i> <?php echo htmlspecialchars($emp->ciudad); ?><?php endif; ?>
                                     </div>
