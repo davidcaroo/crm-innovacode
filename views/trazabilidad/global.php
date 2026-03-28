@@ -54,6 +54,9 @@
                                     'estudio de necesidades' => 'estudio_necesidades',
                                     'oferta de servicio' => 'oferta_servicio',
                                     'oferta de servicios' => 'oferta_servicio',
+                                    'seguimiento de la oferta' => 'seguimiento_oferta',
+                                    'seguimiento de oferta' => 'seguimiento_oferta',
+                                    'seguimiento' => 'seguimiento_oferta',
                                 ][$tipoRaw] ?? $tipoRaw;
                                 $tipos = [
                                     'llamada' => ['fas fa-phone', 'Llamada'],
@@ -62,6 +65,7 @@
                                     'visita' => ['fas fa-map-marker-alt', 'Visita'],
                                     'estudio_necesidades' => ['fas fa-search', 'Estudio de Necesidades'],
                                     'oferta_servicio' => ['fas fa-file-signature', 'Oferta de Servicio'],
+                                    'seguimiento_oferta' => ['fas fa-eye', 'Seguimiento de la Oferta'],
                                     'nota' => ['fas fa-sticky-note', 'Nota'],
                                 ];
                                 $metaTipo = $tipos[$tipoNorm] ?? ['fas fa-circle', ucwords(str_replace('_', ' ', $tipoNorm))];
@@ -131,6 +135,7 @@
                             <option value="visita">Visita</option>
                             <option value="estudio_necesidades">Estudio de Necesidades</option>
                             <option value="oferta_servicio">Oferta de Servicio</option>
+                            <option value="seguimiento_oferta">Seguimiento de la Oferta</option>
                             <option value="nota">Nota</option>
                         </select>
                     </div>

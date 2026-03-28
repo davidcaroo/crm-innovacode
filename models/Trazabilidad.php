@@ -70,7 +70,8 @@ class Trazabilidad extends BaseModel
         $sql = "SELECT
                     empresa_id,
                     MAX(CASE WHEN LOWER(tipo_actividad) IN ('estudio_necesidades', 'estudio de necesidades') THEN 1 ELSE 0 END) AS tiene_estudio_necesidades,
-                    MAX(CASE WHEN LOWER(tipo_actividad) IN ('oferta_servicio', 'oferta de servicio', 'oferta de servicios') THEN 1 ELSE 0 END) AS tiene_oferta_servicios
+                    MAX(CASE WHEN LOWER(tipo_actividad) IN ('oferta_servicio', 'oferta de servicio', 'oferta de servicios') THEN 1 ELSE 0 END) AS tiene_oferta_servicios,
+                    MAX(CASE WHEN LOWER(tipo_actividad) IN ('seguimiento_oferta', 'seguimiento', 'seguimiento de oferta', 'seguimiento de la oferta') THEN 1 ELSE 0 END) AS tiene_seguimiento_oferta
                 FROM trazabilidad
                 WHERE empresa_id IN ($placeholders)
                 GROUP BY empresa_id";
@@ -84,6 +85,7 @@ class Trazabilidad extends BaseModel
             $estadoPorEmpresa[$id] = [
                 'tiene_estudio_necesidades' => false,
                 'tiene_oferta_servicios' => false,
+                'tiene_seguimiento_oferta' => false,
             ];
         }
 
@@ -93,6 +95,7 @@ class Trazabilidad extends BaseModel
                 $estadoPorEmpresa[$empresaId] = [
                     'tiene_estudio_necesidades' => ((int)($row->tiene_estudio_necesidades ?? 0) === 1),
                     'tiene_oferta_servicios' => ((int)($row->tiene_oferta_servicios ?? 0) === 1),
+                    'tiene_seguimiento_oferta' => ((int)($row->tiene_seguimiento_oferta ?? 0) === 1),
                 ];
             }
         }

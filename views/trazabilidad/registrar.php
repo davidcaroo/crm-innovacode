@@ -36,6 +36,7 @@
                             <option value="visita">Visita</option>
                             <option value="estudio_necesidades">Estudio de Necesidades</option>
                             <option value="oferta_servicio">Oferta de Servicio</option>
+                            <option value="seguimiento_oferta">Seguimiento de la Oferta</option>
                             <option value="nota" selected>Nota interna</option>
                         </select>
                     </div>
@@ -79,8 +80,11 @@
         }
 
         tipoActividad.addEventListener('change', function() {
-            if ((tipoActividad.value || '').toLowerCase() === 'oferta_servicio') {
+            var val = (tipoActividad.value || '').toLowerCase();
+            if (val === 'oferta_servicio') {
                 etapaVenta.value = 'negociacion';
+            } else if (val === 'seguimiento_oferta') {
+                etapaVenta.value = 'seguimiento';
             }
         });
     });

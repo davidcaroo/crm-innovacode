@@ -51,6 +51,7 @@ $total = array_sum(array_map('count', $etapas));
                             $estadoFlujo = $estadosTrazabilidad[(int)$emp->id] ?? [
                                 'tiene_estudio_necesidades' => false,
                                 'tiene_oferta_servicios' => false,
+                                'tiene_seguimiento_oferta' => false,
                             ];
                             $contactoEfectivo = (
                                 strtolower((string)($emp->etapa_venta ?? '')) === 'contactado'
@@ -58,6 +59,7 @@ $total = array_sum(array_map('count', $etapas));
                             );
                             $tieneOferta = !empty($estadoFlujo['tiene_oferta_servicios']);
                             $tieneEstudio = !empty($estadoFlujo['tiene_estudio_necesidades']);
+                            $tieneSeguimiento = !empty($estadoFlujo['tiene_seguimiento_oferta']);
                             ?>
                             <div class="card shadow mb-2">
                                 <div class="card-body p-2">
@@ -65,12 +67,14 @@ $total = array_sum(array_map('count', $etapas));
                                         <?php echo htmlspecialchars(mb_strimwidth($emp->razon_social, 0, 30, '...')); ?>
                                     </div>
 
-                                    <?php if ($contactoEfectivo || $tieneEstudio): ?>
+                                    <?php if ($contactoEfectivo || $tieneEstudio || $tieneOferta || $tieneSeguimiento): ?>
                                         <div class="mb-1">
                                             <?php if ($contactoEfectivo): ?>
                                                 <span class="badge badge-success mr-1">Contacto interesado</span>
                                             <?php endif; ?>
-                                            <?php if ($tieneOferta): ?>
+                                            <?php if ($tieneSeguimiento): ?>
+                                                <span class="badge badge-info bg-info text-white">Seguimiento de la oferta</span>
+                                            <?php elseif ($tieneOferta): ?>
                                                 <span class="badge badge-primary">Oferta de servicios</span>
                                             <?php elseif ($tieneEstudio): ?>
                                                 <span class="badge badge-primary">Estudio de necesidades</span>

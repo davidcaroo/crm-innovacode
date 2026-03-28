@@ -61,6 +61,9 @@ $etapaColors = [
                         'estudio de necesidades' => 'estudio_necesidades',
                         'oferta de servicio' => 'oferta_servicio',
                         'oferta de servicios' => 'oferta_servicio',
+                        'seguimiento de la oferta' => 'seguimiento_oferta',
+                        'seguimiento de oferta' => 'seguimiento_oferta',
+                        'seguimiento' => 'seguimiento_oferta',
                     ][$tipoRaw] ?? $tipoRaw;
                     $iconos = [
                         'correo'  => ['fas fa-envelope', 'bg-primary', 'primary'],
@@ -70,6 +73,7 @@ $etapaColors = [
                         'visita'  => ['fas fa-map-marker-alt', 'bg-danger', 'danger'],
                         'estudio_necesidades' => ['fas fa-search', 'bg-secondary', 'secondary'],
                         'oferta_servicio'     => ['fas fa-file-signature', 'bg-dark', 'dark'],
+                        'seguimiento_oferta'  => ['fas fa-eye', 'bg-info', 'info'],
                     ];
                     $tiposLabel = [
                         'correo'  => 'Correo',
@@ -79,6 +83,7 @@ $etapaColors = [
                         'visita'  => 'Visita',
                         'estudio_necesidades' => 'Estudio de Necesidades',
                         'oferta_servicio'     => 'Oferta de Servicio',
+                        'seguimiento_oferta'  => 'Seguimiento de la Oferta',
                     ];
                     $meta = $iconos[$tipoNorm] ?? ['fas fa-circle', 'bg-secondary', 'secondary'];
                     $tipoLabel = $tiposLabel[$tipoNorm] ?? ucwords(str_replace('_', ' ', $tipoNorm));
@@ -165,6 +170,7 @@ $etapaColors = [
                             <option value="visita">Visita</option>
                             <option value="estudio_necesidades">Estudio de Necesidades</option>
                             <option value="oferta_servicio">Oferta de Servicio</option>
+                            <option value="seguimiento_oferta">Seguimiento de la Oferta</option>
                             <option value="nota">Nota</option>
                         </select>
                     </div>

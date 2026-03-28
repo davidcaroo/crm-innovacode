@@ -64,6 +64,10 @@ class TrazabilidadController extends BaseController
                 'oferta_servicio' => 'Oferta de servicios',
                 'oferta de servicio' => 'Oferta de servicios',
                 'oferta de servicios' => 'Oferta de servicios',
+                'seguimiento' => 'Seguimiento de la oferta',
+                'seguimiento_oferta' => 'Seguimiento de la oferta',
+                'seguimiento de oferta' => 'Seguimiento de la oferta',
+                'seguimiento de la oferta' => 'Seguimiento de la oferta',
             ];
             $tipoActividad = $tipoActividadMap[$tipoActividadNorm] ?? 'nota';
 
@@ -72,6 +76,8 @@ class TrazabilidadController extends BaseController
             if ($tipoActividad === 'Oferta de servicios') {
                 // Regla de negocio: oferta enviada mueve la empresa a negociación.
                 $nuevaEtapa = 'negociacion';
+            } elseif ($tipoActividad === 'Seguimiento de la oferta') {
+                $nuevaEtapa = 'seguimiento';
             }
 
             $data = [
@@ -187,6 +193,9 @@ class TrazabilidadController extends BaseController
                 'visita' => 'Visita',
                 'estudio_necesidades' => 'Estudio de Necesidades',
                 'oferta_servicio' => 'Oferta de Servicio',
+                'seguimiento_oferta' => 'Seguimiento de la Oferta',
+                'seguimiento de la oferta' => 'Seguimiento de la Oferta',
+                'seguimiento' => 'Seguimiento de la Oferta',
                 'nota' => 'Nota',
             ];
             $tipoLabel = $tipoLabelMap[$tipoRaw] ?? ucwords(str_replace('_', ' ', $tipoRaw));

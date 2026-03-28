@@ -88,6 +88,7 @@
                                     $estadoFlujo = $estadosTrazabilidad[(int)$e->id] ?? [
                                         'tiene_estudio_necesidades' => false,
                                         'tiene_oferta_servicios' => false,
+                                        'tiene_seguimiento_oferta' => false,
                                     ];
                                     $contactoEfectivo = (
                                         $etapa === 'contactado'
@@ -95,16 +96,19 @@
                                     );
                                     $tieneOferta = !empty($estadoFlujo['tiene_oferta_servicios']);
                                     $tieneEstudio = !empty($estadoFlujo['tiene_estudio_necesidades']);
+                                    $tieneSeguimiento = !empty($estadoFlujo['tiene_seguimiento_oferta']);
                                     ?>
                                     <span class="badge badge-pill badge-<?= $badgeMap[$etapa] ?? 'secondary' ?>">
                                         <?= $labels[$etapa] ?? ucfirst($etapa) ?>
                                     </span>
-                                    <?php if ($contactoEfectivo || $tieneEstudio): ?>
+                                    <?php if ($contactoEfectivo || $tieneEstudio || $tieneOferta || $tieneSeguimiento): ?>
                                         <div class="mt-1">
                                             <?php if ($contactoEfectivo): ?>
                                                 <span class="badge badge-success mr-1">Contacto interesado</span>
                                             <?php endif; ?>
-                                            <?php if ($tieneOferta): ?>
+                                            <?php if ($tieneSeguimiento): ?>
+                                                <span class="badge badge-info bg-info text-white">Seguimiento de la oferta</span>
+                                            <?php elseif ($tieneOferta): ?>
                                                 <span class="badge badge-primary">Oferta de servicios</span>
                                             <?php elseif ($tieneEstudio): ?>
                                                 <span class="badge badge-primary">Estudio de necesidades</span>
