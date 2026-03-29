@@ -53,8 +53,8 @@
         <div id="wrapper">
             <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
                 <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?php echo url('dashboard/index'); ?>">
-                    <div class="sidebar-brand-icon rotate-n-15">
-                        <i class="fas fa-layer-group"></i>
+                    <div class="sidebar-brand-icon">
+                        <img src="<?php echo BASE_URL; ?>/public/img/icono-blanco.png" alt="Logo" style="max-height: 2.5rem; width: auto;">
                     </div>
                     <div class="sidebar-brand-text mx-3"><?php echo APP_NAME; ?></div>
                 </a>

@@ -25,7 +25,7 @@
                                         <p class="crm-login-hero-text mb-0">Centraliza empresas, contactos y oportunidades en una sola vista para acelerar tu operación comercial.</p>
                                     </div>
                                     <div class="crm-login-hero-art">
-                                        <img src="<?php echo BASE_URL; ?>/icono-blanco.png" alt="Ilustración comercial" class="img-fluid">
+                                        <img src="<?php echo BASE_URL; ?>/public/img/icono-blanco.png" alt="Ilustración comercial" class="img-fluid">
                                     </div>
                                 </div>
 

@@ -26,7 +26,7 @@
                     <tr>
                         <th><i class="fas fa-clock fa-xs mr-1"></i> Fecha</th>
                         <th><i class="fas fa-building fa-xs mr-1"></i> Empresa</th>
-                        <th><i class="fas fa-user fa-xs mr-1"></i> Vendedor</th>
+                        <th><i class="fas fa-user fa-xs mr-1"></i> Comercial</th>
                         <th><i class="fas fa-clipboard-list fa-xs mr-1"></i> Actividad</th>
                         <th><i class="fas fa-flag fa-xs mr-1"></i> Etapa</th>
                         <th><i class="fas fa-comment-dots fa-xs mr-1"></i> Observaciones</th>
