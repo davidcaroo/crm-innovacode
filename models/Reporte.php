@@ -86,18 +86,25 @@ class Reporte extends BaseModel
     public function resumenGlobalComercialUsuarios($filtros = [])
     {
         $whereEmp = [];
-        $params = [];
+        $paramsEmp = [];
+        $whereUser = ["u.estado = 'activo'"];
+        $paramsUser = [];
 
+        if (!empty($filtros['usuario_id'])) {
+            $whereUser[] = "u.id = ?";
+            $paramsUser[] = $filtros['usuario_id'];
+        }
         if (!empty($filtros['fecha_inicio'])) {
             $whereEmp[] = "e.creado_en >= ?";
-            $params[] = $filtros['fecha_inicio'] . ' 00:00:00';
+            $paramsEmp[] = $filtros['fecha_inicio'] . ' 00:00:00';
         }
         if (!empty($filtros['fecha_fin'])) {
             $whereEmp[] = "e.creado_en <= ?";
-            $params[] = $filtros['fecha_fin'] . ' 23:59:59';
+            $paramsEmp[] = $filtros['fecha_fin'] . ' 23:59:59';
         }
 
         $whereEmpSql = empty($whereEmp) ? '' : (' AND ' . implode(' AND ', $whereEmp));
+        $whereUserSql = implode(' AND ', $whereUser);
 
         $sql = "SELECT
                     u.id AS usuario_id,
@@ -121,10 +128,11 @@ class Reporte extends BaseModel
                     FROM trazabilidad
                     GROUP BY empresa_id
                 ) tf ON tf.empresa_id = e.id
-                WHERE u.estado = 'activo'
+                WHERE {$whereUserSql}
                 GROUP BY u.id, u.nombre, u.email, u.rol
                 ORDER BY u.nombre ASC";
 
+        $params = array_merge($paramsEmp, $paramsUser);
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return $stmt->fetchAll();
@@ -169,6 +177,40 @@ class Reporte extends BaseModel
                 ) tf ON tf.empresa_id = e.id
                 WHERE " . implode(' AND ', $where) . "
                 ORDER BY e.razon_social ASC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Extrae todo el historial de trazabilidad de un usuario para el Excel.
+     */
+    public function detalleActividadesPorUsuario($usuarioId, $filtros = [])
+    {
+        $where = ["t.usuario_id = ?"];
+        $params = [$usuarioId];
+
+        if (!empty($filtros['fecha_inicio'])) {
+            $where[] = "t.fecha >= ?";
+            $params[] = $filtros['fecha_inicio'] . ' 00:00:00';
+        }
+        if (!empty($filtros['fecha_fin'])) {
+            $where[] = "t.fecha <= ?";
+            $params[] = $filtros['fecha_fin'] . ' 23:59:59';
+        }
+
+        $sql = "SELECT 
+                    e.razon_social AS empresa,
+                    e.etapa_venta AS etapa_actual,
+                    t.tipo_actividad,
+                    t.etapa_venta AS etapa_en_momento_actividad,
+                    t.observaciones,
+                    t.fecha AS fecha_actividad
+                FROM trazabilidad t
+                JOIN empresas e ON t.empresa_id = e.id
+                WHERE " . implode(' AND ', $where) . "
+                ORDER BY t.fecha ASC";
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);

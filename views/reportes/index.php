@@ -141,7 +141,7 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
         <div class="col-12">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Ranking de Vendedores - Rendimiento Monetario</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Ranking de Comerciales - Rendimiento Monetario</h6>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
@@ -184,26 +184,41 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-wrap align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Reporte Global Comercial por Usuario</h6>
-                    <a class="btn btn-success btn-sm" href="<?php echo url('reporte/exportarGlobalExcel', ['fecha_inicio' => $filtrosGlobal['fecha_inicio'], 'fecha_fin' => $filtrosGlobal['fecha_fin']]); ?>">
+                    <a class="btn btn-success btn-sm" href="<?php echo url('reporte/exportarGlobalExcel', ['fecha_inicio' => $filtrosGlobal['fecha_inicio'], 'fecha_fin' => $filtrosGlobal['fecha_fin'], 'usuario_id' => $filtrosGlobal['usuario_id']]); ?>">
                         <i class="fas fa-file-excel mr-1"></i> Exportar XLSX
                     </a>
                 </div>
                 <div class="card-body">
                     <form method="GET" action="<?php echo url('reporte/index'); ?>" class="form-row align-items-end mb-3">
+                        
+                        <div class="col-md-3 mb-2">
+                            <label class="small font-weight-bold text-muted">Consultar Comercial</label>
+                            <select name="usuario_id" class="form-control">
+                                <option value="">Todos los comerciales</option>
+                                <?php if (!empty($listaUsuarios)): ?>
+                                    <?php foreach ($listaUsuarios as $usr): ?>
+                                        <option value="<?php echo $usr->id; ?>" <?php echo ((string)$filtrosGlobal['usuario_id'] === (string)$usr->id) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars($usr->nombre); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                        </div>
+                        
                         <div class="col-md-3 mb-2">
                             <label class="small font-weight-bold text-muted">Fecha inicio</label>
                             <input type="date" name="fecha_inicio" class="form-control" value="<?php echo htmlspecialchars($filtrosGlobal['fecha_inicio']); ?>">
                         </div>
-                        <div class="col-md-3 mb-2">
+                        <div class="col-md-2 mb-2">
                             <label class="small font-weight-bold text-muted">Fecha fin</label>
                             <input type="date" name="fecha_fin" class="form-control" value="<?php echo htmlspecialchars($filtrosGlobal['fecha_fin']); ?>">
                         </div>
-                        <div class="col-md-3 mb-2">
+                        <div class="col-md-2 mb-2">
                             <button type="submit" class="btn btn-primary btn-block">
                                 <i class="fas fa-filter mr-1"></i> Filtrar
                             </button>
                         </div>
-                        <div class="col-md-3 mb-2">
+                        <div class="col-md-2 mb-2">
                             <a href="<?php echo url('reporte/index'); ?>" class="btn btn-outline-secondary btn-block">
                                 <i class="fas fa-undo mr-1"></i> Limpiar
                             </a>

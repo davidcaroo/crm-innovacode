@@ -94,7 +94,7 @@
                 <div class="alert alert-info border-left-info shadow-sm mt-3 mb-1">
                     <h6 class="font-weight-bold text-info border-bottom-info pb-2 mb-2">¿Necesitas una funcionalidad nueva en tu CRM?</h6>
                     <p class="mb-2 text-gray-700">Nuestro equipo está listo para desarrollar e integrar módulos personalizados. Te ayudamos a escalar la operación de tu empresa.</p>
-                    <a href="https://innovacode-tech.vercel.app/" target="_blank" class="alert-link font-weight-bold text-primary">Solicitar auditoría tecnológica o cotización &rarr;</a>
+                    <a href="https://innovacode.click/" target="_blank" class="alert-link font-weight-bold text-primary">Solicitar auditoría tecnológica o cotización &rarr;</a>
                 </div>
             </div>
         </div>

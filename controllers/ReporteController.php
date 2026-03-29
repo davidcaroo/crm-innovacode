@@ -16,11 +16,17 @@ class ReporteController extends BaseController
     {
         $filtros = [
             'fecha_inicio' => isset($_GET['fecha_inicio']) ? trim((string)$_GET['fecha_inicio']) : '',
-            'fecha_fin'    => isset($_GET['fecha_fin']) ? trim((string)$_GET['fecha_fin']) : ''
+            'fecha_fin'    => isset($_GET['fecha_fin']) ? trim((string)$_GET['fecha_fin']) : '',
+            'usuario_id'   => isset($_GET['usuario_id']) ? trim((string)$_GET['usuario_id']) : ''
         ];
 
         $usuario_id = $_SESSION['usuario_rol'] === 'usuario' ? $_SESSION['usuario_id'] : null;
         $esAdmin = in_array($_SESSION['usuario_rol'], ['admin', 'superadmin'], true);
+
+        // Si es admin, puede filtrar por usuario especifico en todo el tablero
+        if ($esAdmin && !empty($filtros['usuario_id'])) {
+            $usuario_id = (int)$filtros['usuario_id'];
+        }
 
         $stats = [
             'ventas_mes'   => $this->reporteModel->ventasMensuales($usuario_id),
@@ -32,6 +38,14 @@ class ReporteController extends BaseController
         $reporteGlobal = $esAdmin
             ? $this->reporteModel->resumenGlobalComercialUsuarios($filtros)
             : [];
+
+        // Obtener lista completa de usuarios para el select del filtro
+        $listaUsuarios = [];
+        if ($esAdmin) {
+            require_once __DIR__ . '/../models/Usuario.php';
+            $usrModel = new Usuario();
+            $listaUsuarios = $usrModel->todos();
+        }
 
         // Preparar datos para los charts
         $labelsVentas = [];
@@ -49,7 +63,8 @@ class ReporteController extends BaseController
             'dataVentas'   => $dataVentas,
             'reporteGlobal' => $reporteGlobal,
             'filtrosGlobal' => $filtros,
-            'esAdminGlobal' => $esAdmin
+            'esAdminGlobal' => $esAdmin,
+            'listaUsuarios' => $listaUsuarios
         ]);
     }
 
@@ -64,14 +79,17 @@ class ReporteController extends BaseController
 
         $filtros = [
             'fecha_inicio' => isset($_GET['fecha_inicio']) ? trim((string)$_GET['fecha_inicio']) : '',
-            'fecha_fin'    => isset($_GET['fecha_fin']) ? trim((string)$_GET['fecha_fin']) : ''
+            'fecha_fin'    => isset($_GET['fecha_fin']) ? trim((string)$_GET['fecha_fin']) : '',
+            'usuario_id'   => isset($_GET['usuario_id']) ? trim((string)$_GET['usuario_id']) : ''
         ];
 
         $resumen = $this->reporteModel->resumenGlobalComercialUsuarios($filtros);
 
         $detallesPorUsuario = [];
+        $actividadesPorUsuario = [];
         foreach ($resumen as $fila) {
             $detallesPorUsuario[(int)$fila->usuario_id] = $this->reporteModel->detalleGlobalComercialPorUsuario($fila->usuario_id, $filtros);
+            $actividadesPorUsuario[(int)$fila->usuario_id] = $this->reporteModel->detalleActividadesPorUsuario($fila->usuario_id, $filtros);
         }
 
         $tmpFile = tempnam(sys_get_temp_dir(), 'xlsx_rep_');
@@ -80,7 +98,7 @@ class ReporteController extends BaseController
             exit('No se pudo crear archivo temporal para exportacion XLSX.');
         }
 
-        $ok = $this->buildXlsxReportFile($tmpFile, $resumen, $detallesPorUsuario);
+        $ok = $this->buildXlsxReportFile($tmpFile, $resumen, $detallesPorUsuario, $actividadesPorUsuario);
         if (!$ok) {
             @unlink($tmpFile);
             http_response_code(500);
@@ -92,6 +110,10 @@ class ReporteController extends BaseController
         }
 
         $downloadName = 'reporte_global_comercial_' . date('Ymd_His') . '.xlsx';
+        if (!empty($filtros['usuario_id'])) {
+            $downloadName = 'reporte_individual_' . $filtros['usuario_id'] . '_' . date('Ymd_His') . '.xlsx';
+        }
+
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment; filename="' . $downloadName . '"');
         header('Content-Length: ' . filesize($tmpFile));
@@ -111,7 +133,7 @@ class ReporteController extends BaseController
         }
     }
 
-    private function buildXlsxReportFile($filePath, $resumen, $detallesPorUsuario)
+    private function buildXlsxReportFile($filePath, $resumen, $detallesPorUsuario, $actividadesPorUsuario)
     {
         $zip = new ZipArchive();
         if ($zip->open($filePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
@@ -193,6 +215,52 @@ class ReporteController extends BaseController
             $sheetNames[] = $sheetName;
             $sheetFiles[] = 'sheet' . $sheetIndex . '.xml';
             $sheetXmls[] = $this->worksheetXml($detalleHeaders, $detalleRows, []);
+            $sheetIndex++;
+
+            // Hoja 2: Actividades del Usuario
+            $actividades = isset($actividadesPorUsuario[$usuarioId]) ? $actividadesPorUsuario[$usuarioId] : [];
+            $actHeaders = [
+                'Empresa',
+                'Tipo Actividad',
+                'Etapa durante Actividad',
+                'Observaciones',
+                'Fecha'
+            ];
+            $actRows = [];
+            foreach ($actividades as $act) {
+                $tipoRaw = strtolower((string)($act->tipo_actividad ?? ''));
+                $tipoLabelMap = [
+                    'llamada' => 'Llamada al cliente',
+                    'correo' => 'Envío de correo',
+                    'reunion' => 'Reunión acordada',
+                    'visita' => 'Visita presencial',
+                    'estudio_necesidades' => 'Generación de Estudio de Necesidades',
+                    'oferta_servicio' => 'Envío de Oferta de Servicios',
+                    'seguimiento_oferta' => 'Seguimiento de la Oferta enviada',
+                    'seguimiento' => 'Seguimiento de la Oferta',
+                    'nota' => 'Nota interna',
+                ];
+                $tipoLabel = $tipoLabelMap[$tipoRaw] ?? ucwords(str_replace('_', ' ', $tipoRaw));
+
+                $actRows[] = [
+                    $act->empresa,
+                    $tipoLabel,
+                    ucfirst(strtolower($act->etapa_en_momento_actividad ?? '')),
+                    $act->observaciones,
+                    $act->fecha_actividad
+                ];
+            }
+
+            if (function_exists('mb_substr')) {
+                $actBaseName = mb_substr($baseName, 0, 24, 'UTF-8') . ' Acts';
+            } else {
+                $actBaseName = substr($baseName, 0, 24) . ' Acts';
+            }
+            $actSheetName = $this->nextUniqueSheetName($actBaseName, $usedNames);
+
+            $sheetNames[] = $actSheetName;
+            $sheetFiles[] = 'sheet' . $sheetIndex . '.xml';
+            $sheetXmls[] = $this->worksheetXml($actHeaders, $actRows, []);
             $sheetIndex++;
         }
 
