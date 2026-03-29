@@ -97,11 +97,14 @@
                                     $tieneOferta = !empty($estadoFlujo['tiene_oferta_servicios']);
                                     $tieneEstudio = !empty($estadoFlujo['tiene_estudio_necesidades']);
                                     $tieneSeguimiento = !empty($estadoFlujo['tiene_seguimiento_oferta']);
+                                    
+                                    // No mostrar badges de flujo si ya se cerró la venta (ganado o perdido)
+                                    $mostrarBadgesActividad = !in_array($etapa, ['ganado', 'perdido']);
                                     ?>
                                     <span class="badge badge-pill badge-<?= $badgeMap[$etapa] ?? 'secondary' ?>">
                                         <?= $labels[$etapa] ?? ucfirst($etapa) ?>
                                     </span>
-                                    <?php if ($contactoEfectivo || $tieneEstudio || $tieneOferta || $tieneSeguimiento): ?>
+                                    <?php if ($mostrarBadgesActividad && ($contactoEfectivo || $tieneEstudio || $tieneOferta || $tieneSeguimiento)): ?>
                                         <div class="mt-1">
                                             <?php if ($contactoEfectivo): ?>
                                                 <span class="badge badge-success mr-1">Contacto interesado</span>

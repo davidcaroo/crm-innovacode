@@ -53,13 +53,15 @@ $total = array_sum(array_map('count', $etapas));
                                 'tiene_oferta_servicios' => false,
                                 'tiene_seguimiento_oferta' => false,
                             ];
+                            $etapaActual = strtolower((string)($emp->etapa_venta ?? ''));
                             $contactoEfectivo = (
-                                strtolower((string)($emp->etapa_venta ?? '')) === 'contactado'
+                                $etapaActual === 'contactado'
                                 && strtoupper(trim((string)($emp->aplica ?? ''))) === 'SI'
                             );
                             $tieneOferta = !empty($estadoFlujo['tiene_oferta_servicios']);
                             $tieneEstudio = !empty($estadoFlujo['tiene_estudio_necesidades']);
                             $tieneSeguimiento = !empty($estadoFlujo['tiene_seguimiento_oferta']);
+                            $mostrarBadgesActividad = !in_array($etapaActual, ['ganado', 'perdido']);
                             ?>
                             <div class="card shadow mb-2">
                                 <div class="card-body p-2">
@@ -67,7 +69,7 @@ $total = array_sum(array_map('count', $etapas));
                                         <?php echo htmlspecialchars(mb_strimwidth($emp->razon_social, 0, 30, '...')); ?>
                                     </div>
 
-                                    <?php if ($contactoEfectivo || $tieneEstudio || $tieneOferta || $tieneSeguimiento): ?>
+                                    <?php if ($mostrarBadgesActividad && ($contactoEfectivo || $tieneEstudio || $tieneOferta || $tieneSeguimiento)): ?>
                                         <div class="mb-1">
                                             <?php if ($contactoEfectivo): ?>
                                                 <span class="badge badge-success mr-1">Contacto interesado</span>
