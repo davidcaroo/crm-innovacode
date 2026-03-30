@@ -40,6 +40,7 @@ temp/
 node_modules/
 vendor/
 startbootstrap-sb-admin-gh-pages/
+skills/
 
 # Backup files
 *.sql.backup
