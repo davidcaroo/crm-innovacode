@@ -14,11 +14,10 @@ foreach ($stats['ventas_mes'] as $v) {
 }
 
 $act = 0;
-foreach ($stats['conversion'] as $c) {
-    $etapa = strtolower(trim((string) $c->etapa_venta));
-    if (in_array($etapa, ['contactado', 'contactada'], true)) {
-        $act += (int) $c->cantidad;
-    }
+// Sumar todos los contactos efectivos del reporte global (Total Gestiones)
+$reporteGlobal = isset($reporteGlobal) ? $reporteGlobal : [];
+foreach ($reporteGlobal as $r) {
+    $act += (int) $r->total_contactados;
 }
 
 $totalEmp = 0;

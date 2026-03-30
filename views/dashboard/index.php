@@ -105,10 +105,23 @@ foreach ($empresasPorEtapa as $row) {
                 <h6 class="m-0 font-weight-bold text-primary">Resumen Pipeline por Etapa</h6>
             </div>
             <div class="card-body">
-                <?php foreach ($etapasOrden as $i => $etapa): ?>
+                <?php 
+                $ordenPipelineView = [
+                    'prospectado' => 'Prospectado',
+                    'investigacion' => 'Investigación',
+                    'total_contactados' => 'Contactos Efectivos',
+                    'contacto_interesado' => 'Contacto Interesado',
+                    'estudio_necesidades' => 'Estudio de necesidades',
+                    'oferta_servicios' => 'Oferta de Servicios',
+                    'seguimiento_oferta' => 'Seguimiento a la oferta',
+                    'perdidos' => 'Cierre fallido',
+                    'cierre_exitoso' => 'Cierre exitoso'
+                ];
+                
+                foreach ($ordenPipelineView as $key => $label): ?>
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <span class="small text-gray-700"><?php echo $etapasLabel[$i]; ?></span>
-                        <span class="badge badge-light"><?php echo $etapaConteos[$etapa]; ?></span>
+                        <span class="small text-gray-700"><?php echo $label; ?></span>
+                        <span class="badge badge-light"><?php echo $consolidadoPipeline[$key] ?? 0; ?></span>
                     </div>
                 <?php endforeach; ?>
                 <hr>

@@ -8,16 +8,19 @@
 require_once __DIR__ . '/BaseController.php';
 require_once __DIR__ . '/../models/Empresa.php';
 require_once __DIR__ . '/../models/Venta.php';
+require_once __DIR__ . '/../models/Reporte.php';
 
 class DashboardController extends BaseController
 {
     private $empresaModel;
     private $ventaModel;
+    private $reporteModel;
 
     public function __construct()
     {
         $this->empresaModel = new Empresa();
         $this->ventaModel = new Venta();
+        $this->reporteModel = new Reporte();
     }
 
     /**
@@ -43,6 +46,40 @@ class DashboardController extends BaseController
             $empresasPorActividad = $this->empresaModel->contarPorActividadEconomica($u_id);
             $empresasPorEtapa = $this->empresaModel->contarPorEtapa($u_id);
 
+            // Nuevas métricas avanzadas de pipeline (mutuamente excluyentes)
+            $filtrosReporte = [];
+            if ($u_id !== null) {
+                $filtrosReporte['usuario_id'] = $u_id;
+            }
+            $reporteAvanzado = $this->reporteModel->resumenGlobalComercialUsuarios($filtrosReporte);
+            
+            // Consolidar a una sola fila sumando todos los usuarios si es admin
+            $consolidadoPipeline = [
+                'prospectado' => 0, // este dato no viene del reporte, se calcula restando
+                'investigacion' => 0,
+                'total_contactados' => 0,
+                'contacto_interesado' => 0,
+                'estudio_necesidades' => 0,
+                'oferta_servicios' => 0,
+                'seguimiento_oferta' => 0,
+                'perdidos' => 0,
+                'cierre_exitoso' => 0
+            ];
+            
+            foreach ($reporteAvanzado as $r) {
+                $consolidadoPipeline['investigacion'] += (int)$r->investigacion;
+                $consolidadoPipeline['total_contactados'] += (int)$r->total_contactados;
+                $consolidadoPipeline['contacto_interesado'] += (int)$r->contacto_interesado;
+                $consolidadoPipeline['estudio_necesidades'] += (int)$r->estudio_necesidades;
+                $consolidadoPipeline['oferta_servicios'] += (int)$r->oferta_servicios;
+                $consolidadoPipeline['seguimiento_oferta'] += (int)$r->seguimiento_oferta;
+                $consolidadoPipeline['perdidos'] += (int)$r->perdidos;
+                $consolidadoPipeline['cierre_exitoso'] += (int)$r->cierre_exitoso;
+            }
+            
+            // Prospectados: Total de empresas menos los "Total Contactados"
+            $consolidadoPipeline['prospectado'] = max(0, $totalEmpresas - $consolidadoPipeline['total_contactados']);
+
             $this->view('dashboard/index', [
                 'totalEmpresas' => $totalEmpresas,
                 'empresasUltimos30Dias' => $empresasUltimos30Dias,
@@ -51,6 +88,7 @@ class DashboardController extends BaseController
                 'empresasPorDepartamento' => $empresasPorDepartamento,
                 'empresasPorActividad' => $empresasPorActividad,
                 'empresasPorEtapa' => $empresasPorEtapa,
+                'consolidadoPipeline' => $consolidadoPipeline,
                 'empresasGanadas' => $empresasGanadas,
                 'empresasPerdidas' => $empresasPerdidas
             ]);
