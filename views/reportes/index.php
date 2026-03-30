@@ -46,7 +46,8 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Gestiones Ganadas</div>
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total cierres exitosos
+                        </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $ganados; ?></div>
                     </div>
                     <div class="col-auto">
@@ -62,7 +63,7 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Ventas Totales (Año)
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Ingresos Obtenidos (Año)
                         </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800">
                             $<?php echo number_format($total, 0, ',', '.'); ?></div>
@@ -80,7 +81,7 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Gestiones Realizadas</div>
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Gestiones Realizadas</div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $act; ?></div>
                     </div>
                     <div class="col-auto">
@@ -239,15 +240,17 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
                             <thead class="thead-light">
                                 <tr>
                                     <th>Usuario</th>
-                                    <th>Email</th>
-                                    <!--    <th>Rol</th> -->
-                                    <th class="text-success">Gestiones Ganadas</th>
-                                    <th>Gestiones realizadas</th>
-                                    <th>Gestiones Perdidas/No interesados</th>
-                                    <th>Gestiones en Negociacion con oferta enviada</th>
+                                    <!-- <th>Email</th> -->
+                                    <th>Investigación</th>
+                                    <th>Contacto Efectivo</th>
+                                    <th>Contacto Interesado</th>
+                                    <th>Estudio de necesidades</th>
+                                    <th>Oferta de Servicios</th>
+                                    <th>Seguimiento a la oferta</th>
+                                    <th>Perdidos/No interesados</th>
+                                    <th class="text-success">Cierre exitoso</th>
                                     <th>Total Contactados</th>
-                                    <th>Total Contactados con estudio de necesidades</th>
-                                    <th>Total Prospectados</th>
+                                    <th>Total Empresas</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -260,16 +263,18 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
                                     <?php foreach ($reporteGlobal as $row): ?>
                                         <tr>
                                             <td class="font-weight-bold"><?php echo htmlspecialchars($row->usuario); ?></td>
-                                            <td><?php echo htmlspecialchars($row->email); ?></td>
-                                            <!--  <td><span class="badge badge-info"><?php echo htmlspecialchars($row->rol); ?></span> -->
-                                            </td>
-                                            <td class="font-weight-bold text-success"><?php echo (int) $row->ganadas; ?></td>
-                                            <td><?php echo (int) $row->gestiones_realizadas; ?></td>
-                                            <td><?php echo (int) $row->perdidas; ?></td>
-                                            <td><?php echo (int) $row->negociacion_con_oferta; ?></td>
-                                            <td><?php echo (int) $row->contactado_total; ?></td>
-                                            <td><?php echo (int) $row->contactado_con_estudio; ?></td>
-                                            <td><?php echo (int) $row->prospectado; ?></td>
+                                            <!-- <td><?php echo htmlspecialchars($row->email); ?></td> -->
+                                            <!-- <td><span class="badge badge-info"><?php echo htmlspecialchars($row->rol); ?></span></td> -->
+                                            <td><?php echo (int) $row->investigacion; ?></td>
+                                            <td><?php echo (int) $row->contacto_efectivo; ?></td>
+                                            <td><?php echo (int) $row->contacto_interesado; ?></td>
+                                            <td><?php echo (int) $row->estudio_necesidades; ?></td>
+                                            <td><?php echo (int) $row->oferta_servicios; ?></td>
+                                            <td><?php echo (int) $row->seguimiento_oferta; ?></td>
+                                            <td><?php echo (int) $row->perdidos; ?></td>
+                                            <td class="font-weight-bold text-success"><?php echo (int) $row->cierre_exitoso; ?></td>
+                                            <td class="font-weight-bold"><?php echo (int) $row->total_contactados; ?></td>
+                                            <td class="font-weight-bold"><?php echo (int) $row->total_empresas; ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php endif; ?>

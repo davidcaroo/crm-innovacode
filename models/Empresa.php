@@ -39,6 +39,26 @@ class Empresa extends BaseModel
         return $stmt->fetchAll();
     }
 
+    public function porEtapaPaginadas($etapa, $usuario_id = null, $limit = 20, $offset = 0)
+    {
+        $sql = "SELECT * FROM empresas WHERE etapa_venta = :etapa";
+        if ($usuario_id) {
+            $sql .= " AND usuario_id = :usuario_id";
+        }
+        $sql .= " ORDER BY creado_en DESC LIMIT :offset, :limit";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':etapa', $etapa, PDO::PARAM_STR);
+        if ($usuario_id) {
+            $stmt->bindValue(':usuario_id', $usuario_id, PDO::PARAM_INT);
+        }
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
     /**
      * Buscar empresas por término (nombre, departamento o ciudad)
      */

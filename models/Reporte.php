@@ -111,13 +111,36 @@ class Reporte extends BaseModel
                     u.nombre AS usuario,
                     u.email,
                     u.rol,
-                    SUM(CASE WHEN LOWER(TRIM(e.etapa_venta)) = 'ganado' THEN 1 ELSE 0 END) AS ganadas,
-                    SUM(CASE WHEN e.etapa_venta = 'contactado' AND UPPER(TRIM(COALESCE(e.aplica, ''))) = 'SI' THEN 1 ELSE 0 END) AS gestiones_realizadas,
-                    SUM(CASE WHEN e.etapa_venta = 'perdido' THEN 1 ELSE 0 END) AS perdidas,
-                    SUM(CASE WHEN e.etapa_venta = 'negociacion' AND COALESCE(tf.tiene_oferta_servicios, 0) = 1 THEN 1 ELSE 0 END) AS negociacion_con_oferta,
-                    SUM(CASE WHEN e.etapa_venta = 'contactado' THEN 1 ELSE 0 END) AS contactado_total,
-                    SUM(CASE WHEN e.etapa_venta = 'contactado' AND COALESCE(tf.tiene_estudio_necesidades, 0) = 1 THEN 1 ELSE 0 END) AS contactado_con_estudio,
-                    SUM(CASE WHEN e.etapa_venta = 'prospectado' THEN 1 ELSE 0 END) AS prospectado
+                    
+                    -- 1. Investigación: (Acumulativo) Tienen al menos un contacto
+                    SUM(CASE WHEN tc.empresa_id IS NOT NULL THEN 1 ELSE 0 END) AS investigacion,
+                    
+                    -- 2. Contacto Efectivo: Etapa 'contactado', NO aplican, y NO tienen estudio
+                    SUM(CASE WHEN LOWER(TRIM(e.etapa_venta)) = 'contactado' AND UPPER(TRIM(COALESCE(e.aplica, ''))) != 'SI' AND COALESCE(tf.tiene_estudio_necesidades, 0) = 0 THEN 1 ELSE 0 END) AS contacto_efectivo,
+                    
+                    -- 3. Contacto Interesado: Etapa 'contactado', SI aplican, pero NO tienen estudio de necesidades
+                    SUM(CASE WHEN LOWER(TRIM(e.etapa_venta)) = 'contactado' AND UPPER(TRIM(COALESCE(e.aplica, ''))) = 'SI' AND COALESCE(tf.tiene_estudio_necesidades, 0) = 0 THEN 1 ELSE 0 END) AS contacto_interesado,
+                    
+                    -- 4. Estudio de necesidades: Tienen la actividad en trazabilidad, pero NO oferta de servicios, y NO están en seguimiento/ganado/perdido
+                    SUM(CASE WHEN COALESCE(tf.tiene_estudio_necesidades, 0) = 1 AND COALESCE(tf.tiene_oferta_servicios, 0) = 0 AND LOWER(TRIM(e.etapa_venta)) NOT IN ('seguimiento', 'ganado', 'perdido') THEN 1 ELSE 0 END) AS estudio_necesidades,
+                    
+                    -- 5. Oferta de Servicios: Tienen la actividad en trazabilidad, y NO están en seguimiento/ganado/perdido
+                    SUM(CASE WHEN COALESCE(tf.tiene_oferta_servicios, 0) = 1 AND LOWER(TRIM(e.etapa_venta)) NOT IN ('seguimiento', 'ganado', 'perdido') THEN 1 ELSE 0 END) AS oferta_servicios,
+                    
+                    -- 6. Seguimiento a la oferta: Etapa explícita 'seguimiento'
+                    SUM(CASE WHEN LOWER(TRIM(e.etapa_venta)) = 'seguimiento' THEN 1 ELSE 0 END) AS seguimiento_oferta,
+                    
+                    -- 7. Perdidos/No interesados
+                    SUM(CASE WHEN LOWER(TRIM(e.etapa_venta)) = 'perdido' THEN 1 ELSE 0 END) AS perdidos,
+                    
+                    -- 8. Cierre exitoso
+                    SUM(CASE WHEN LOWER(TRIM(e.etapa_venta)) = 'ganado' THEN 1 ELSE 0 END) AS cierre_exitoso,
+                    
+                    -- 9. Total Contactados (Todo el que pasó de prospectado)
+                    SUM(CASE WHEN LOWER(TRIM(e.etapa_venta)) != 'prospectado' THEN 1 ELSE 0 END) AS total_contactados,
+                    
+                    -- 10. Total Empresas (Globales asignadas)
+                    COUNT(e.id) AS total_empresas
                 FROM usuarios u
                 LEFT JOIN empresas e
                     ON e.usuario_id = u.id {$whereEmpSql}
@@ -129,6 +152,9 @@ class Reporte extends BaseModel
                     FROM trazabilidad
                     GROUP BY empresa_id
                 ) tf ON tf.empresa_id = e.id
+                LEFT JOIN (
+                    SELECT empresa_id FROM contactos GROUP BY empresa_id
+                ) tc ON tc.empresa_id = e.id
                 WHERE {$whereUserSql}
                 GROUP BY u.id, u.nombre, u.email, u.rol
                 ORDER BY u.nombre ASC";

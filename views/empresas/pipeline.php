@@ -10,7 +10,7 @@ $etapasConfig = [
     'ganado'      => ['label' => 'Ganado',       'icon' => 'fas fa-trophy'],
     'perdido'     => ['label' => 'Perdido',      'icon' => 'fas fa-times-circle'],
 ];
-$total = array_sum(array_map('count', $etapas));
+$total = array_sum($conteosPorEtapa); // Usar $conteosPorEtapa desde el controlador
 ?>
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -32,7 +32,7 @@ $total = array_sum(array_map('count', $etapas));
     ?>
     <?php foreach ($etapasConfig as $key => $cfg):
         $lista = $etapas[$key] ?? [];
-        $count = count($lista);
+        $count = $conteosPorEtapa[$key] ?? 0;
         $laneColor = $laneMap[$key] ?? 'secondary';
     ?>
         <div class="col-xl-3 col-md-6 mb-4">
@@ -69,19 +69,24 @@ $total = array_sum(array_map('count', $etapas));
                                         <?php echo htmlspecialchars(mb_strimwidth($emp->razon_social, 0, 30, '...')); ?>
                                     </div>
 
-                                    <?php if ($mostrarBadgesActividad && ($contactoEfectivo || $tieneEstudio || $tieneOferta || $tieneSeguimiento)): ?>
-                                        <div class="mb-1">
-                                            <?php if ($contactoEfectivo): ?>
-                                                <span class="badge badge-success mr-1">Contacto interesado</span>
-                                            <?php endif; ?>
-                                            <?php if ($tieneSeguimiento): ?>
+                                    <?php if ($mostrarBadgesActividad): ?>
+                                        <?php if ($tieneSeguimiento): ?>
+                                            <div class="mb-1">
                                                 <span class="badge badge-info bg-info text-white">Seguimiento de la oferta</span>
-                                            <?php elseif ($tieneOferta): ?>
+                                            </div>
+                                        <?php elseif ($tieneOferta): ?>
+                                            <div class="mb-1">
                                                 <span class="badge badge-primary">Oferta de servicios</span>
-                                            <?php elseif ($tieneEstudio): ?>
+                                            </div>
+                                        <?php elseif ($tieneEstudio): ?>
+                                            <div class="mb-1">
                                                 <span class="badge badge-primary">Estudio de necesidades</span>
-                                            <?php endif; ?>
-                                        </div>
+                                            </div>
+                                        <?php elseif ($contactoEfectivo): ?>
+                                            <div class="mb-1">
+                                                <span class="badge badge-success mr-1">Contacto interesado</span>
+                                            </div>
+                                        <?php endif; ?>
                                     <?php endif; ?>
 
                                     <div class="small text-gray-600 mb-1">
@@ -108,6 +113,27 @@ $total = array_sum(array_map('count', $etapas));
         </div>
     <?php endforeach; ?>
 </div>
+
+<!-- Paginación Global del Pipeline -->
+<?php if (isset($totalPages) && $totalPages > 1): ?>
+    <div class="row mt-4">
+        <div class="col-12 d-flex justify-content-center">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item <?php echo ($currentPage <= 1) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?controller=empresa&action=pipeline&page=<?php echo $currentPage - 1; ?>" tabindex="-1">Anterior</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link text-dark">Página <?php echo (int)$currentPage; ?> de <?php echo (int)$totalPages; ?></span>
+                    </li>
+                    <li class="page-item <?php echo ($currentPage >= $totalPages) ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?controller=empresa&action=pipeline&page=<?php echo $currentPage + 1; ?>">Siguiente</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+<?php endif; ?>
 
 <?php // Footer included from BaseController 
 ?>

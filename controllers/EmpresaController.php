@@ -237,22 +237,43 @@ class EmpresaController extends BaseController
     {
         $empresaModel = new Empresa();
 
-        $todasEmpresas = (in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']))
-            ? $empresaModel->todasAdmin()
-            : $empresaModel->todasPorUsuario($_SESSION['usuario_id']);
+        $usuario_id = in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']) ? null : $_SESSION['usuario_id'];
+        
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $limit = 15; // Límite de tarjetas por columna
+        $offset = ($page - 1) * $limit;
 
-        // Agrupar por etapa
-        $etapas = ['prospectado' => [], 'contactado' => [], 'negociacion' => [], 'seguimiento' => [], 'ganado' => [], 'perdido' => []];
-        foreach ($todasEmpresas as $emp) {
-            $etapa = $emp->etapa_venta ?? 'prospectado';
-            if (!isset($etapas[$etapa]))
-                $etapa = 'prospectado';
-            $etapas[$etapa][] = $emp;
+        $etapasList = ['prospectado', 'contactado', 'negociacion', 'seguimiento', 'ganado', 'perdido'];
+        $etapas = [];
+        $todasEmpresasPaginadas = [];
+        
+        $totalesPorEtapaObj = $empresaModel->contarPorEtapa($usuario_id);
+        $maxEmpresasEnEtapa = 0;
+        $conteosPorEtapa = array_fill_keys($etapasList, 0);
+
+        foreach($totalesPorEtapaObj as $row) {
+            $e = strtolower($row->etapa_venta ?? 'prospectado');
+            $conteosPorEtapa[$e] += (int)$row->conteo;
+        }
+
+        foreach ($conteosPorEtapa as $conteo) {
+            if ($conteo > $maxEmpresasEnEtapa) {
+                $maxEmpresasEnEtapa = $conteo;
+            }
+        }
+        $totalPages = max(1, (int)ceil($maxEmpresasEnEtapa / $limit));
+
+        foreach ($etapasList as $etapaStr) {
+            $empresasEtapa = $empresaModel->porEtapaPaginadas($etapaStr, $usuario_id, $limit, $offset);
+            $etapas[$etapaStr] = $empresasEtapa;
+            foreach ($empresasEtapa as $ee) {
+                $todasEmpresasPaginadas[] = $ee;
+            }
         }
 
         $empresaIds = array_map(function ($e) {
             return (int)($e->id ?? 0);
-        }, $todasEmpresas);
+        }, $todasEmpresasPaginadas);
 
         $estadosTrazabilidad = [];
         if (!empty($empresaIds)) {
@@ -263,6 +284,9 @@ class EmpresaController extends BaseController
         $this->view('empresas/pipeline', [
             'etapas' => $etapas,
             'estadosTrazabilidad' => $estadosTrazabilidad,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'conteosPorEtapa' => $conteosPorEtapa
         ]);
     }
 
@@ -386,20 +410,20 @@ class EmpresaController extends BaseController
 
             $badgeHtm = '<span class="badge badge-pill badge-' . ($badgeMap[$etapa] ?? 'secondary') . '">' . ($labels[$etapa] ?? ucfirst($etapa)) . '</span>';
 
-            if ($mostrarBadgesActividad && ($contactoEfectivo || $tieneEstudio || $tieneOferta || $tieneSeguimiento)) {
-                $badgeHtm .= '<div class="mt-1">';
-                if ($contactoEfectivo)
-                    $badgeHtm .= '<span class="badge badge-success mr-1 mb-1 d-inline-block">Contacto interesado</span>';
+            if ($mostrarBadgesActividad) {
                 if ($tieneSeguimiento) {
-                    $badgeHtm .= '<span class="badge badge-info bg-info text-white mr-1 mb-1 d-inline-block">Seguimiento de la oferta</span>';
+                    $badgeHtm .= '<div class="mt-1"><span class="badge badge-info bg-info text-white mr-1 mb-1 d-inline-block">Seguimiento de la oferta</span></div>';
                 }
                 elseif ($tieneOferta) {
-                    $badgeHtm .= '<span class="badge badge-primary mr-1 mb-1 d-inline-block">Oferta de servicios</span>';
+                    $badgeHtm .= '<div class="mt-1"><span class="badge badge-primary mr-1 mb-1 d-inline-block">Oferta de servicios</span></div>';
                 }
                 elseif ($tieneEstudio) {
-                    $badgeHtm .= '<span class="badge badge-primary mr-1 mb-1 d-inline-block">Estudio de necesidades</span>';
+                    // Reemplazar el badge de etapa por solo "Estudio de necesidades"
+                    $badgeHtm = '<span class="badge badge-pill badge-primary">Estudio de necesidades</span>';
                 }
-                $badgeHtm .= '</div>';
+                elseif ($contactoEfectivo) {
+                    $badgeHtm .= '<div class="mt-1"><span class="badge badge-success mr-1 mb-1 d-inline-block">Contacto interesado</span></div>';
+                }
             }
 
             $btnContactos = url('contacto/index', ['empresa_id' => $e->id]);

@@ -146,36 +146,38 @@ class ReporteController extends BaseController
 
         $resumenHeaders = [
             'Usuario',
-            'Email',
-            'Rol',
-            'Gestiones Ganadas',
-            'Gestiones realizadas',
-            'Gestiones Perdidas/No interesados',
-            'Gestiones en Negociacion con oferta enviada',
+            'Investigación',
+            'Contacto Efectivo',
+            'Contacto Interesado',
+            'Estudio de necesidades',
+            'Oferta de Servicios',
+            'Seguimiento a la oferta',
+            'Perdidos/No interesados',
+            'Cierre exitoso',
             'Total Contactados',
-            'Total Contactados con estudio de necesidades',
-            'Total Prospectados'
+            'Total Empresas'
         ];
 
         $resumenRows = [];
         foreach ($resumen as $r) {
             $resumenRows[] = [
                 $r->usuario,
-                $r->email,
-                $r->rol,
-                (int)$r->ganadas,
-                (int)$r->gestiones_realizadas,
-                (int)$r->perdidas,
-                (int)$r->negociacion_con_oferta,
-                (int)$r->contactado_total,
-                (int)$r->contactado_con_estudio,
-                (int)$r->prospectado
+                (int)$r->investigacion,
+                (int)$r->contacto_efectivo,
+                (int)$r->contacto_interesado,
+                (int)$r->estudio_necesidades,
+                (int)$r->oferta_servicios,
+                (int)$r->seguimiento_oferta,
+                (int)$r->perdidos,
+                (int)$r->cierre_exitoso,
+                (int)$r->total_contactados,
+                (int)$r->total_empresas
             ];
         }
 
         $sheetNames[] = 'Resumen Global';
         $sheetFiles[] = 'sheet1.xml';
-        $sheetXmls[] = $this->worksheetXml($resumenHeaders, $resumenRows, [4, 5, 6, 7, 8, 9, 10]);
+        $sheetXmls[] = $this->worksheetXml($resumenHeaders, $resumenRows, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
 
         $usedNames = ['Resumen Global' => true];
         $sheetIndex = 2;
