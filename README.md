@@ -1,228 +1,218 @@
-# CRM - Sistema de Gestión de Clientes
+<div align="center">
 
-Sistema de gestión de relaciones con clientes (CRM) desarrollado en PHP con MySQL, que incluye dashboard general y vista detallada por cliente.
+# 🚀 CRM Innovacode
 
-## Características
+**Sistema de Gestión de Relaciones Comerciales**
 
-- 📊 Dashboard general con estadísticas
-- 👥 Gestión de clientes y empresas
-- 📈 Visualización de datos por cliente
-- 🎯 Interfaz intuitiva y responsive
-- 🔍 Búsqueda y filtrado de clientes
-- 🔐 Sistema de autenticación con roles
-- 📧 Notificaciones por email
-- 🔄 CI/CD automático con GitHub Actions
+Un CRM moderno y completo para la gestión integral de equipos comerciales, pipeline de ventas y trazabilidad de actividades.
 
-## Requisitos Previos
+[![PHP](https://img.shields.io/badge/PHP-8.0+-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://mysql.com)
+[![Bootstrap](https://img.shields.io/badge/Bootstrap-4.6-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com)
+[![jQuery](https://img.shields.io/badge/jQuery-3.6-0769AD?style=for-the-badge&logo=jquery&logoColor=white)](https://jquery.com)
+[![License](https://img.shields.io/badge/License-Proprietary-red?style=for-the-badge)](#-licencia)
 
-- **PHP 7.4+** (recomendado 8.0 o superior)
-- **MySQL 5.7+** o **MariaDB 10.2+**
-- **Apache 2.4+** (incluido en XAMPP)
-- **XAMPP** (opcional, para desarrollo local)
-- **Composer** (opcional, para dependencias)
+</div>
 
-## Instalación
+---
 
-### 1. Preparar el entorno
+## 📋 Descripción
 
-En Windows con XAMPP:
-- Copia todos los archivos a `C:\xampp\htdocs\crm-php.com`
-- Si la carpeta no existe, créala manualmente
+CRM Innovacode es una plataforma web diseñada para centralizar y optimizar la operación comercial de equipos de ventas. Permite gestionar empresas, contactos, oportunidades y el ciclo completo de ventas desde la prospección hasta el cierre, con trazabilidad completa de cada interacción.
 
-En Linux/macOS:
-- Copia los archivos al directorio raíz web de tu servidor (generalmente `/var/www/html/`)
+## ✨ Características Principales
 
-### 2. Configurar la base de datos
+| Módulo | Descripción |
+|--------|-------------|
+| 📊 **Dashboard Analítico** | Panel de control con KPIs en tiempo real, métricas de rendimiento y gráficos interactivos |
+| 🏢 **Gestión de Empresas** | CRUD completo, importación masiva por Excel, búsqueda avanzada y filtrado |
+| 🔄 **Pipeline Comercial** | Visualización Kanban del embudo de ventas con drag & drop entre etapas |
+| 📝 **Trazabilidad** | Historial completo de actividades comerciales por empresa y usuario |
+| 👥 **Contactos** | Gestión de personas de contacto vinculadas a cada empresa |
+| 💰 **Cierre de Ventas** | Registro y seguimiento de ventas ganadas con métricas de conversión |
+| 📈 **Reportes** | Exportación a Excel con reportes globales e individuales por comercial |
+| 🔔 **Notificaciones** | Sistema de alertas en tiempo real para eventos del CRM |
+| 👤 **Gestión de Usuarios** | Roles (superadmin, admin, usuario), impersonación y control de acceso |
+| ⚙️ **Configuración** | Panel de ajustes, integración SMTP y personalización del sistema |
+| 🛟 **Soporte** | Centro de ayuda integrado para los usuarios |
 
-- Abre phpMyAdmin (http://localhost/phpmyadmin) o usa la consola MySQL
-- Crea una nueva base de datos con el nombre deseado
-- Importa el archivo `esquema.sql`:
-  - En phpMyAdmin: selecciona la BD → Importar → selecciona `esquema.sql`
-  - En consola: `mysql -u root -p nombre_bd < esquema.sql`
+## 🛠️ Stack Tecnológico
 
-### 3. Configurar credenciales
+<table>
+<tr>
+<td align="center" width="120">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg" width="48" height="48" alt="PHP" />
+<br><strong>PHP 8.0+</strong>
+<br><sub>Backend</sub>
+</td>
+<td align="center" width="120">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" width="48" height="48" alt="MySQL" />
+<br><strong>MySQL 8.0</strong>
+<br><sub>Base de datos</sub>
+</td>
+<td align="center" width="120">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/bootstrap/bootstrap-original.svg" width="48" height="48" alt="Bootstrap" />
+<br><strong>Bootstrap 4.6</strong>
+<br><sub>UI Framework</sub>
+</td>
+<td align="center" width="120">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/jquery/jquery-original.svg" width="48" height="48" alt="jQuery" />
+<br><strong>jQuery 3.6</strong>
+<br><sub>Interactividad</sub>
+</td>
+<td align="center" width="120">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" width="48" height="48" alt="JavaScript" />
+<br><strong>JavaScript</strong>
+<br><sub>Frontend</sub>
+</td>
+<td align="center" width="120">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apache/apache-original.svg" width="48" height="48" alt="Apache" />
+<br><strong>Apache</strong>
+<br><sub>Servidor web</sub>
+</td>
+</tr>
+</table>
 
-Edita el archivo `__funciones.php`:
-```php
-// Busca la función obtenerBD() y actualiza:
-$host = 'localhost';
-$usuario = 'root';
-$contrasena = '';
-$base_datos = 'nombre_bd';
-```
+**Librerías adicionales:**
 
-### 4. Configurar zona horaria
+- 🎨 [SB Admin 2](https://startbootstrap.com/theme/sb-admin-2) — Plantilla administrativa
+- 📊 [Chart.js](https://www.chartjs.org/) — Gráficos interactivos
+- 📋 [DataTables](https://datatables.net/) — Tablas dinámicas con paginación
+- 🍬 [SweetAlert2](https://sweetalert2.github.io/) — Alertas y confirmaciones elegantes
+- 🔤 [Font Awesome 5](https://fontawesome.com/) — Iconografía profesional
+- 🔡 [Google Fonts (Nunito)](https://fonts.google.com/specimen/Nunito) — Tipografía del sistema
 
-En el mismo archivo `__funciones.php`, ajusta la zona horaria según tu ubicación:
-```php
-date_default_timezone_set('America/Mexico_City'); // Cambia según tu zona
-```
+## 🏗️ Arquitectura
 
-### 5. Acceder al proyecto
-
-Abre tu navegador y ve a:
-- **Windows con XAMPP**: http://localhost/crm-php.com
-- **Linux/macOS**: http://tudominio/crm-php.com (o la ruta configurada)
-
-## Estructura de Carpetas
+El proyecto sigue un patrón **MVC (Modelo-Vista-Controlador)** con routing limpio basado en URL amigables:
 
 ```
 crm-php.com/
-├── index.php          # Página principal
-├── __funciones.php    # Funciones y configuración
-├── esquema.sql        # Estructura de la base de datos
-├── css/               # Estilos
-├── js/                # Scripts
-├── img/               # Imágenes e iconos
-└── README.md          # Este archivo
+├── config/                 # Configuración del sistema y base de datos
+│   ├── config.php          # Config local (excluido de git)
+│   ├── config.production.php # Config de producción (template)
+│   ├── Database.php        # Singleton de conexión PDO
+│   └── routes.php          # Definición de rutas del sistema
+├── controllers/            # Controladores (lógica de negocio)
+│   ├── BaseController.php  # Controlador base con helpers comunes
+│   ├── DashboardController.php
+│   ├── EmpresaController.php
+│   ├── ReporteController.php
+│   ├── TrazabilidadController.php
+│   └── ...
+├── core/                   # Núcleo del framework
+│   └── Router.php          # Router con URL amigables (SEO-friendly)
+├── models/                 # Modelos de datos (acceso a BD)
+│   ├── BaseModel.php       # Modelo base con métodos CRUD genéricos
+│   ├── Empresa.php
+│   ├── Trazabilidad.php
+│   ├── Reporte.php
+│   └── ...
+├── views/                  # Vistas (templates PHP)
+│   ├── layouts/            # Encabezado, pie y sidebar compartidos
+│   ├── dashboard/
+│   ├── empresas/
+│   ├── reportes/
+│   └── ...
+├── public/                 # Assets públicos (CSS, JS, imágenes)
+├── logs/                   # Logs de errores (excluido de git)
+├── index.php               # Entry point del sistema
+├── .htaccess               # Reglas de rewriting (Apache)
+└── .htaccess.production    # Reglas optimizadas para producción
 ```
 
-## Solución de Problemas
+## 🚀 Instalación
 
-**Error de conexión a base de datos:**
-- Verifica que MySQL está ejecutándose
-- Comprueba las credenciales en `__funciones.php`
-- Asegúrate de que la base de datos existe
+### Requisitos previos
 
-**Página en blanco:**
-- Revisa los logs de error de PHP
-- Comprueba que la zona horaria está correcta
-- Verifica los permisos de los archivos
+| Software | Versión mínima |
+|----------|---------------|
+| PHP | 8.0+ |
+| MySQL / MariaDB | 5.7+ / 10.2+ |
+| Apache | 2.4+ con `mod_rewrite` |
 
-**Ruta incorrecta:**
-- Si el proyecto está en otra carpeta, actualiza las rutas en los archivos
+### Paso a paso
 
-## Deployment Automático (CI/CD)
-
-Este proyecto está configurado para despliegue automático a Hostinger mediante GitHub Actions.
-
-### Configuración Inicial
-
-#### 1. Secrets de GitHub
-
-Ve a **Settings > Secrets and variables > Actions** en tu repositorio y configura:
-
-| Secret Name | Valor | Descripción |
-|-------------|-------|-------------|
-| `SSH_PRIVATE_KEY` | Clave privada SSH | La clave privada correspondiente a la pública configurada en Hostinger |
-| `SSH_HOST` | `147.79.84.57` | IP del servidor Hostinger |
-| `SSH_PORT` | `65002` | Puerto SSH del servidor |
-| `SSH_USER` | `u329333801` | Usuario SSH de Hostinger |
-
-#### 2. Configuración en Hostinger (Primera vez)
-
-**a) Agregar clave SSH pública:**
-```bash
-# En Hostinger, ve a: Advanced > SSH Access > Manage SSH Keys
-# Agrega la clave pública proporcionada
-```
-
-**b) Crear el archivo de configuración de producción:**
-```bash
-# Conéctate por SSH a Hostinger
-ssh -p 65002 u329333801@147.79.84.57
-
-# Navega al directorio del proyecto
-cd /home/u329333801/domains/crm.bahariaqua.com/public_html/
-
-# Copia el archivo de ejemplo
-cp config/config.production.php.example config/config.php
-
-# Edita el archivo con las credenciales reales
-nano config/config.php
-```
-
-**c) Configurar base de datos:**
-- Crea la base de datos en phpMyAdmin de Hostinger
-- Importa el esquema SQL completo:
-  - `esquema.sql`
-  - `esquema_crm.sql`
-  - `migration_*.sql` (en orden cronológico)
-
-**d) Configurar permisos:**
-```bash
-chmod 755 logs uploads
-chmod 644 config/config.php
-```
-
-### Flujo de Deployment
-
-1. Haz cambios en tu código local
-2. Commit y push a la rama `main` o `master`:
+1. **Clonar el repositorio**
    ```bash
-   git add .
-   git commit -m "Descripción de cambios"
-   git push origin main
+   git clone https://github.com/tu-usuario/crm-bahari.git
+   cd crm-bahari
    ```
-3. GitHub Actions se ejecuta automáticamente
-4. El código se sincroniza vía rsync a Hostinger
-5. Se ejecutan tareas post-deployment
-6. El sitio en `https://crm.bahariaqua.com` se actualiza
 
-### Monitorear Deployment
+2. **Configurar la base de datos**
+   - Crear una base de datos MySQL
+   - Importar el esquema desde `crm_db-production.sql`
 
-- Ve a **Actions** en tu repositorio de GitHub
-- Revisa los logs del workflow `Deploy to Hostinger`
-- Verifica que todos los steps se completen con éxito ✅
+3. **Configurar el entorno**
+   - Copiar `config/config.production.php` como `config/config.php`
+   - Editar las credenciales de base de datos, URL base y claves de cifrado
 
-### Archivos Excluidos del Deployment
+4. **Configurar permisos**
+   ```bash
+   mkdir -p logs
+   chmod 755 logs
+   ```
 
-El workflow **NO** sobrescribe estos archivos en producción:
-- `config/config.php` (credenciales de producción)
-- `logs/*.log` (logs del servidor)
-- `.env` (variables de entorno)
-- `.git/` (historial de git)
-- `node_modules/`, `vendor/` (dependencias)
+5. **Configurar Apache**
+   - Asegurar que `mod_rewrite` esté habilitado
+   - El archivo `.htaccess` ya incluye las reglas necesarias
 
-### Rollback en Caso de Error
+6. **Acceder al sistema**
+   - Abrir el navegador en la URL configurada
+   - Iniciar sesión con las credenciales de administrador
 
-Si un deployment causa problemas:
+## 🔐 Seguridad
 
-```bash
-# Opción 1: Revertir el último commit y hacer push
-git revert HEAD
-git push origin main
+- ✅ Autenticación basada en sesiones con protección CSRF
+- ✅ Contraseñas hasheadas con `bcrypt` (PASSWORD_DEFAULT)
+- ✅ Prepared statements (PDO) en todas las consultas SQL
+- ✅ Sanitización de entradas con `htmlspecialchars`
+- ✅ Cookies de sesión `HttpOnly`, `Secure` y `SameSite=Strict`
+- ✅ Cifrado AES-256-CBC para datos sensibles (claves SMTP, API keys)
+- ✅ Manejo de errores sin exposición de stack traces en producción
+- ✅ Control de acceso basado en roles (RBAC)
 
-# Opción 2: Conectarse por SSH y restaurar desde backup
-ssh -p 65002 u329333801@147.79.84.57
-cd /home/u329333801/domains/crm.bahariaqua.com/
-# Restaurar archivos manualmente
+## 🌐 Deployment
+
+El sistema está preparado para despliegue en servidores con hosting compartido (como Hostinger) o servidores dedicados. Consultar `DEPLOYMENT.md` para instrucciones detalladas.
+
+**Entornos soportados:**
+- 🖥️ **Local**: XAMPP / WAMP / MAMP
+- ☁️ **Producción**: Hostinger, cPanel, VPS con Apache
+
+## 📄 Licencia
+
+Este proyecto es **software propietario**. Todos los derechos reservados.
+
+```
+Copyright (c) 2026 David Caro / Innovacode Tech
+
+Se prohíbe la copia, modificación, distribución o uso de este software
+sin autorización expresa por escrito del autor.
+
+El acceso al código fuente no implica licencia de uso.
 ```
 
-### Troubleshooting
+## 👨‍💻 Autor
 
-**Error: "Permission denied (publickey)"**
-- Verifica que la clave privada en GitHub Secrets sea correcta
-- Asegúrate de que la clave pública esté agregada en Hostinger
+<table>
+<tr>
+<td align="center">
+<strong>David Caro</strong>
+<br>
+<a href="https://innovacode.click">🌐 innovacode.click</a>
+<br>
+<sub>Full Stack Developer & Tech Lead</sub>
+</td>
+</tr>
+</table>
 
-**Error: "rsync: failed to connect to..."**
-- Verifica que el servidor SSH esté activo en Hostinger
-- Confirma el puerto (65002) y la IP (147.79.84.57)
+---
 
-**Error: "config.php not found"**
-- Crea manualmente el archivo `config/config.php` en el servidor
-- Usa `config.production.php.example` como plantilla
+<div align="center">
 
-**Deployment exitoso pero sitio no funciona:**
-- Verifica la base de datos en Hostinger
-- Revisa los logs: `logs/error.log`
-- Confirma que los permisos de directorios sean correctos
+**Desarrollado con ❤️ por [Innovacode Tech](https://innovacode.click)**
 
-### Mantenimiento
+<sub>CRM Innovacode v2.0.0 · 2026</sub>
 
-**Revisar logs de deployment:**
-```bash
-ssh -p 65002 u329333801@147.79.84.57
-cat /home/u329333801/domains/crm.bahariaqua.com/public_html/logs/deployment.log
-```
-
-**Limpiar logs antiguos:**
-```bash
-find logs/ -name "*.log" -type f -mtime +30 -delete
-```
-
-**Ejecutar migraciones manualmente:**
-```bash
-# Desde phpMyAdmin o consola MySQL
-mysql -u u329333801_crmuser -p u329333801_crm_bahari < migration_nombre.sql
-```
+</div>
