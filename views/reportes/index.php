@@ -81,7 +81,8 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Gestiones Realizadas</div>
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Gestiones Realizadas
+                        </div>
                         <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $act; ?></div>
                     </div>
                     <div class="col-auto">
@@ -242,21 +243,21 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
                                     <th>Usuario</th>
                                     <!-- <th>Email</th> -->
                                     <th>Investigación</th>
-                                    <th>Contacto Efectivo</th>
+                                    <th class="font-weight-bold">Contactos Efectivos</th>
                                     <th>Contacto Interesado</th>
                                     <th>Estudio de necesidades</th>
                                     <th>Oferta de Servicios</th>
                                     <th>Seguimiento a la oferta</th>
-                                    <th>Perdidos/No interesados</th>
+                                    <th>Cierre fallido</th>
                                     <th class="text-success">Cierre exitoso</th>
-                                    <th>Total Contactados</th>
-                                    <th>Total Empresas</th>
+
+                                    <!-- <th>Total Empresas</th> -->
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if (empty($reporteGlobal)): ?>
                                     <tr>
-                                        <td colspan="10" class="text-center text-muted">No hay datos para el rango seleccionado.
+                                        <td colspan="9" class="text-center text-muted">No hay datos para el rango seleccionado.
                                         </td>
                                     </tr>
                                 <?php else: ?>
@@ -266,15 +267,16 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
                                             <!-- <td><?php echo htmlspecialchars($row->email); ?></td> -->
                                             <!-- <td><span class="badge badge-info"><?php echo htmlspecialchars($row->rol); ?></span></td> -->
                                             <td><?php echo (int) $row->investigacion; ?></td>
-                                            <td><?php echo (int) $row->contacto_efectivo; ?></td>
+                                            <td class="font-weight-bold text-primary"><?php echo (int) $row->total_contactados; ?>
+                                            </td>
+                                            <!-- <td><?php echo (int) $row->contacto_efectivo; ?></td> -->
                                             <td><?php echo (int) $row->contacto_interesado; ?></td>
                                             <td><?php echo (int) $row->estudio_necesidades; ?></td>
                                             <td><?php echo (int) $row->oferta_servicios; ?></td>
                                             <td><?php echo (int) $row->seguimiento_oferta; ?></td>
                                             <td><?php echo (int) $row->perdidos; ?></td>
                                             <td class="font-weight-bold text-success"><?php echo (int) $row->cierre_exitoso; ?></td>
-                                            <td class="font-weight-bold"><?php echo (int) $row->total_contactados; ?></td>
-                                            <td class="font-weight-bold"><?php echo (int) $row->total_empresas; ?></td>
+                                            <!-- <td class="font-weight-bold"><?php echo (int) $row->total_empresas; ?></td> -->
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php endif; ?>

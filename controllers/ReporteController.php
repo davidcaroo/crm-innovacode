@@ -15,9 +15,9 @@ class ReporteController extends BaseController
     public function index()
     {
         $filtros = [
-            'fecha_inicio' => isset($_GET['fecha_inicio']) ? trim((string)$_GET['fecha_inicio']) : '',
-            'fecha_fin'    => isset($_GET['fecha_fin']) ? trim((string)$_GET['fecha_fin']) : '',
-            'usuario_id'   => isset($_GET['usuario_id']) ? trim((string)$_GET['usuario_id']) : ''
+            'fecha_inicio' => isset($_GET['fecha_inicio']) ? trim((string) $_GET['fecha_inicio']) : '',
+            'fecha_fin' => isset($_GET['fecha_fin']) ? trim((string) $_GET['fecha_fin']) : '',
+            'usuario_id' => isset($_GET['usuario_id']) ? trim((string) $_GET['usuario_id']) : ''
         ];
 
         $usuario_id = $_SESSION['usuario_rol'] === 'usuario' ? $_SESSION['usuario_id'] : null;
@@ -25,14 +25,14 @@ class ReporteController extends BaseController
 
         // Si es admin, puede filtrar por usuario especifico en todo el tablero
         if ($esAdmin && !empty($filtros['usuario_id'])) {
-            $usuario_id = (int)$filtros['usuario_id'];
+            $usuario_id = (int) $filtros['usuario_id'];
         }
 
         $stats = [
-            'ventas_mes'   => $this->reporteModel->ventasMensuales($usuario_id),
-            'conversion'   => $this->reporteModel->conversionRates($usuario_id),
-            'actividades'  => $this->reporteModel->resumenActividades($usuario_id),
-            'ranking'      => ($_SESSION['usuario_rol'] !== 'usuario') ? $this->reporteModel->rankingVendedores() : []
+            'ventas_mes' => $this->reporteModel->ventasMensuales($usuario_id),
+            'conversion' => $this->reporteModel->conversionRates($usuario_id),
+            'actividades' => $this->reporteModel->resumenActividades($usuario_id),
+            'ranking' => ($_SESSION['usuario_rol'] !== 'usuario') ? $this->reporteModel->rankingVendedores() : []
         ];
 
         $reporteGlobal = $esAdmin
@@ -49,18 +49,18 @@ class ReporteController extends BaseController
 
         // Preparar datos para los charts
         $labelsVentas = [];
-        $dataVentas   = [];
+        $dataVentas = [];
         $meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
         foreach ($stats['ventas_mes'] as $v) {
             $labelsVentas[] = $meses[$v->mes - 1];
-            $dataVentas[]   = $v->total;
+            $dataVentas[] = $v->total;
         }
 
         $this->view('reportes/index', [
-            'stats'        => $stats,
+            'stats' => $stats,
             'labelsVentas' => $labelsVentas,
-            'dataVentas'   => $dataVentas,
+            'dataVentas' => $dataVentas,
             'reporteGlobal' => $reporteGlobal,
             'filtrosGlobal' => $filtros,
             'esAdminGlobal' => $esAdmin,
@@ -78,9 +78,9 @@ class ReporteController extends BaseController
         }
 
         $filtros = [
-            'fecha_inicio' => isset($_GET['fecha_inicio']) ? trim((string)$_GET['fecha_inicio']) : '',
-            'fecha_fin'    => isset($_GET['fecha_fin']) ? trim((string)$_GET['fecha_fin']) : '',
-            'usuario_id'   => isset($_GET['usuario_id']) ? trim((string)$_GET['usuario_id']) : ''
+            'fecha_inicio' => isset($_GET['fecha_inicio']) ? trim((string) $_GET['fecha_inicio']) : '',
+            'fecha_fin' => isset($_GET['fecha_fin']) ? trim((string) $_GET['fecha_fin']) : '',
+            'usuario_id' => isset($_GET['usuario_id']) ? trim((string) $_GET['usuario_id']) : ''
         ];
 
         $resumen = $this->reporteModel->resumenGlobalComercialUsuarios($filtros);
@@ -88,8 +88,8 @@ class ReporteController extends BaseController
         $detallesPorUsuario = [];
         $actividadesPorUsuario = [];
         foreach ($resumen as $fila) {
-            $detallesPorUsuario[(int)$fila->usuario_id] = $this->reporteModel->detalleGlobalComercialPorUsuario($fila->usuario_id, $filtros);
-            $actividadesPorUsuario[(int)$fila->usuario_id] = $this->reporteModel->detalleActividadesPorUsuario($fila->usuario_id, $filtros);
+            $detallesPorUsuario[(int) $fila->usuario_id] = $this->reporteModel->detalleGlobalComercialPorUsuario($fila->usuario_id, $filtros);
+            $actividadesPorUsuario[(int) $fila->usuario_id] = $this->reporteModel->detalleActividadesPorUsuario($fila->usuario_id, $filtros);
         }
 
         $tmpFile = tempnam(sys_get_temp_dir(), 'xlsx_rep_');
@@ -147,43 +147,39 @@ class ReporteController extends BaseController
         $resumenHeaders = [
             'Usuario',
             'Investigación',
-            'Contacto Efectivo',
+            'Contactos Efectivos',
             'Contacto Interesado',
             'Estudio de necesidades',
             'Oferta de Servicios',
             'Seguimiento a la oferta',
-            'Perdidos/No interesados',
-            'Cierre exitoso',
-            'Total Contactados',
-            'Total Empresas'
+            'Cierre fallido',
+            'Cierre exitoso'
         ];
 
         $resumenRows = [];
         foreach ($resumen as $r) {
             $resumenRows[] = [
                 $r->usuario,
-                (int)$r->investigacion,
-                (int)$r->contacto_efectivo,
-                (int)$r->contacto_interesado,
-                (int)$r->estudio_necesidades,
-                (int)$r->oferta_servicios,
-                (int)$r->seguimiento_oferta,
-                (int)$r->perdidos,
-                (int)$r->cierre_exitoso,
-                (int)$r->total_contactados,
-                (int)$r->total_empresas
+                (int) $r->investigacion,
+                (int) $r->total_contactados,
+                (int) $r->contacto_interesado,
+                (int) $r->estudio_necesidades,
+                (int) $r->oferta_servicios,
+                (int) $r->seguimiento_oferta,
+                (int) $r->perdidos,
+                (int) $r->cierre_exitoso
             ];
         }
 
         $sheetNames[] = 'Resumen Global';
         $sheetFiles[] = 'sheet1.xml';
-        $sheetXmls[] = $this->worksheetXml($resumenHeaders, $resumenRows, [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+        $sheetXmls[] = $this->worksheetXml($resumenHeaders, $resumenRows, [2, 3, 4, 5, 6, 7, 8, 9]);
 
         $usedNames = ['Resumen Global' => true];
         $sheetIndex = 2;
 
         foreach ($resumen as $r) {
-            $usuarioId = (int)$r->usuario_id;
+            $usuarioId = (int) $r->usuario_id;
             $detalle = isset($detallesPorUsuario[$usuarioId]) ? $detallesPorUsuario[$usuarioId] : [];
 
             $detalleHeaders = [
@@ -207,8 +203,8 @@ class ReporteController extends BaseController
                     $d->correo_comercial,
                     $d->aplica,
                     $d->etapa_venta,
-                    ((int)$d->tiene_estudio_necesidades === 1) ? 'SI' : 'NO',
-                    ((int)$d->tiene_oferta_servicios === 1) ? 'SI' : 'NO',
+                    ((int) $d->tiene_estudio_necesidades === 1) ? 'SI' : 'NO',
+                    ((int) $d->tiene_oferta_servicios === 1) ? 'SI' : 'NO',
                     $d->creado_en
                 ];
             }
@@ -232,7 +228,7 @@ class ReporteController extends BaseController
             ];
             $actRows = [];
             foreach ($actividades as $act) {
-                $tipoRaw = strtolower((string)($act->tipo_actividad ?? ''));
+                $tipoRaw = strtolower((string) ($act->tipo_actividad ?? ''));
                 $tipoLabelMap = [
                     'llamada' => 'Llamada al cliente',
                     'correo' => 'Envío de correo',
@@ -376,7 +372,7 @@ class ReporteController extends BaseController
                 if (in_array($col1, $numericColumns, true) && is_numeric($value)) {
                     $xml .= '<c r="' . $cellRef . '"><v>' . (0 + $value) . '</v></c>';
                 } else {
-                    $txt = $this->xmlEscText((string)$value);
+                    $txt = $this->xmlEscText((string) $value);
                     $xml .= '<c r="' . $cellRef . '" t="inlineStr"><is><t xml:space="preserve">' . $txt . '</t></is></c>';
                 }
             }
@@ -393,14 +389,14 @@ class ReporteController extends BaseController
         while ($index > 0) {
             $mod = ($index - 1) % 26;
             $letters = chr(65 + $mod) . $letters;
-            $index = (int)(($index - $mod) / 26);
+            $index = (int) (($index - $mod) / 26);
         }
         return $letters;
     }
 
     private function xmlEscText($value)
     {
-        $clean = $this->cleanXmlString((string)$value);
+        $clean = $this->cleanXmlString((string) $value);
         return htmlspecialchars($clean, ENT_QUOTES | ENT_XML1, 'UTF-8');
     }
 
@@ -425,7 +421,7 @@ class ReporteController extends BaseController
 
     private function sheetNameSafe($name)
     {
-        $clean = preg_replace('/[\\\/?*\[\]:]/', '_', (string)$name);
+        $clean = preg_replace('/[\\\/?*\[\]:]/', '_', (string) $name);
         $clean = trim($clean);
         if ($clean === '') {
             $clean = 'Hoja';
@@ -465,15 +461,15 @@ class ReporteController extends BaseController
     {
         $nombre = '';
         if (isset($row->usuario)) {
-            $nombre = trim((string)$row->usuario);
+            $nombre = trim((string) $row->usuario);
         }
 
         if ($nombre === '' && isset($row->nombre)) {
-            $nombre = trim((string)$row->nombre);
+            $nombre = trim((string) $row->nombre);
         }
 
         if ($nombre === '' && isset($row->email)) {
-            $email = trim((string)$row->email);
+            $email = trim((string) $row->email);
             if ($email !== '') {
                 $atPos = strpos($email, '@');
                 $nombre = ($atPos !== false) ? substr($email, 0, $atPos) : $email;
@@ -481,7 +477,7 @@ class ReporteController extends BaseController
         }
 
         if ($nombre === '' && isset($row->usuario_id)) {
-            $nombre = 'Usuario_' . (int)$row->usuario_id;
+            $nombre = 'Usuario_' . (int) $row->usuario_id;
         }
 
         return $this->sheetNameSafe($nombre);
