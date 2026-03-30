@@ -148,12 +148,13 @@ class ReporteController extends BaseController
             'Usuario',
             'Email',
             'Rol',
+            'Gestiones Ganadas',
             'Gestiones realizadas',
-            'Perdidas',
-            'Negociacion con oferta',
-            'Contactado total',
-            'Contactado con estudio',
-            'Prospectado'
+            'Gestiones Perdidas/No interesados',
+            'Gestiones en Negociacion con oferta enviada',
+            'Total Contactados',
+            'Total Contactados con estudio de necesidades',
+            'Total Prospectados'
         ];
 
         $resumenRows = [];
@@ -162,6 +163,7 @@ class ReporteController extends BaseController
                 $r->usuario,
                 $r->email,
                 $r->rol,
+                (int)$r->ganadas,
                 (int)$r->gestiones_realizadas,
                 (int)$r->perdidas,
                 (int)$r->negociacion_con_oferta,
@@ -173,7 +175,7 @@ class ReporteController extends BaseController
 
         $sheetNames[] = 'Resumen Global';
         $sheetFiles[] = 'sheet1.xml';
-        $sheetXmls[] = $this->worksheetXml($resumenHeaders, $resumenRows, [4, 5, 6, 7, 8, 9]);
+        $sheetXmls[] = $this->worksheetXml($resumenHeaders, $resumenRows, [4, 5, 6, 7, 8, 9, 10]);
 
         $usedNames = ['Resumen Global' => true];
         $sheetIndex = 2;

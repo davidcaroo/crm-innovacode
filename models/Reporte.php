@@ -111,6 +111,7 @@ class Reporte extends BaseModel
                     u.nombre AS usuario,
                     u.email,
                     u.rol,
+                    SUM(CASE WHEN LOWER(TRIM(e.etapa_venta)) = 'ganado' THEN 1 ELSE 0 END) AS ganadas,
                     SUM(CASE WHEN e.etapa_venta = 'contactado' AND UPPER(TRIM(COALESCE(e.aplica, ''))) = 'SI' THEN 1 ELSE 0 END) AS gestiones_realizadas,
                     SUM(CASE WHEN e.etapa_venta = 'perdido' THEN 1 ELSE 0 END) AS perdidas,
                     SUM(CASE WHEN e.etapa_venta = 'negociacion' AND COALESCE(tf.tiene_oferta_servicios, 0) = 1 THEN 1 ELSE 0 END) AS negociacion_con_oferta,

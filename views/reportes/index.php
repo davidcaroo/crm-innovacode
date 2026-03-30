@@ -2,9 +2,9 @@
 // views/reportes/index.php
 $ganados = 0;
 foreach ($stats['conversion'] as $c) {
-    $etapa = strtolower(trim((string)$c->etapa_venta));
+    $etapa = strtolower(trim((string) $c->etapa_venta));
     if (in_array($etapa, ['ganado', 'ganada'], true)) {
-        $ganados += (int)$c->cantidad;
+        $ganados += (int) $c->cantidad;
     }
 }
 
@@ -15,9 +15,9 @@ foreach ($stats['ventas_mes'] as $v) {
 
 $act = 0;
 foreach ($stats['conversion'] as $c) {
-    $etapa = strtolower(trim((string)$c->etapa_venta));
+    $etapa = strtolower(trim((string) $c->etapa_venta));
     if (in_array($etapa, ['contactado', 'contactada'], true)) {
-        $act += (int)$c->cantidad;
+        $act += (int) $c->cantidad;
     }
 }
 
@@ -26,7 +26,7 @@ foreach ($stats['conversion'] as $c) {
     $totalEmp += $c->cantidad;
 }
 
-$esAdminGlobal = isset($esAdminGlobal) ? (bool)$esAdminGlobal : false;
+$esAdminGlobal = isset($esAdminGlobal) ? (bool) $esAdminGlobal : false;
 $reporteGlobal = isset($reporteGlobal) ? $reporteGlobal : [];
 $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '', 'fecha_fin' => ''];
 ?>
@@ -62,8 +62,10 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
             <div class="card-body">
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Ventas Totales (Año)</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">$<?php echo number_format($total, 0, ',', '.'); ?></div>
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Ventas Totales (Año)
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            $<?php echo number_format($total, 0, ',', '.'); ?></div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -95,7 +97,9 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
                 <div class="row no-gutters align-items-center">
                     <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">% Conversión Éxito</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $totalEmp > 0 ? round(($ganados / $totalEmp) * 100, 1) : 0; ?>%</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <?php echo $totalEmp > 0 ? round(($ganados / $totalEmp) * 100, 1) : 0; ?>%
+                        </div>
                     </div>
                     <div class="col-auto">
                         <i class="fas fa-chart-line fa-2x text-gray-300"></i>
@@ -161,10 +165,12 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
                                         <td><?= $index + 1 ?></td>
                                         <td class="font-weight-bold"><?= htmlspecialchars($r->nombre) ?></td>
                                         <td><?= $r->num_operaciones ?></td>
-                                        <td class="text-success font-weight-bold">$<?= number_format($r->total_ventas, 0, ',', '.') ?></td>
+                                        <td class="text-success font-weight-bold">
+                                            $<?= number_format($r->total_ventas, 0, ',', '.') ?></td>
                                         <td>
                                             <div class="progress" style="height: 0.6rem;">
-                                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 100%"
+                                                    aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                                             </div>
                                         </td>
                                     </tr>
@@ -184,34 +190,37 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-wrap align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Reporte Global Comercial por Usuario</h6>
-                    <a class="btn btn-success btn-sm" href="<?php echo url('reporte/exportarGlobalExcel', ['fecha_inicio' => $filtrosGlobal['fecha_inicio'], 'fecha_fin' => $filtrosGlobal['fecha_fin'], 'usuario_id' => $filtrosGlobal['usuario_id']]); ?>">
+                    <a class="btn btn-success btn-sm"
+                        href="<?php echo url('reporte/exportarGlobalExcel', ['fecha_inicio' => $filtrosGlobal['fecha_inicio'], 'fecha_fin' => $filtrosGlobal['fecha_fin'], 'usuario_id' => $filtrosGlobal['usuario_id']]); ?>">
                         <i class="fas fa-file-excel mr-1"></i> Exportar XLSX
                     </a>
                 </div>
                 <div class="card-body">
                     <form method="GET" action="<?php echo url('reporte/index'); ?>" class="form-row align-items-end mb-3">
-                        
+
                         <div class="col-md-3 mb-2">
                             <label class="small font-weight-bold text-muted">Consultar Comercial</label>
                             <select name="usuario_id" class="form-control">
                                 <option value="">Todos los comerciales</option>
                                 <?php if (!empty($listaUsuarios)): ?>
                                     <?php foreach ($listaUsuarios as $usr): ?>
-                                        <option value="<?php echo $usr->id; ?>" <?php echo ((string)$filtrosGlobal['usuario_id'] === (string)$usr->id) ? 'selected' : ''; ?>>
+                                        <option value="<?php echo $usr->id; ?>" <?php echo ((string) $filtrosGlobal['usuario_id'] === (string) $usr->id) ? 'selected' : ''; ?>>
                                             <?php echo htmlspecialchars($usr->nombre); ?>
                                         </option>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </select>
                         </div>
-                        
+
                         <div class="col-md-3 mb-2">
                             <label class="small font-weight-bold text-muted">Fecha inicio</label>
-                            <input type="date" name="fecha_inicio" class="form-control" value="<?php echo htmlspecialchars($filtrosGlobal['fecha_inicio']); ?>">
+                            <input type="date" name="fecha_inicio" class="form-control"
+                                value="<?php echo htmlspecialchars($filtrosGlobal['fecha_inicio']); ?>">
                         </div>
                         <div class="col-md-2 mb-2">
                             <label class="small font-weight-bold text-muted">Fecha fin</label>
-                            <input type="date" name="fecha_fin" class="form-control" value="<?php echo htmlspecialchars($filtrosGlobal['fecha_fin']); ?>">
+                            <input type="date" name="fecha_fin" class="form-control"
+                                value="<?php echo htmlspecialchars($filtrosGlobal['fecha_fin']); ?>">
                         </div>
                         <div class="col-md-2 mb-2">
                             <button type="submit" class="btn btn-primary btn-block">
@@ -231,32 +240,36 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
                                 <tr>
                                     <th>Usuario</th>
                                     <th>Email</th>
-                                    <th>Rol</th>
+                                    <!--    <th>Rol</th> -->
+                                    <th class="text-success">Gestiones Ganadas</th>
                                     <th>Gestiones realizadas</th>
-                                    <th>Perdidas</th>
-                                    <th>Negociacion con oferta</th>
-                                    <th>Contactado</th>
-                                    <th>Contactado con estudio</th>
-                                    <th>Prospectado</th>
+                                    <th>Gestiones Perdidas/No interesados</th>
+                                    <th>Gestiones en Negociacion con oferta enviada</th>
+                                    <th>Total Contactados</th>
+                                    <th>Total Contactados con estudio de necesidades</th>
+                                    <th>Total Prospectados</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php if (empty($reporteGlobal)): ?>
                                     <tr>
-                                        <td colspan="9" class="text-center text-muted">No hay datos para el rango seleccionado.</td>
+                                        <td colspan="10" class="text-center text-muted">No hay datos para el rango seleccionado.
+                                        </td>
                                     </tr>
                                 <?php else: ?>
                                     <?php foreach ($reporteGlobal as $row): ?>
                                         <tr>
                                             <td class="font-weight-bold"><?php echo htmlspecialchars($row->usuario); ?></td>
                                             <td><?php echo htmlspecialchars($row->email); ?></td>
-                                            <td><span class="badge badge-info"><?php echo htmlspecialchars($row->rol); ?></span></td>
-                                            <td><?php echo (int)$row->gestiones_realizadas; ?></td>
-                                            <td><?php echo (int)$row->perdidas; ?></td>
-                                            <td><?php echo (int)$row->negociacion_con_oferta; ?></td>
-                                            <td><?php echo (int)$row->contactado_total; ?></td>
-                                            <td><?php echo (int)$row->contactado_con_estudio; ?></td>
-                                            <td><?php echo (int)$row->prospectado; ?></td>
+                                            <!--  <td><span class="badge badge-info"><?php echo htmlspecialchars($row->rol); ?></span> -->
+                                            </td>
+                                            <td class="font-weight-bold text-success"><?php echo (int) $row->ganadas; ?></td>
+                                            <td><?php echo (int) $row->gestiones_realizadas; ?></td>
+                                            <td><?php echo (int) $row->perdidas; ?></td>
+                                            <td><?php echo (int) $row->negociacion_con_oferta; ?></td>
+                                            <td><?php echo (int) $row->contactado_total; ?></td>
+                                            <td><?php echo (int) $row->contactado_con_estudio; ?></td>
+                                            <td><?php echo (int) $row->prospectado; ?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
@@ -276,14 +289,14 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
     var ventasLabels = <?php echo json_encode($labelsVentas); ?>;
     var ventasData = <?php echo json_encode($dataVentas); ?>;
     // asegurar que sean números (Chart.js v3 espera números en parsed)
-    ventasData = ventasData.map(function(v) {
+    ventasData = ventasData.map(function (v) {
         if (v === null || v === undefined || v === '') return NaN;
         return Number(v);
     });
     var ctxV = document.getElementById('ventasChart').getContext('2d');
 
     // filtrar NaN para calcular min/max
-    var numeric = ventasData.filter(function(x) {
+    var numeric = ventasData.filter(function (x) {
         return isFinite(x);
     });
     var minV = numeric.length ? Math.min.apply(null, numeric) : 0;
@@ -301,7 +314,7 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
                 borderColor: 'rgba(78, 115, 223, 1)',
                 pointRadius: 6,
                 pointHoverRadius: 8,
-                pointBackgroundColor: function(context) {
+                pointBackgroundColor: function (context) {
                     var idx = context.dataIndex;
                     if (idx === 0) return 'rgba(78, 115, 223, 1)';
                     var cur = ventasData[idx];
@@ -320,7 +333,7 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
                     mode: 'index',
                     intersect: false,
                     callbacks: {
-                        label: function(context) {
+                        label: function (context) {
                             var nf = new Intl.NumberFormat('es-CO');
                             var value = context.parsed && context.parsed.y !== undefined ? context.parsed.y : context.parsed;
                             var idx = context.dataIndex;
@@ -352,7 +365,7 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
                         beginAtZero: false,
                         suggestedMin: Math.max(0, minV - padding),
                         suggestedMax: maxV + padding,
-                        callback: function(value) {
+                        callback: function (value) {
                             return '$' + Number(value).toLocaleString('es-CO');
                         }
                     },
@@ -369,9 +382,11 @@ $filtrosGlobal = isset($filtrosGlobal) ? $filtrosGlobal : ['fecha_inicio' => '',
     new Chart(ctxP, {
         type: 'doughnut',
         data: {
-            labels: [<?php foreach ($stats['conversion'] as $c) echo '"' . ucfirst($c->etapa_venta) . '",'; ?>],
+            labels: [<?php foreach ($stats['conversion'] as $c)
+                echo '"' . ucfirst($c->etapa_venta) . '",'; ?>],
             datasets: [{
-                data: [<?php foreach ($stats['conversion'] as $c) echo $c->cantidad . ','; ?>],
+                data: [<?php foreach ($stats['conversion'] as $c)
+                    echo $c->cantidad . ','; ?>],
                 backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
                 hoverBorderColor: "rgba(234, 236, 244, 1)",
             }],
