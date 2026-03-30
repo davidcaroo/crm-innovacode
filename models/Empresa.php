@@ -78,6 +78,76 @@ class Empresa extends BaseModel
         return $stmt->fetch();
     }
 
+    public function obtenerFiltroDataTables($usuario_id, $start, $length, $searchValue, $orderColumn, $orderDir)
+    {
+        $params = [];
+        $sql = "SELECT e.* FROM empresas e WHERE 1=1";
+        
+        if ($usuario_id) {
+            $sql .= " AND e.usuario_id = :usuario_id";
+            $params[':usuario_id'] = $usuario_id;
+        }
+
+        if (!empty($searchValue)) {
+            $sql .= " AND (e.razon_social LIKE :search OR e.dpto LIKE :search OR e.ciudad LIKE :search OR e.correo_comercial LIKE :search)";
+            $params[':search'] = '%' . $searchValue . '%';
+        }
+
+        $columnsMapping = [
+            0 => 'e.razon_social',
+            1 => 'e.dpto',
+            2 => 'e.ciudad',
+            3 => 'e.actividad_economica',
+            4 => 'e.correo_comercial',
+            5 => 'e.etapa_venta'
+        ];
+        
+        $orderColName = $columnsMapping[$orderColumn] ?? 'e.creado_en';
+        $orderDir = strtoupper($orderDir) === 'DESC' ? 'DESC' : 'ASC';
+
+        $sql .= " ORDER BY {$orderColName} {$orderDir}";
+        
+        if ($length > 0) {
+            $sql .= " LIMIT :start, :length";
+        }
+
+        $stmt = $this->db->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, PDO::PARAM_STR);
+        }
+        if ($length > 0) {
+            $stmt->bindValue(':start', (int)$start, PDO::PARAM_INT);
+            $stmt->bindValue(':length', (int)$length, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function contarFiltroDataTables($usuario_id, $searchValue)
+    {
+        $params = [];
+        $sql = "SELECT COUNT(*) as total FROM empresas e WHERE 1=1";
+        
+        if ($usuario_id) {
+            $sql .= " AND e.usuario_id = :usuario_id";
+            $params[':usuario_id'] = $usuario_id;
+        }
+
+        if (!empty($searchValue)) {
+            $sql .= " AND (e.razon_social LIKE :search OR e.dpto LIKE :search OR e.ciudad LIKE :search OR e.correo_comercial LIKE :search)";
+            $params[':search'] = '%' . $searchValue . '%';
+        }
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_OBJ)->total;
+    }
+
     public function actualizar($id, $data, $usuario_id = null)
     {
         $sql = "UPDATE empresas SET razon_social=?, dpto=?, ciudad=?, actividad_economica=?, correo_comercial=?, aplica=?, etapa_venta=?, observaciones=? WHERE id=?";

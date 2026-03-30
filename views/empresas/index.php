@@ -43,7 +43,7 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">Listado de Empresas</h6>
-        <small class="text-muted"><?php echo count($empresas); ?> registros</small>
+        <small class="text-muted" id="totalRecordsBadge"><?php echo $totalEmpresas ?? 0; ?> registros en total</small>
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -60,75 +60,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($empresas as $e): ?>
-                        <tr>
-                            <td class="font-weight-bold"><?= htmlspecialchars($e->razon_social) ?></td>
-                            <td><?= htmlspecialchars($e->dpto) ?></td>
-                            <td><?= htmlspecialchars($e->ciudad) ?></td>
-                            <td><?= htmlspecialchars($e->actividad_economica) ?></td>
-                            <td><?= htmlspecialchars($e->correo_comercial) ?></td>
-                            <td>
-                                <?php
-                                $etapa = strtolower($e->etapa_venta ?? 'prospectado');
-                                $labels = ['prospectado' => 'Prospectado', 'contactado' => 'Contactado', 'negociacion' => 'Negociación', 'seguimiento' => 'Seguimiento', 'ganado' => 'Ganado', 'perdido' => 'Perdido'];
-                                $badgeMap = ['prospectado' => 'info', 'contactado' => 'warning', 'negociacion' => 'primary', 'seguimiento' => 'secondary', 'ganado' => 'success', 'perdido' => 'danger'];
-                                $estadoFlujo = $estadosTrazabilidad[(int)$e->id] ?? [
-                                    'tiene_estudio_necesidades' => false,
-                                    'tiene_oferta_servicios' => false,
-                                    'tiene_seguimiento_oferta' => false,
-                                ];
-                                $contactoEfectivo = (
-                                    $etapa === 'contactado'
-                                    && strtoupper(trim((string)($e->aplica ?? ''))) === 'SI'
-                                );
-                                $tieneOferta = !empty($estadoFlujo['tiene_oferta_servicios']);
-                                $tieneEstudio = !empty($estadoFlujo['tiene_estudio_necesidades']);
-                                $tieneSeguimiento = !empty($estadoFlujo['tiene_seguimiento_oferta']);
-                                
-                                // No mostrar badges de flujo si ya se cerró la venta (ganado o perdido)
-                                $mostrarBadgesActividad = !in_array($etapa, ['ganado', 'perdido']);
-                                ?>
-                                <span class="badge badge-pill badge-<?= $badgeMap[$etapa] ?? 'secondary' ?>">
-                                    <?= $labels[$etapa] ?? ucfirst($etapa) ?>
-                                </span>
-                                <?php if ($mostrarBadgesActividad && ($contactoEfectivo || $tieneEstudio || $tieneOferta || $tieneSeguimiento)): ?>
-                                    <div class="mt-1">
-                                        <?php if ($contactoEfectivo): ?>
-                                            <span class="badge badge-success mr-1">Contacto interesado</span>
-                                        <?php endif; ?>
-                                        <?php if ($tieneSeguimiento): ?>
-                                            <span class="badge badge-info bg-info text-white">Seguimiento de la oferta</span>
-                                        <?php elseif ($tieneOferta): ?>
-                                            <span class="badge badge-primary">Oferta de servicios</span>
-                                        <?php elseif ($tieneEstudio): ?>
-                                            <span class="badge badge-primary">Estudio de necesidades</span>
-                                        <?php endif; ?>
-                                    </div>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a href="<?php echo url('contacto/index', ['empresa_id' => $e->id]); ?>"
-                                        class="btn btn-sm btn-outline-info" title="Contactos">
-                                        <i class="fas fa-address-book fa-sm"></i>
-                                    </a>
-                                    <a href="<?php echo url('trazabilidad/index', ['empresa_id' => $e->id]); ?>"
-                                        class="btn btn-sm btn-outline-success" title="Trazabilidad">
-                                        <i class="fas fa-eye fa-sm"></i>
-                                    </a>
-                                    <a href="<?php echo url('empresa/editar', ['id' => $e->id]); ?>"
-                                        class="btn btn-sm btn-outline-primary" title="Editar">
-                                        <i class="fas fa-edit fa-sm"></i>
-                                    </a>
-                                    <a href="#"
-                                        class="btn btn-sm btn-outline-danger" title="Eliminar"
-                                        onclick="return confirmarEliminacion('<?php echo url('empresa/eliminar', ['id' => $e->id]); ?>', '¿Eliminar la empresa <?php echo htmlspecialchars($e->razon_social); ?>?')">
-                                        <i class="fas fa-trash-alt fa-sm"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
+                    <!-- Llenado usando AJAX Server-Side -->
                 </tbody>
             </table>
         </div>
@@ -148,27 +80,48 @@
 
         if (window.jQuery && jQuery.fn.DataTable && document.getElementById('dataTable')) {
             const table = jQuery('#dataTable').DataTable({
-                pageLength: 25,
-                lengthMenu: [10, 25, 50, 100],
+                pageLength: 10,
+                lengthMenu: [10, 15, 25, 50, 100],
+                serverSide: true,
+                processing: true,
+                searching: false, // Ocultar buscador por defecto ya que usamos el personalizado
+                ajax: {
+                    url: '<?php echo url('empresa/datosDataTables'); ?>',
+                    type: 'POST',
+                    data: function(d) {
+                        d.search.value = inputBuscar ? inputBuscar.value : '';
+                    }
+                },
                 order: [
                     [0, 'asc']
                 ],
                 autoWidth: true,
                 responsive: true,
-                dom: 't<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                dom: 't<"row mt-3"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
                 language: {
-                    url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json'
+                    url: 'https://cdn.datatables.net/plug-ins/1.13.8/i18n/es-ES.json',
+                    processing: '<div class="text-center text-primary mt-3"><i class="fas fa-circle-notch fa-spin fa-2x"></i> <br> Cargando información...</div>'
                 },
                 columnDefs: [{
                     targets: [6],
                     orderable: false,
                     searchable: false
-                }]
+                }],
+                drawCallback: function(settings) {
+                    const badge = document.getElementById('totalRecordsBadge');
+                    if (badge) {
+                        badge.innerText = settings._iRecordsTotal + ' registros en total (' + settings._iRecordsDisplay + ' filtrados)';
+                    }
+                }
             });
 
             if (inputBuscar) {
+                let searchTimeout;
                 inputBuscar.addEventListener('input', function() {
-                    table.search(this.value).draw();
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(function() {
+                        table.draw();
+                    }, 400); // 400ms de debouncing para no saturar al servidor
                 });
             }
         }

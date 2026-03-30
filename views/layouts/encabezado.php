@@ -20,6 +20,7 @@
     <?php endif; ?>
 
     <meta name="description" content="<?php echo APP_NAME; ?>">
+    <link rel="icon" type="image/png" href="<?php echo BASE_URL; ?>/Icono-Logo-CRM.png">
     <title><?php echo APP_NAME; ?></title>
 </head>
 
