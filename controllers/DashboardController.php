@@ -96,12 +96,4 @@ class DashboardController extends BaseController
             $this->error($e->getMessage());
         }
     }
-
-    /**
-     * Página de créditos
-     */
-    public function creditos()
-    {
-        $this->view('dashboard/creditos', []);
-    }
 }
