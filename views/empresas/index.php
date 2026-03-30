@@ -60,89 +60,75 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (empty($empresas)): ?>
+                    <?php foreach ($empresas as $e): ?>
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-5">
-                                <i class="fas fa-building fa-2x mb-2"></i><br>
-                                <?php if (!empty($buscar)): ?>
-                                    <strong>No se encontraron empresas con el término "<?php echo htmlspecialchars($buscar); ?>"</strong>
-                                    <br><small>Intenta con otro término de búsqueda</small>
-                                <?php else: ?>
-                                    No hay empresas registradas aun.
+                            <td class="font-weight-bold"><?= htmlspecialchars($e->razon_social) ?></td>
+                            <td><?= htmlspecialchars($e->dpto) ?></td>
+                            <td><?= htmlspecialchars($e->ciudad) ?></td>
+                            <td><?= htmlspecialchars($e->actividad_economica) ?></td>
+                            <td><?= htmlspecialchars($e->correo_comercial) ?></td>
+                            <td>
+                                <?php
+                                $etapa = strtolower($e->etapa_venta ?? 'prospectado');
+                                $labels = ['prospectado' => 'Prospectado', 'contactado' => 'Contactado', 'negociacion' => 'Negociación', 'seguimiento' => 'Seguimiento', 'ganado' => 'Ganado', 'perdido' => 'Perdido'];
+                                $badgeMap = ['prospectado' => 'info', 'contactado' => 'warning', 'negociacion' => 'primary', 'seguimiento' => 'secondary', 'ganado' => 'success', 'perdido' => 'danger'];
+                                $estadoFlujo = $estadosTrazabilidad[(int)$e->id] ?? [
+                                    'tiene_estudio_necesidades' => false,
+                                    'tiene_oferta_servicios' => false,
+                                    'tiene_seguimiento_oferta' => false,
+                                ];
+                                $contactoEfectivo = (
+                                    $etapa === 'contactado'
+                                    && strtoupper(trim((string)($e->aplica ?? ''))) === 'SI'
+                                );
+                                $tieneOferta = !empty($estadoFlujo['tiene_oferta_servicios']);
+                                $tieneEstudio = !empty($estadoFlujo['tiene_estudio_necesidades']);
+                                $tieneSeguimiento = !empty($estadoFlujo['tiene_seguimiento_oferta']);
+                                
+                                // No mostrar badges de flujo si ya se cerró la venta (ganado o perdido)
+                                $mostrarBadgesActividad = !in_array($etapa, ['ganado', 'perdido']);
+                                ?>
+                                <span class="badge badge-pill badge-<?= $badgeMap[$etapa] ?? 'secondary' ?>">
+                                    <?= $labels[$etapa] ?? ucfirst($etapa) ?>
+                                </span>
+                                <?php if ($mostrarBadgesActividad && ($contactoEfectivo || $tieneEstudio || $tieneOferta || $tieneSeguimiento)): ?>
+                                    <div class="mt-1">
+                                        <?php if ($contactoEfectivo): ?>
+                                            <span class="badge badge-success mr-1">Contacto interesado</span>
+                                        <?php endif; ?>
+                                        <?php if ($tieneSeguimiento): ?>
+                                            <span class="badge badge-info bg-info text-white">Seguimiento de la oferta</span>
+                                        <?php elseif ($tieneOferta): ?>
+                                            <span class="badge badge-primary">Oferta de servicios</span>
+                                        <?php elseif ($tieneEstudio): ?>
+                                            <span class="badge badge-primary">Estudio de necesidades</span>
+                                        <?php endif; ?>
+                                    </div>
                                 <?php endif; ?>
                             </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a href="<?php echo url('contacto/index', ['empresa_id' => $e->id]); ?>"
+                                        class="btn btn-sm btn-outline-info" title="Contactos">
+                                        <i class="fas fa-address-book fa-sm"></i>
+                                    </a>
+                                    <a href="<?php echo url('trazabilidad/index', ['empresa_id' => $e->id]); ?>"
+                                        class="btn btn-sm btn-outline-success" title="Trazabilidad">
+                                        <i class="fas fa-eye fa-sm"></i>
+                                    </a>
+                                    <a href="<?php echo url('empresa/editar', ['id' => $e->id]); ?>"
+                                        class="btn btn-sm btn-outline-primary" title="Editar">
+                                        <i class="fas fa-edit fa-sm"></i>
+                                    </a>
+                                    <a href="#"
+                                        class="btn btn-sm btn-outline-danger" title="Eliminar"
+                                        onclick="return confirmarEliminacion('<?php echo url('empresa/eliminar', ['id' => $e->id]); ?>', '¿Eliminar la empresa <?php echo htmlspecialchars($e->razon_social); ?>?')">
+                                        <i class="fas fa-trash-alt fa-sm"></i>
+                                    </a>
+                                </div>
+                            </td>
                         </tr>
-                    <?php else: ?>
-                        <?php foreach ($empresas as $e): ?>
-                            <tr>
-                                <td class="font-weight-bold"><?= htmlspecialchars($e->razon_social) ?></td>
-                                <td><?= htmlspecialchars($e->dpto) ?></td>
-                                <td><?= htmlspecialchars($e->ciudad) ?></td>
-                                <td><?= htmlspecialchars($e->actividad_economica) ?></td>
-                                <td><?= htmlspecialchars($e->correo_comercial) ?></td>
-                                <td>
-                                    <?php
-                                    $etapa = strtolower($e->etapa_venta ?? 'prospectado');
-                                    $labels = ['prospectado' => 'Prospectado', 'contactado' => 'Contactado', 'negociacion' => 'Negociación', 'seguimiento' => 'Seguimiento', 'ganado' => 'Ganado', 'perdido' => 'Perdido'];
-                                    $badgeMap = ['prospectado' => 'info', 'contactado' => 'warning', 'negociacion' => 'primary', 'seguimiento' => 'secondary', 'ganado' => 'success', 'perdido' => 'danger'];
-                                    $estadoFlujo = $estadosTrazabilidad[(int)$e->id] ?? [
-                                        'tiene_estudio_necesidades' => false,
-                                        'tiene_oferta_servicios' => false,
-                                        'tiene_seguimiento_oferta' => false,
-                                    ];
-                                    $contactoEfectivo = (
-                                        $etapa === 'contactado'
-                                        && strtoupper(trim((string)($e->aplica ?? ''))) === 'SI'
-                                    );
-                                    $tieneOferta = !empty($estadoFlujo['tiene_oferta_servicios']);
-                                    $tieneEstudio = !empty($estadoFlujo['tiene_estudio_necesidades']);
-                                    $tieneSeguimiento = !empty($estadoFlujo['tiene_seguimiento_oferta']);
-                                    
-                                    // No mostrar badges de flujo si ya se cerró la venta (ganado o perdido)
-                                    $mostrarBadgesActividad = !in_array($etapa, ['ganado', 'perdido']);
-                                    ?>
-                                    <span class="badge badge-pill badge-<?= $badgeMap[$etapa] ?? 'secondary' ?>">
-                                        <?= $labels[$etapa] ?? ucfirst($etapa) ?>
-                                    </span>
-                                    <?php if ($mostrarBadgesActividad && ($contactoEfectivo || $tieneEstudio || $tieneOferta || $tieneSeguimiento)): ?>
-                                        <div class="mt-1">
-                                            <?php if ($contactoEfectivo): ?>
-                                                <span class="badge badge-success mr-1">Contacto interesado</span>
-                                            <?php endif; ?>
-                                            <?php if ($tieneSeguimiento): ?>
-                                                <span class="badge badge-info bg-info text-white">Seguimiento de la oferta</span>
-                                            <?php elseif ($tieneOferta): ?>
-                                                <span class="badge badge-primary">Oferta de servicios</span>
-                                            <?php elseif ($tieneEstudio): ?>
-                                                <span class="badge badge-primary">Estudio de necesidades</span>
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <div class="btn-group btn-group-sm" role="group">
-                                        <a href="<?php echo url('contacto/index', ['empresa_id' => $e->id]); ?>"
-                                            class="btn btn-sm btn-outline-info" title="Contactos">
-                                            <i class="fas fa-address-book fa-sm"></i>
-                                        </a>
-                                        <a href="<?php echo url('trazabilidad/index', ['empresa_id' => $e->id]); ?>"
-                                            class="btn btn-sm btn-outline-success" title="Trazabilidad">
-                                            <i class="fas fa-eye fa-sm"></i>
-                                        </a>
-                                        <a href="<?php echo url('empresa/editar', ['id' => $e->id]); ?>"
-                                            class="btn btn-sm btn-outline-primary" title="Editar">
-                                            <i class="fas fa-edit fa-sm"></i>
-                                        </a>
-                                        <a href="#"
-                                            class="btn btn-sm btn-outline-danger" title="Eliminar"
-                                            onclick="return confirmarEliminacion('<?php echo url('empresa/eliminar', ['id' => $e->id]); ?>', '¿Eliminar la empresa <?php echo htmlspecialchars($e->razon_social); ?>?')">
-                                            <i class="fas fa-trash-alt fa-sm"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
