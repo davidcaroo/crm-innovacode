@@ -46,6 +46,16 @@ return [
     'POST /ventas/guardar'                     => ['venta', 'guardar'],
     'GET  /ventas/:id/eliminar'                => ['venta', 'eliminar'],
 
+    // ── EMAIL MARKETING ─────────────────────────────────────
+    'GET  /email-marketing'                    => ['emailMarketing', 'index'],
+    'POST /email-marketing/redactar'           => ['emailMarketing', 'redactar'],
+    'POST /email-marketing/enviar'             => ['emailMarketing', 'enviar'],
+    'GET  /email-marketing/plantillas'         => ['emailMarketing', 'plantillas'],
+    'GET  /email-marketing/plantillas/crear'   => ['emailMarketing', 'crearPlantilla'],
+    'POST /email-marketing/plantillas/guardar' => ['emailMarketing', 'guardarPlantilla'],
+    'GET  /email-marketing/plantilla/ajax'     => ['emailMarketing', 'obtenerPlantillaAjax'],
+    'GET  /email-marketing/plantillas/:id/eliminar' => ['emailMarketing', 'eliminarPlantilla'],
+    
     // ── REPORTES ────────────────────────────────────────────
     'GET  /reportes'                           => ['reporte', 'index'],
     'GET  /reportes/exportar-global'           => ['reporte', 'exportarGlobalExcel'],

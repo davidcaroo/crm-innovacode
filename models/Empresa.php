@@ -486,4 +486,36 @@ class Empresa extends BaseModel
         $result = $stmt->fetch();
         return $result->total ?? 0;
     }
+
+    /**
+     * Obtiene las empresas filtradas para el módulo de Email Marketing.
+     * Criterio: Deben haber pasado el "Estudio de Necesidades" y estar listas para la "Oferta de Servicios".
+     */
+    public function obtenerParaMarketing($usuario_id = null)
+    {
+        $sql = "SELECT e.*, 
+                (SELECT COUNT(*) FROM trazabilidad t WHERE t.empresa_id = e.id AND LOWER(t.tipo_actividad) IN ('estudio_necesidades', 'estudio de necesidades')) as tiene_estudio,
+                (SELECT COUNT(*) FROM trazabilidad t WHERE t.empresa_id = e.id AND LOWER(t.tipo_actividad) IN ('oferta_servicio', 'oferta de servicio', 'oferta de servicios')) as tiene_oferta
+                FROM empresas e
+                WHERE e.etapa_venta NOT IN ('ganado', 'perdido')
+                AND (e.etapa_venta = 'negociacion' OR EXISTS (
+                    SELECT 1 FROM trazabilidad t 
+                    WHERE t.empresa_id = e.id 
+                    AND LOWER(t.tipo_actividad) IN ('estudio_necesidades', 'estudio de necesidades')
+                ))";
+
+        if ($usuario_id) {
+            $sql .= " AND e.usuario_id = :usuario_id";
+        }
+
+        $sql .= " ORDER BY e.razon_social ASC";
+
+        $stmt = $this->db->prepare($sql);
+        if ($usuario_id) {
+            $stmt->bindValue(':usuario_id', $usuario_id, PDO::PARAM_INT);
+        }
+        $stmt->execute();
+        // Forzamos FETCH_ASSOC para compatibilidad con la vista
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

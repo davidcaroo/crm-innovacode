@@ -129,6 +129,15 @@ function url(string $route, array $params = []): string
         'venta/index'                   => '/ventas',
         'venta/guardar'                 => '/ventas/guardar',
         'venta/eliminar'                => '/ventas/:id/eliminar',
+        // Email Marketing
+        'emailMarketing/index'          => '/email-marketing',
+        'emailMarketing/redactar'       => '/email-marketing/redactar',
+        'emailMarketing/enviar'         => '/email-marketing/enviar',
+        'emailMarketing/plantillas'     => '/email-marketing/plantillas',
+        'emailMarketing/crearPlantilla' => '/email-marketing/plantillas/crear',
+        'emailMarketing/guardarPlantilla' => '/email-marketing/plantillas/guardar',
+        'emailMarketing/obtenerPlantillaAjax' => '/email-marketing/plantilla/ajax',
+        'emailMarketing/eliminarPlantilla' => '/email-marketing/plantillas/:id/eliminar',
         // Reportes
         'reporte/index'                 => '/reportes',
         'reporte/exportarGlobalExcel'   => '/reportes/exportar-global',

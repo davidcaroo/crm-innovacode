@@ -45,6 +45,19 @@ class Mailer
     }
 
     /**
+     * Envía email de marketing o propuesta comercial.
+     * NO exige que las notificaciones estén activas pues es una acción manual.
+     */
+    public static function enviarMarketing(string $para, string $asunto, string $cuerpo, array $adjuntos = []): bool
+    {
+        $smtp = Configuracion::getSMTP();
+        if (!$smtp || empty($smtp['smtp_host']) || empty($smtp['smtp_user'])) {
+            return false;
+        }
+        return self::_enviarSmtp($smtp, $para, $asunto, $cuerpo, $adjuntos);
+    }
+
+    /**
      * Envía credenciales a un nuevo usuario
      * Email transaccional que NO requiere notificaciones activas
      */
@@ -182,7 +195,7 @@ class Mailer
 
         try {
             $log = '';
-            $ok  = self::_enviarSmtp($smtp, $smtp['smtp_user'], $asunto, $cuerpo, $log);
+            $ok  = self::_enviarSmtp($smtp, $smtp['smtp_user'], $asunto, $cuerpo, [], $log);
             return [
                 'ok'  => $ok,
                 'msg' => $ok
@@ -199,7 +212,7 @@ class Mailer
     // Motor SMTP privado
     // ------------------------------------------------------------------
 
-    private static function _enviarSmtp(array $smtp, string $para, string $asunto, string $cuerpo, string &$log = ''): bool
+    private static function _enviarSmtp(array $smtp, string $para, string $asunto, string $cuerpo, array $adjuntos = [], string &$log = ''): bool
     {
         $host = $smtp['smtp_host'];
         $port = intval($smtp['smtp_port'] ?? 465);
@@ -323,19 +336,48 @@ class Mailer
             return false;
         }
 
-        $appName = defined('APP_NAME') ? APP_NAME : 'CRM';
-        $msgId   = md5(uniqid()) . '@crm-app';
-        $msg  = "Date: " . date('r') . "\r\n"
+        $appName  = defined('APP_NAME') ? APP_NAME : 'CRM';
+        $boundary = "----=_NextPart_" . md5(uniqid());
+        $msgId    = md5(uniqid()) . '@crm-app';
+
+        $header = "Date: " . date('r') . "\r\n"
             . "From: {$appName} <{$user}>\r\n"
             . "To: <{$para}>\r\n"
             . "Message-ID: <{$msgId}>\r\n"
             . "Subject: =?UTF-8?B?" . base64_encode($asunto) . "?=\r\n"
-            . "MIME-Version: 1.0\r\n"
-            . "Content-Type: text/html; charset=UTF-8\r\n"
-            . "Content-Transfer-Encoding: base64\r\n"
-            . "\r\n"
-            . chunk_split(base64_encode($cuerpo))
-            . "\r\n.\r\n";
+            . "MIME-Version: 1.0\r\n";
+
+        if (empty($adjuntos)) {
+            $header .= "Content-Type: text/html; charset=UTF-8\r\n"
+                . "Content-Transfer-Encoding: base64\r\n"
+                . "\r\n"
+                . chunk_split(base64_encode($cuerpo));
+        } else {
+            $header .= "Content-Type: multipart/mixed; boundary=\"{$boundary}\"\r\n"
+                . "\r\n"
+                . "--{$boundary}\r\n"
+                . "Content-Type: text/html; charset=UTF-8\r\n"
+                . "Content-Transfer-Encoding: base64\r\n"
+                . "\r\n"
+                . chunk_split(base64_encode($cuerpo));
+
+            foreach ($adjuntos as $adj) {
+                $ruta   = $adj['ruta'];
+                $nombre = $adj['nombre'];
+                if (file_exists($ruta)) {
+                    $content = file_get_contents($ruta);
+                    $header .= "\r\n--{$boundary}\r\n"
+                        . "Content-Type: application/octet-stream; name=\"{$nombre}\"\r\n"
+                        . "Content-Transfer-Encoding: base64\r\n"
+                        . "Content-Disposition: attachment; filename=\"{$nombre}\"\r\n"
+                        . "\r\n"
+                        . chunk_split(base64_encode($content));
+                }
+            }
+            $header .= "\r\n--{$boundary}--\r\n";
+        }
+        
+        $msg = $header . "\r\n.\r\n";
 
         fwrite($sock, $msg);
         $resp = $read();

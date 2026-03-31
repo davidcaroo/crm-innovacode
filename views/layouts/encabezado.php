@@ -12,6 +12,9 @@
         <link href="https://cdn.jsdelivr.net/gh/StartBootstrap/startbootstrap-sb-admin-2@gh-pages/css/sb-admin-2.min.css" rel="stylesheet" crossorigin="anonymous">
         <link href="<?php echo BASE_URL; ?>/public/css/sb-admin2-crm.css?v=20260327d" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap4.min.css" crossorigin="anonymous">
+        <!-- Core Scripts moved to head for better view support (Summernote, etc.) -->
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <?php else: ?>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -42,6 +45,7 @@
         $activeDashboard = preg_match('#/(dashboard|)$#', $currentPath) || strpos($currentPath, '/dashboard') !== false;
         $activePipeline = strpos($currentPath, '/empresa/pipeline') !== false || strpos($currentPath, '/empresas/pipeline') !== false;
         $activeEmpresas = strpos($currentPath, '/empresa/index') !== false || strpos($currentPath, '/empresas') !== false;
+        $activeEmailMarketing = strpos($currentPath, '/email-marketing') !== false;
         $activeVentas = strpos($currentPath, '/venta/index') !== false;
         $activeReportes = strpos($currentPath, '/reporte/index') !== false;
         $activeTrazabilidad = strpos($currentPath, '/trazabilidad') !== false;
@@ -84,6 +88,13 @@
                     <a class="nav-link" href="<?php echo url('empresa/index'); ?>">
                         <i class="fas fa-building fa-fw mr-2"></i>
                         <span>Mis Empresas</span>
+                    </a>
+                </li>
+
+                <li class="nav-item <?php echo $activeEmailMarketing ? 'active' : ''; ?>">
+                    <a class="nav-link" href="<?php echo url('emailMarketing/index'); ?>">
+                        <i class="fas fa-envelope-open-text fa-fw mr-2"></i>
+                        <span>Email Marketing</span>
                     </a>
                 </li>
 
