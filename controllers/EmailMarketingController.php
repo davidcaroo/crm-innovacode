@@ -170,8 +170,19 @@ class EmailMarketingController extends BaseController {
             $asunto = trim($_POST['asunto'] ?? '');
             $cuerpo_html = $_POST['cuerpo_html'] ?? '';
 
-            if (!$nombre || !$asunto || !$cuerpo_html) {
+            if (empty($nombre) || empty($asunto) || empty($cuerpo_html)) {
                 $this->redirect(url('emailMarketing/crearPlantilla'));
+            }
+
+            $contentLength = isset($_SERVER['CONTENT_LENGTH']) ? (int) $_SERVER['CONTENT_LENGTH'] : 0;
+            if ($contentLength > 0) {
+                $maxUpload = $this->toBytes(ini_get('upload_max_filesize'));
+                $maxPost = $this->toBytes(ini_get('post_max_size'));
+                $limit = min($maxUpload > 0 ? $maxUpload : PHP_INT_MAX, $maxPost > 0 ? $maxPost : PHP_INT_MAX);
+
+                if ($limit > 0 && $contentLength > $limit) {
+                    $this->redirect(url('emailMarketing/crearPlantilla', ['error' => 'El contenido excede el tamaño permitido por el servidor. Reduce el HTML o los adjuntos.']));
+                }
             }
 
             try {
@@ -199,8 +210,8 @@ class EmailMarketingController extends BaseController {
 
                 $this->redirect(url('emailMarketing/plantillas'));
             } catch (\Exception $e) {
-                die($e->getMessage());
-                $this->redirect(url('emailMarketing/crearPlantilla'));
+                error_log('EmailMarketing guardarPlantilla error: ' . $e->getMessage());
+                $this->redirect(url('emailMarketing/crearPlantilla', ['error' => 'No se pudo guardar la plantilla.']));
             }
         }
     }
@@ -232,6 +243,27 @@ class EmailMarketingController extends BaseController {
             $this->redirect(url('emailMarketing/plantillas'));
         } catch (\Exception $e) {
             $this->redirect(url('emailMarketing/plantillas'));
+        }
+    }
+
+    private function toBytes($value) {
+        $value = trim((string) $value);
+        if ($value === '') {
+            return 0;
+        }
+
+        $unit = strtolower(substr($value, -1));
+        $number = (int) $value;
+
+        switch ($unit) {
+            case 'g':
+                return $number * 1024 * 1024 * 1024;
+            case 'm':
+                return $number * 1024 * 1024;
+            case 'k':
+                return $number * 1024;
+            default:
+                return (int) $value;
         }
     }
 }

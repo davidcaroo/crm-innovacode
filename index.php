@@ -50,8 +50,8 @@ $controllerName = isset($_GET['controller']) ? $_GET['controller'] : 'dashboard'
 $actionName = isset($_GET['action']) ? $_GET['action'] : 'index';
 
 // Convertir nombre del controlador a formato de clase (PascalCase)
-// Ejemplo: cliente => ClienteController
-$controllerClass = ucfirst(strtolower($controllerName)) . 'Controller';
+// Ejemplo: cliente => ClienteController, emailMarketing => EmailMarketingController
+$controllerClass = ucfirst($controllerName) . 'Controller';
 
 // Ruta del archivo del controlador
 $controllerFile = CONTROLLERS_PATH . '/' . $controllerClass . '.php';

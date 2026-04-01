@@ -25,9 +25,12 @@ define('VIEWS_PATH', BASE_PATH . '/views');
 define('MODELS_PATH', BASE_PATH . '/models');
 define('CONTROLLERS_PATH', BASE_PATH . '/controllers');
 
-// URL base (Fija explícitamente para evitar problemas de proxy)
-define('BASE_URL', 'https://crm.innovacode.click');
-define('APP_BASE_PATH', ''); // En raíz de subdominio
+// URL base dinámica para que el mismo build funcione en cualquier dominio/subdominio
+$_protocol  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$_host      = $_SERVER['HTTP_HOST'] ?? 'localhost';
+define('BASE_URL', $_protocol . '://' . $_host);
+define('APP_BASE_PATH', ''); // En raíz del dominio
+unset($_protocol, $_host);
 
 // Configuración de la aplicación
 define('APP_NAME', 'CRM Innovacode');
@@ -126,6 +129,15 @@ function url(string $route, array $params = []): string
         'venta/index'                   => '/ventas',
         'venta/guardar'                 => '/ventas/guardar',
         'venta/eliminar'                => '/ventas/:id/eliminar',
+        // Email Marketing
+        'emailMarketing/index'          => '/email-marketing',
+        'emailMarketing/redactar'       => '/email-marketing/redactar',
+        'emailMarketing/enviar'         => '/email-marketing/enviar',
+        'emailMarketing/plantillas'     => '/email-marketing/plantillas',
+        'emailMarketing/crearPlantilla' => '/email-marketing/plantillas/crear',
+        'emailMarketing/guardarPlantilla' => '/email-marketing/plantillas/guardar',
+        'emailMarketing/obtenerPlantillaAjax' => '/email-marketing/plantilla/ajax',
+        'emailMarketing/eliminarPlantilla' => '/email-marketing/plantillas/:id/eliminar',
         // Reportes
         'reporte/index'                 => '/reportes',
         'reporte/exportarGlobalExcel'   => '/reportes/exportar-global',

@@ -12,7 +12,16 @@
         <h6 class="m-0 font-weight-bold text-primary">Formulario de Plantilla HTML</h6>
     </div>
     <div class="card-body">
-        <form action="<?php echo url('emailMarketing/guardarPlantilla'); ?>" method="POST" enctype="multipart/form-data">
+        <?php if (!empty($_GET['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?php echo htmlspecialchars($_GET['error']); ?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        <?php endif; ?>
+
+        <form id="formPlantilla" action="<?php echo url('emailMarketing/guardarPlantilla'); ?>" method="POST" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-md-6 form-group">
                     <label for="nombre" class="font-weight-bold">Nombre para identificar la plantilla <span class="text-danger">*</span></label>
@@ -66,6 +75,10 @@ $(document).ready(function() {
             ['insert', ['link', 'picture', 'video']],
             ['view', ['fullscreen', 'codeview', 'help']]
         ]
+    });
+
+    $('#formPlantilla').on('submit', function() {
+        $('#cuerpo_html').val($('#cuerpo_html').summernote('code'));
     });
 });
 </script>

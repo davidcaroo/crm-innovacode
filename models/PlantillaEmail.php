@@ -18,14 +18,41 @@ class PlantillaEmail extends BaseModel {
     }
 
     public function crear($data) {
-        $sql = "INSERT INTO {$this->table} (nombre, asunto, cuerpo_html, usuario_id) VALUES (?, ?, ?, ?)";
+        $idColumn = $this->db->prepare(
+            "SELECT EXTRA FROM INFORMATION_SCHEMA.COLUMNS
+             WHERE TABLE_SCHEMA = DATABASE()
+               AND TABLE_NAME = ?
+               AND COLUMN_NAME = 'id'"
+        );
+        $idColumn->execute([$this->table]);
+        $extra = strtolower((string) $idColumn->fetchColumn());
+
+        if (strpos($extra, 'auto_increment') !== false) {
+            $sql = "INSERT INTO {$this->table} (nombre, asunto, cuerpo_html, usuario_id) VALUES (?, ?, ?, ?)";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                $data['nombre'],
+                $data['asunto'],
+                $data['cuerpo_html'],
+                $data['usuario_id']
+            ]);
+            return $this->db->lastInsertId();
+        }
+
+        $nextIdStmt = $this->db->prepare("SELECT COALESCE(MAX(id), 0) + 1 FROM {$this->table}");
+        $nextIdStmt->execute();
+        $nextId = (int) $nextIdStmt->fetchColumn();
+
+        $sql = "INSERT INTO {$this->table} (id, nombre, asunto, cuerpo_html, usuario_id) VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
+            $nextId,
             $data['nombre'],
             $data['asunto'],
             $data['cuerpo_html'],
             $data['usuario_id']
         ]);
-        return $this->db->lastInsertId();
+
+        return $nextId;
     }
 }
