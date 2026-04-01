@@ -71,6 +71,92 @@ class Mailer
     }
 
     /**
+     * Plantilla HTML para recordatorios automáticos.
+     */
+    public static function plantillaRecordatorio(array $datos): string
+    {
+        $appName = defined('APP_NAME') ? APP_NAME : 'CRM';
+        $nombreUsuario = htmlspecialchars((string)($datos['nombre_usuario'] ?? 'usuario'), ENT_QUOTES, 'UTF-8');
+        $empresa = htmlspecialchars((string)($datos['empresa'] ?? 'la empresa'), ENT_QUOTES, 'UTF-8');
+        $tipo = htmlspecialchars((string)($datos['tipo_label'] ?? 'Recordatorio'), ENT_QUOTES, 'UTF-8');
+        $asunto = htmlspecialchars((string)($datos['asunto'] ?? 'Recordatorio automático'), ENT_QUOTES, 'UTF-8');
+        $fechaProgramada = htmlspecialchars((string)($datos['fecha_programada'] ?? ''), ENT_QUOTES, 'UTF-8');
+        $detalleHtml = (string)($datos['detalle_html'] ?? '');
+        $ctaUrl = htmlspecialchars((string)($datos['cta_url'] ?? (defined('BASE_URL') ? BASE_URL . '/recordatorios' : '#')), ENT_QUOTES, 'UTF-8');
+        $accent = htmlspecialchars((string)($datos['accent'] ?? '#0f766e'), ENT_QUOTES, 'UTF-8');
+
+        return '<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin:0;padding:0;background:#f3f4f6;font-family:Arial,Helvetica,sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f3f4f6;padding:36px 16px;">
+        <tr>
+            <td align="center">
+                <table width="640" cellpadding="0" cellspacing="0" style="max-width:640px;width:100%;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(15,23,42,0.10);">
+                    <tr>
+                        <td style="background:linear-gradient(135deg, ' . $accent . ' 0%, #1d4ed8 100%);padding:28px 32px;text-align:left;">
+                            <div style="font-size:13px;letter-spacing:1px;text-transform:uppercase;color:#dbeafe;font-weight:bold;margin-bottom:8px;">' . htmlspecialchars($appName, ENT_QUOTES, 'UTF-8') . '</div>
+                            <h1 style="margin:0;color:#ffffff;font-size:28px;line-height:1.2;">' . $asunto . '</h1>
+                            <p style="margin:10px 0 0 0;color:#e0f2fe;font-size:15px;line-height:1.6;">Tienes un seguimiento importante pendiente y queríamos dejarte el detalle claro y rápido.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:32px;">
+                            <p style="margin:0 0 18px 0;color:#0f172a;font-size:16px;line-height:1.7;">Hola <strong>' . $nombreUsuario . '</strong>,</p>
+                            <p style="margin:0 0 24px 0;color:#475569;font-size:15px;line-height:1.7;">Este recordatorio automático se generó para <strong>' . $empresa . '</strong>. Puedes usarlo como punto de control para no perder el seguimiento.</p>
+
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px 0;border:1px solid #e2e8f0;border-radius:14px;background:#f8fafc;">
+                                <tr>
+                                    <td style="padding:18px 20px;">
+                                        <table width="100%" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td style="padding:0 0 12px 0;">
+                                                    <span style="display:inline-block;background:rgba(15,118,110,0.10);color:' . $accent . ';border-radius:999px;padding:6px 12px;font-size:12px;font-weight:bold;text-transform:uppercase;letter-spacing:.4px;">' . $tipo . '</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding:0 0 8px 0;color:#0f172a;font-size:18px;font-weight:bold;">' . $empresa . '</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="color:#475569;font-size:14px;line-height:1.7;">' . $detalleHtml . '</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-top:16px;color:#64748b;font-size:13px;">Programado para: <strong style="color:#0f172a;">' . $fechaProgramada . '</strong></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 26px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="' . $ctaUrl . '" style="display:inline-block;background:' . $accent . ';color:#ffffff;text-decoration:none;padding:14px 26px;border-radius:10px;font-size:15px;font-weight:bold;">Ver recordatorios</a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="margin:0;color:#64748b;font-size:13px;line-height:1.6;">Si el seguimiento ya fue realizado, puedes revisarlo desde el módulo de recordatorios y trazabilidad.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:18px 32px 26px 32px;background:#f8fafc;border-top:1px solid #e2e8f0;text-align:center;">
+                            <p style="margin:0 0 6px 0;color:#94a3b8;font-size:12px;">Mensaje generado automáticamente por ' . htmlspecialchars($appName, ENT_QUOTES, 'UTF-8') . '</p>
+                            <p style="margin:0;color:#cbd5e1;font-size:12px;">No es necesario responder a este correo.</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>';
+    }
+
+    /**
      * Envía credenciales a un nuevo usuario
      * Email transaccional que NO requiere notificaciones activas
      */

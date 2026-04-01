@@ -25,24 +25,27 @@ foreach ($recordatorios as $recordatorio) {
     $empresa = $recordatorio->razon_social ?? 'la empresa';
     $tipo = $recordatorio->tipo_recordatorio ?? 'recordatorio';
     $asunto = $recordatorio->asunto ?: ('Recordatorio CRM - ' . $empresa);
+    $tipoLabelMap = [
+        'reunion' => 'Reunión pendiente',
+        'seguimiento_oferta' => 'Seguimiento de oferta',
+        'oferta_servicio' => 'Oferta de servicios',
+        'general' => 'Recordatorio general',
+    ];
 
-    $detalleHtml = '';
-    if (!empty($datos['observaciones'])) {
-        $detalleHtml .= '<p><strong>Detalles:</strong><br>' . nl2br(htmlspecialchars($datos['observaciones'])) . '</p>';
-    }
-    if (!empty($datos['fecha_origen'])) {
-        $detalleHtml .= '<p><strong>Registrado el:</strong> ' . htmlspecialchars($datos['fecha_origen']) . '</p>';
-    }
+    $fechaProgramada = !empty($recordatorio->fecha_programada)
+        ? date('d/m/Y H:i', strtotime($recordatorio->fecha_programada))
+        : '';
 
-    $mensaje = '<html><body style="font-family:Arial,sans-serif;background:#f8fafc;padding:24px;">'
-        . '<div style="max-width:640px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;">'
-        . '<h2 style="margin:0 0 12px 0;color:#1d4ed8;">Recordatorio automático</h2>'
-        . '<p>Hola <strong>' . htmlspecialchars($recordatorio->usuario_nombre ?? 'usuario') . '</strong>,</p>'
-        . '<p>Este es un recordatorio sobre <strong>' . htmlspecialchars($empresa) . '</strong>.</p>'
-        . '<p><strong>Tipo:</strong> ' . htmlspecialchars($tipo) . '</p>'
-        . $detalleHtml
-        . '<p style="margin-top:24px;color:#6b7280;font-size:13px;">Enviado automáticamente por el CRM.</p>'
-        . '</div></body></html>';
+    $mensaje = Mailer::plantillaRecordatorio([
+        'nombre_usuario' => $recordatorio->usuario_nombre ?? 'usuario',
+        'empresa' => $empresa,
+        'tipo_label' => $tipoLabelMap[$tipo] ?? ucfirst(str_replace('_', ' ', $tipo)),
+        'asunto' => $asunto,
+        'fecha_programada' => $fechaProgramada,
+        'detalle_html' => !empty($recordatorio->mensaje_html) ? $recordatorio->mensaje_html : '<p>Sin detalles adicionales.</p>',
+        'cta_url' => defined('BASE_URL') ? BASE_URL . '/recordatorios' : '#',
+        'accent' => '#0f766e',
+    ]);
 
     $destinatario = $recordatorio->usuario_email ?? null;
     if (empty($destinatario)) {
