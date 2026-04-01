@@ -1,0 +1,20 @@
+CREATE TABLE `recordatorios_email` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `empresa_id` int(11) NOT NULL,
+  `usuario_id` int(11) NOT NULL,
+  `tipo_recordatorio` varchar(50) NOT NULL,
+  `asunto` varchar(180) NOT NULL,
+  `mensaje_html` longtext NOT NULL,
+  `fecha_programada` datetime NOT NULL,
+  `fecha_ejecucion` datetime DEFAULT NULL,
+  `estado` enum('pendiente','enviado','cancelado','fallido') NOT NULL DEFAULT 'pendiente',
+  `datos_json` longtext DEFAULT NULL,
+  `error_msg` text DEFAULT NULL,
+  `creado_en` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_recordatorios_estado_fecha` (`estado`,`fecha_programada`),
+  KEY `idx_recordatorios_empresa` (`empresa_id`),
+  KEY `idx_recordatorios_usuario` (`usuario_id`),
+  CONSTRAINT `fk_recordatorios_empresa` FOREIGN KEY (`empresa_id`) REFERENCES `empresas` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_recordatorios_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

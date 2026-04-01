@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../models/Trazabilidad.php';
 require_once __DIR__ . '/../models/Empresa.php';
+require_once __DIR__ . '/../models/RecordatorioEmail.php';
 require_once __DIR__ . '/BaseController.php';
 
 class TrazabilidadController extends BaseController
@@ -44,10 +45,31 @@ class TrazabilidadController extends BaseController
         $this->view('trazabilidad/global', ['historial' => $historial]);
     }
 
+    public function recordatorios()
+    {
+        $recordatorioModel = new RecordatorioEmail();
+        $esAdmin = in_array($_SESSION['usuario_rol'], ['admin', 'superadmin'], true);
+        $usuario_id = $esAdmin ? null : (int) $_SESSION['usuario_id'];
+
+        $filtros = [
+            'estado' => $this->get('estado') ?: '',
+            'tipo_recordatorio' => $this->get('tipo_recordatorio') ?: '',
+            'empresa_id' => $this->get('empresa_id') ?: '',
+        ];
+
+        $recordatorios = $recordatorioModel->obtenerListado($filtros, $usuario_id);
+
+        $this->view('trazabilidad/recordatorios', [
+            'recordatorios' => $recordatorios,
+            'filtros' => $filtros,
+            'esAdmin' => $esAdmin,
+        ]);
+    }
+
     public function registrar()
     {
         $empresa_id = $this->get('empresa_id') ?? $this->post('empresa_id');
-        $this->validarPropiedadEmpresa($empresa_id);
+        $empresa = $this->validarPropiedadEmpresa($empresa_id);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tipoActividadRaw = trim((string)$this->post('tipo_actividad'));
@@ -85,10 +107,15 @@ class TrazabilidadController extends BaseController
                 'usuario_id'     => $_SESSION['usuario_id'],
                 'etapa_venta'    => $nuevaEtapa,
                 'tipo_actividad' => $tipoActividad,
+                'tipo_actividad_key' => $tipoActividadNorm,
                 'observaciones'  => $this->post('observaciones'),
             ];
             $trazabilidadModel = new Trazabilidad();
-            $trazabilidadModel->registrar($data);
+            $trazabilidadId = $trazabilidadModel->registrar($data);
+
+            if ($trazabilidadId) {
+                $this->programarRecordatorios($data, $empresa, (int) $trazabilidadId);
+            }
 
             // Actualizar etapa de la empresa si cambió
             $empresaModel = new Empresa();
@@ -102,6 +129,56 @@ class TrazabilidadController extends BaseController
                 'empresa_id' => $empresa_id,
                 'empresa'    => $empresa,
             ]);
+        }
+    }
+
+    private function programarRecordatorios(array $data, $empresa, int $trazabilidadId): void
+    {
+        $recordatorioModel = new RecordatorioEmail();
+            $tipoActividad = strtolower((string)($data['tipo_actividad_key'] ?? $data['tipo_actividad'] ?? ''));
+        $observaciones = trim((string)($data['observaciones'] ?? ''));
+        $empresaNombre = (string)($empresa->razon_social ?? 'la empresa');
+
+        if ($tipoActividad === 'reunion') {
+            $fechaProgramada = date('Y-m-d H:i:s', strtotime('+1 day'));
+            $recordatorioModel->crear([
+                'empresa_id' => (int) $data['empresa_id'],
+                'usuario_id' => (int) $data['usuario_id'],
+                'tipo_recordatorio' => 'reunion',
+                'asunto' => 'Recordatorio de reunión pendiente - ' . $empresaNombre,
+                'mensaje_html' => '<p>Tienes una reunión pendiente con <strong>' . htmlspecialchars($empresaNombre) . '</strong>.</p><p><strong>Detalles:</strong><br>' . nl2br(htmlspecialchars($observaciones ?: 'Sin observaciones')) . '</p>',
+                'fecha_programada' => $fechaProgramada,
+                'datos_json' => json_encode([
+                    'trazabilidad_id' => $trazabilidadId,
+                    'tipo_actividad' => 'reunion',
+                    'observaciones' => $observaciones,
+                    'fecha_origen' => date('Y-m-d H:i:s'),
+                ], JSON_UNESCAPED_UNICODE),
+            ]);
+        }
+
+        if ($tipoActividad === 'oferta_servicio') {
+            $recordatorioModel->cancelarPendientesPorEmpresaYTipo((int) $data['empresa_id'], ['seguimiento_oferta']);
+
+            $fechaProgramada = date('Y-m-d H:i:s', strtotime('+2 days'));
+            $recordatorioModel->crear([
+                'empresa_id' => (int) $data['empresa_id'],
+                'usuario_id' => (int) $data['usuario_id'],
+                'tipo_recordatorio' => 'seguimiento_oferta',
+                'asunto' => 'Seguimiento pendiente de oferta - ' . $empresaNombre,
+                'mensaje_html' => '<p>La empresa <strong>' . htmlspecialchars($empresaNombre) . '</strong> se encuentra en <strong>Oferta de servicios</strong>.</p><p>No olvides realizar el seguimiento correspondiente.</p><p><strong>Detalles:</strong><br>' . nl2br(htmlspecialchars($observaciones ?: 'Sin observaciones')) . '</p>',
+                'fecha_programada' => $fechaProgramada,
+                'datos_json' => json_encode([
+                    'trazabilidad_id' => $trazabilidadId,
+                    'tipo_actividad' => 'oferta_servicio',
+                    'observaciones' => $observaciones,
+                    'fecha_origen' => date('Y-m-d H:i:s'),
+                ], JSON_UNESCAPED_UNICODE),
+            ]);
+        }
+
+        if ($tipoActividad === 'seguimiento_oferta') {
+            $recordatorioModel->cancelarPendientesPorEmpresaYTipo((int) $data['empresa_id'], ['seguimiento_oferta']);
         }
     }
 

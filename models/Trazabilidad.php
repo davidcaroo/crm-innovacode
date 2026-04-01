@@ -11,13 +11,19 @@ class Trazabilidad extends BaseModel
     {
         $sql  = "INSERT INTO trazabilidad (empresa_id, usuario_id, etapa_venta, tipo_actividad, observaciones) VALUES (?, ?, ?, ?, ?)";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
+        $ok = $stmt->execute([
             $data['empresa_id'],
             $data['usuario_id'],
             $data['etapa_venta'],
             $data['tipo_actividad'] ?? 'nota',
             $data['observaciones'],
         ]);
+
+        if (!$ok) {
+            return false;
+        }
+
+        return (int) $this->db->lastInsertId();
     }
 
     public function historialPorEmpresa($empresa_id)

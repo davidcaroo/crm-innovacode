@@ -39,6 +39,7 @@
             'empresa_creada'   => ['icono' => 'fas fa-building',      'color' => 'text-primary'],
             'cambio_etapa'     => ['icono' => 'fas fa-random',        'color' => 'text-info'],
             'credito_aprobado' => ['icono' => 'fas fa-credit-card',   'color' => 'text-warning'],
+            'recordatorio_email' => ['icono' => 'fas fa-bell',        'color' => 'text-warning'],
         ];
         $ultimas5 = array_slice($noLeidas, 0, 5);
         $currentPath = strtolower((string)(parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?? ''));
@@ -49,6 +50,7 @@
         $activeVentas = strpos($currentPath, '/venta/index') !== false;
         $activeReportes = strpos($currentPath, '/reporte/index') !== false;
         $activeTrazabilidad = strpos($currentPath, '/trazabilidad') !== false;
+        $activeRecordatorios = strpos($currentPath, '/recordatorios') !== false;
         $activeNotificaciones = strpos($currentPath, '/notificacion') !== false;
         $activeUsuarios = strpos($currentPath, '/usuario/lista') !== false;
         $activeConfiguracion = strpos($currentPath, '/configuracion') !== false;
@@ -116,6 +118,13 @@
                     <a class="nav-link" href="<?php echo url('trazabilidad/historial'); ?>">
                         <i class="fas fa-history fa-fw mr-2"></i>
                         <span>Bitácora de Actividad</span>
+                    </a>
+                </li>
+
+                <li class="nav-item <?php echo $activeRecordatorios ? 'active' : ''; ?>">
+                    <a class="nav-link" href="<?php echo url('trazabilidad/recordatorios'); ?>">
+                        <i class="fas fa-clock fa-fw mr-2"></i>
+                        <span>Recordatorios</span>
                     </a>
                 </li>
 

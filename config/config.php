@@ -143,6 +143,7 @@ function url(string $route, array $params = []): string
         'reporte/exportarGlobalExcel'   => '/reportes/exportar-global',
         // Trazabilidad
         'trazabilidad/historial'        => '/trazabilidad',
+        'trazabilidad/recordatorios'    => '/recordatorios',
         'trazabilidad/index'            => '/trazabilidad/:empresa_id',
         'trazabilidad/registrar'        => '/trazabilidad/:empresa_id/registrar',
         // Notificaciones

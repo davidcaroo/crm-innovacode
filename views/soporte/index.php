@@ -75,7 +75,7 @@
                     </div>
                     <div class="col-md-6 mb-4 border-left d-none d-md-block">
                         <h6 class="font-weight-bold text-primary mb-3"><i class="fas fa-user-circle mr-2"></i>Ing. David Caro</h6>
-                        <p class="small text-gray-600 mb-3">Director Técnico & Arquitecto de Software</p>
+                        <p class="small text-gray-600 mb-3">Ingeniero Informático & Desarrollador</p>
                         <div class="text-gray-700">
                             <div class="mb-2"><i class="fas fa-envelope text-primary mr-2" style="width:16px;"></i> dacamo0502@gmail.com</div>
                             <div class="mb-2"><i class="fas fa-map-marker-alt text-danger mr-2" style="width:16px;"></i> Cartagena de Indias, Colombia</div>

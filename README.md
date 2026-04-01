@@ -28,6 +28,7 @@ CRM Innovacode es una plataforma web diseñada para centralizar y optimizar la o
 | 🏢 **Gestión de Empresas** | CRUD completo, importación masiva por Excel, búsqueda avanzada y filtrado |
 | 🔄 **Pipeline Comercial** | Visualización Kanban del embudo de ventas con drag & drop entre etapas |
 | 📝 **Trazabilidad** | Historial completo de actividades comerciales por empresa y usuario |
+| ⏰ **Recordatorios Automáticos** | Avisos por correo para reuniones y seguimientos pendientes |
 | 👥 **Contactos** | Gestión de personas de contacto vinculadas a cada empresa |
 | 💰 **Cierre de Ventas** | Registro y seguimiento de ventas ganadas con métricas de conversión |
 | 📈 **Reportes** | Exportación a Excel con reportes globales e individuales por comercial |
@@ -106,6 +107,7 @@ crm-php.com/
 │   ├── BaseModel.php       # Modelo base con métodos CRUD genéricos
 │   ├── Empresa.php
 │   ├── Trazabilidad.php
+│   ├── RecordatorioEmail.php
 │   ├── Reporte.php
 │   └── ...
 ├── views/                  # Vistas (templates PHP)
@@ -116,6 +118,7 @@ crm-php.com/
 │   └── ...
 ├── public/                 # Assets públicos (CSS, JS, imágenes)
 ├── logs/                   # Logs de errores (excluido de git)
+├── cron/                   # Scripts CLI para tareas programadas
 ├── index.php               # Entry point del sistema
 ├── .htaccess               # Reglas de rewriting (Apache)
 └── .htaccess.production    # Reglas optimizadas para producción

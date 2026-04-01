@@ -30,6 +30,8 @@ RewriteBase /
 5. **Verificar permisos** de `logs/` (755)
 6. **Activar SSL** en Hostinger
 7. **Probar:** https://crm.bahariaqua.com
+8. **Configurar cron** para recordatorios automáticos, por ejemplo cada hora:
+   - `php /home/u329333801/domains/crm.bahariaqua.com/public_html/cron/recordatorios_email.php`
 
 ---
 
@@ -69,3 +71,4 @@ https://crm.bahariaqua.com/diagnostico.php
 - [ ] Búsqueda de empresas funciona
 - [ ] Exportar CSV funciona
 - [ ] CSS y JS cargan correctamente
+- [ ] Cron de recordatorios corre y envía correos automáticos

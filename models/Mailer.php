@@ -58,6 +58,19 @@ class Mailer
     }
 
     /**
+     * Envía recordatorios automáticos del sistema.
+     * No depende de que las notificaciones estén activas.
+     */
+    public static function enviarRecordatorio(string $para, string $asunto, string $cuerpo): bool
+    {
+        $smtp = Configuracion::getSMTP();
+        if (!$smtp || empty($smtp['smtp_host']) || empty($smtp['smtp_user'])) {
+            return false;
+        }
+        return self::_enviarSmtp($smtp, $para, $asunto, $cuerpo);
+    }
+
+    /**
      * Envía credenciales a un nuevo usuario
      * Email transaccional que NO requiere notificaciones activas
      */

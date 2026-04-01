@@ -39,6 +39,9 @@
                             <option value="seguimiento_oferta">Seguimiento de la Oferta</option>
                             <option value="nota" selected>Nota interna</option>
                         </select>
+                        <small class="form-text text-muted mt-1">
+                            Las actividades de <strong>Reunión</strong> generan un recordatorio por correo al día siguiente. Las actividades de <strong>Oferta de Servicio</strong> generan un recordatorio de seguimiento a los 2 días si no registras seguimiento.
+                        </small>
                     </div>
 
                     <div class="form-group">
