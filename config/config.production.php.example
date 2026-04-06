@@ -1,21 +1,20 @@
 <?php
 
 /**
- * Archivo de configuración para PRODUCCIÓN - Hostinger
- * Contiene todo el setup necesario e idéntico al desarrollo 
- * (excepto URLs y Credenciales DB).
+ * Archivo de configuracion para PRODUCCION (ejemplo)
+ * Copiar a config.production.php y completar las credenciales reales.
  */
 
 // Zona horaria
 date_default_timezone_set("America/Bogota");
 
 // ===============================
-// CONFIGURACIÓN DE BASE DE DATOS
+// CONFIGURACION DE BASE DE DATOS
 // ===============================
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'u329333801_crm');
-define('DB_USER', 'u329333801_crm');
-define('DB_PASS', '#Dav1d.carO');
+define('DB_NAME', 'REEMPLAZAR_DB_NAME');
+define('DB_USER', 'REEMPLAZAR_DB_USER');
+define('DB_PASS', 'REEMPLAZAR_DB_PASS');
 define('DB_CHARSET', 'utf8');
 
 // Rutas del sistema
@@ -25,32 +24,31 @@ define('VIEWS_PATH', BASE_PATH . '/views');
 define('MODELS_PATH', BASE_PATH . '/models');
 define('CONTROLLERS_PATH', BASE_PATH . '/controllers');
 
-// URL base dinámica para que el mismo build funcione en cualquier dominio/subdominio
+// URL base dinamica para que el mismo build funcione en cualquier dominio/subdominio
 $_protocol  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $_host      = $_SERVER['HTTP_HOST'] ?? 'localhost';
 define('BASE_URL', $_protocol . '://' . $_host);
-define('APP_BASE_PATH', ''); // En raíz del dominio
+define('APP_BASE_PATH', ''); // En raiz del dominio
 unset($_protocol, $_host);
 
-// Configuración de la aplicación
+// Configuracion de la aplicacion
 define('APP_NAME', 'CRM Innovacode');
 define('APP_VERSION', '2.0.0');
 
-// Clave de cifrado
-define('ENCRYPTION_KEY', 'tQW8bKzguz+3vMV5VP8UMF19SX0S+rFm6mya8yFz32Q=');
+// Clave de cifrado (32 bytes recomendados, base64)
+define('ENCRYPTION_KEY', 'REEMPLAZAR_ENCRYPTION_KEY_BASE64');
 define('ENCRYPTION_METHOD', 'AES-256-CBC');
 
-// Modo de desarrollo: ALWAYS false en producción
+// Modo de desarrollo: ALWAYS false en produccion
 define('DEBUG_MODE', false);
 
-// Configurar reporte de errores según el modo
+// Configurar reporte de errores segun el modo
 if (DEBUG_MODE) {
     error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
-    ini_set('display_errors', 1); 
+    ini_set('display_errors', 1);
     ini_set('log_errors', 1);
     ini_set('error_log', BASE_PATH . '/logs/error.log');
 } else {
-    // ⚠️ ATENCION: si ves un 500, cambiar 'display_errors' a 1 un instante para debugearlo.
     error_reporting(E_ALL);
     ini_set('display_errors', 0);
     ini_set('log_errors', 1);
@@ -72,21 +70,21 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) {
 
 // Datos maestros
 define('DEPARTAMENTOS', [
-    "Nuevo León",
+    "Nuevo Leon",
     "Puebla",
     "CDMX",
     "Quintana Roo",
 ]);
 
-// Configuración de sesión
+// Configuracion de sesion
 if (session_status() === PHP_SESSION_NONE) {
     ini_set('session.cookie_httponly', 1);
     ini_set('session.use_only_cookies', 1);
-    ini_set('session.cookie_secure', 1);  // Strict en producción
+    ini_set('session.cookie_secure', 1);
     ini_set('session.cookie_samesite', 'Strict');
 }
 
-// Limites de subida de producción
+// Limites de subida de produccion
 ini_set('upload_max_filesize', '10M');
 ini_set('post_max_size', '10M');
 ini_set('max_execution_time', '300');
@@ -94,9 +92,9 @@ ini_set('max_execution_time', '300');
 // Charset por defecto
 header('Content-Type: text/html; charset=utf-8');
 
-// ── Helper de URL amigables ──────────────────────────────────────────────────
+// ── Helper de URL amigables ─────────────────────────────────────────────────-
 /**
- * Genera una URL limpia para un par controlador/acción.
+ * Genera una URL limpia para un par controlador/accion.
  */
 function url(string $route, array $params = []): string
 {
@@ -115,6 +113,7 @@ function url(string $route, array $params = []): string
         'empresa/procesarImportacion'   => '/empresas/procesar-importacion',
         'empresa/crear'                 => '/empresas/crear',
         'empresa/guardar'               => '/empresas/guardar',
+        'empresa/datosDataTables'       => '/empresas/datos',
         'empresa/editar'                => '/empresas/:id/editar',
         'empresa/actualizar'            => '/empresas/actualizar',
         'empresa/eliminar'              => '/empresas/:id/eliminar',
@@ -159,7 +158,7 @@ function url(string $route, array $params = []): string
         'usuario/eliminarUsuario'       => '/usuarios/:id/eliminar',
         'usuario/impersonate'           => '/usuarios/:id/impersonate',
         'usuario/stopImpersonating'     => '/usuarios/stop-impersonating',
-        // Configuración
+        // Configuracion
         'configuracion/index'           => '/configuracion',
         'configuracion/editar'          => '/configuracion',
         'configuracion/guardar'         => '/configuracion/guardar',
@@ -172,7 +171,6 @@ function url(string $route, array $params = []): string
     ];
 
     if (!isset($map[$route])) {
-        // Fallback legacy para rutas no mapeadas
         $parts = explode('/', $route, 2);
         $qs = http_build_query(array_merge(
             ['controller' => $parts[0], 'action' => $parts[1] ?? 'index'],
@@ -183,7 +181,6 @@ function url(string $route, array $params = []): string
 
     $path = $map[$route];
 
-    // Reemplazar parámetros de ruta (:nombre) con sus valores
     $extra = [];
     foreach ($params as $key => $value) {
         if (strpos($path, ':' . $key) !== false) {
@@ -193,7 +190,6 @@ function url(string $route, array $params = []): string
         }
     }
 
-    // Parámetros sobrantes → query string
     $qs = !empty($extra) ? '?' . http_build_query($extra) : '';
 
     return BASE_URL . $path . $qs;

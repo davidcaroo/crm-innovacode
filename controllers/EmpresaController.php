@@ -363,76 +363,79 @@ class EmpresaController extends BaseController
     public function datosDataTables()
     {
         $request = $_POST;
-
         $draw = isset($request['draw']) ? intval($request['draw']) : 1;
-        $start = isset($request['start']) ? intval($request['start']) : 0;
-        $length = isset($request['length']) ? intval($request['length']) : 10;
-        $searchValue = isset($request['search']['value']) ? $request['search']['value'] : '';
 
-        $orderColumnIndex = isset($request['order'][0]['column']) ? intval($request['order'][0]['column']) : 0;
-        $orderDir = isset($request['order'][0]['dir']) ? $request['order'][0]['dir'] : 'asc';
+        try {
+            $start = isset($request['start']) ? intval($request['start']) : 0;
+            $length = isset($request['length']) ? intval($request['length']) : 10;
+            $searchValue = isset($request['search']['value']) ? $request['search']['value'] : '';
 
-        $usuario_id = in_array($_SESSION['usuario_rol'], ['admin', 'superadmin']) ? null : $_SESSION['usuario_id'];
+            $orderColumnIndex = isset($request['order'][0]['column']) ? intval($request['order'][0]['column']) : 0;
+            $orderDir = isset($request['order'][0]['dir']) ? $request['order'][0]['dir'] : 'asc';
 
-        $empresaModel = new Empresa();
+            $usuario_id = in_array($_SESSION['usuario_rol'] ?? '', ['admin', 'superadmin'], true)
+                ? null
+                : ($_SESSION['usuario_id'] ?? null);
 
-        $totalRecords = $empresaModel->count($usuario_id);
-        $totalFiltered = $empresaModel->contarFiltroDataTables($usuario_id, $searchValue);
+            $empresaModel = new Empresa();
 
-        $empresas = $empresaModel->obtenerFiltroDataTables($usuario_id, $start, $length, $searchValue, $orderColumnIndex, $orderDir);
+            $totalRecords = $empresaModel->count($usuario_id);
+            $totalFiltered = $empresaModel->contarFiltroDataTables($usuario_id, $searchValue);
 
-        $empresaIds = array_map(function ($e) {
-            return (int)($e->id ?? 0); }, $empresas);
-        $estadosTrazabilidad = [];
-        if (!empty($empresaIds)) {
-            $trazabilidadModel = new Trazabilidad();
-            $estadosTrazabilidad = $trazabilidadModel->obtenerEstadosFlujoEmpresas($empresaIds);
-        }
+            $empresas = $empresaModel->obtenerFiltroDataTables($usuario_id, $start, $length, $searchValue, $orderColumnIndex, $orderDir);
 
-        $data = [];
-        $labels = ['prospectado' => 'Prospectado', 'contactado' => 'Contactado', 'negociacion' => 'Negociación', 'seguimiento' => 'Seguimiento', 'ganado' => 'Ganado', 'perdido' => 'Perdido'];
-        $badgeMap = ['prospectado' => 'info', 'contactado' => 'warning', 'negociacion' => 'primary', 'seguimiento' => 'secondary', 'ganado' => 'success', 'perdido' => 'danger'];
-
-        foreach ($empresas as $e) {
-            $etapa = strtolower($e->etapa_venta ?? 'prospectado');
-            $estadoFlujo = $estadosTrazabilidad[(int)$e->id] ?? [
-                'tiene_estudio_necesidades' => false,
-                'tiene_oferta_servicios' => false,
-                'tiene_seguimiento_oferta' => false,
-            ];
-
-            $contactoEfectivo = ($etapa === 'contactado' && strtoupper(trim((string)($e->aplica ?? ''))) === 'SI');
-            $tieneOferta = !empty($estadoFlujo['tiene_oferta_servicios']);
-            $tieneEstudio = !empty($estadoFlujo['tiene_estudio_necesidades']);
-            $tieneSeguimiento = !empty($estadoFlujo['tiene_seguimiento_oferta']);
-
-            $mostrarBadgesActividad = !in_array($etapa, ['ganado', 'perdido']);
-
-            $badgeHtm = '<span class="badge badge-pill badge-' . ($badgeMap[$etapa] ?? 'secondary') . '">' . ($labels[$etapa] ?? ucfirst($etapa)) . '</span>';
-
-            if ($mostrarBadgesActividad) {
-                if ($tieneSeguimiento) {
-                    $badgeHtm .= '<div class="mt-1"><span class="badge badge-info bg-info text-white mr-1 mb-1 d-inline-block">Seguimiento de la oferta</span></div>';
-                }
-                elseif ($tieneOferta) {
-                    $badgeHtm .= '<div class="mt-1"><span class="badge badge-primary mr-1 mb-1 d-inline-block">Oferta de servicios</span></div>';
-                }
-                elseif ($tieneEstudio) {
-                    // Reemplazar el badge de etapa por solo "Estudio de necesidades"
-                    $badgeHtm = '<span class="badge badge-pill badge-primary">Estudio de necesidades</span>';
-                }
-                elseif ($contactoEfectivo) {
-                    $badgeHtm .= '<div class="mt-1"><span class="badge badge-success mr-1 mb-1 d-inline-block">Contacto interesado</span></div>';
-                }
+            $empresaIds = array_map(function ($e) {
+                return (int)($e->id ?? 0);
+            }, $empresas);
+            $estadosTrazabilidad = [];
+            if (!empty($empresaIds)) {
+                $trazabilidadModel = new Trazabilidad();
+                $estadosTrazabilidad = $trazabilidadModel->obtenerEstadosFlujoEmpresas($empresaIds);
             }
 
-            $btnContactos = url('contacto/index', ['empresa_id' => $e->id]);
-            $btnTrazabilidad = url('trazabilidad/index', ['empresa_id' => $e->id]);
-            $btnEditar = url('empresa/editar', ['id' => $e->id]);
-            $btnEliminar = url('empresa/eliminar', ['id' => $e->id]);
-            $nameEscaped = htmlspecialchars($e->razon_social, ENT_QUOTES, 'UTF-8');
+            $data = [];
+            $labels = ['prospectado' => 'Prospectado', 'contactado' => 'Contactado', 'negociacion' => 'Negociación', 'seguimiento' => 'Seguimiento', 'ganado' => 'Ganado', 'perdido' => 'Perdido'];
+            $badgeMap = ['prospectado' => 'info', 'contactado' => 'warning', 'negociacion' => 'primary', 'seguimiento' => 'secondary', 'ganado' => 'success', 'perdido' => 'danger'];
 
-            $accionesHtm = '
+            foreach ($empresas as $e) {
+                $etapa = strtolower($e->etapa_venta ?? 'prospectado');
+                $estadoFlujo = $estadosTrazabilidad[(int)$e->id] ?? [
+                    'tiene_estudio_necesidades' => false,
+                    'tiene_oferta_servicios' => false,
+                    'tiene_seguimiento_oferta' => false,
+                ];
+
+                $contactoEfectivo = ($etapa === 'contactado' && strtoupper(trim((string)($e->aplica ?? ''))) === 'SI');
+                $tieneOferta = !empty($estadoFlujo['tiene_oferta_servicios']);
+                $tieneEstudio = !empty($estadoFlujo['tiene_estudio_necesidades']);
+                $tieneSeguimiento = !empty($estadoFlujo['tiene_seguimiento_oferta']);
+
+                $mostrarBadgesActividad = !in_array($etapa, ['ganado', 'perdido'], true);
+
+                $badgeHtm = '<span class="badge badge-pill badge-' . ($badgeMap[$etapa] ?? 'secondary') . '">' . ($labels[$etapa] ?? ucfirst($etapa)) . '</span>';
+
+                if ($mostrarBadgesActividad) {
+                    if ($tieneSeguimiento) {
+                        $badgeHtm .= '<div class="mt-1"><span class="badge badge-info bg-info text-white mr-1 mb-1 d-inline-block">Seguimiento de la oferta</span></div>';
+                    }
+                    elseif ($tieneOferta) {
+                        $badgeHtm .= '<div class="mt-1"><span class="badge badge-primary mr-1 mb-1 d-inline-block">Oferta de servicios</span></div>';
+                    }
+                    elseif ($tieneEstudio) {
+                        $badgeHtm = '<span class="badge badge-pill badge-primary">Estudio de necesidades</span>';
+                    }
+                    elseif ($contactoEfectivo) {
+                        $badgeHtm .= '<div class="mt-1"><span class="badge badge-success mr-1 mb-1 d-inline-block">Contacto interesado</span></div>';
+                    }
+                }
+
+                $btnContactos = url('contacto/index', ['empresa_id' => $e->id]);
+                $btnTrazabilidad = url('trazabilidad/index', ['empresa_id' => $e->id]);
+                $btnEditar = url('empresa/editar', ['id' => $e->id]);
+                $btnEliminar = url('empresa/eliminar', ['id' => $e->id]);
+                $nameEscaped = htmlspecialchars($e->razon_social, ENT_QUOTES, 'UTF-8');
+
+                $accionesHtm = '
             <div class="btn-group btn-group-sm" role="group">
                 <a href="' . $btnContactos . '" class="btn btn-sm btn-outline-info" title="Contactos">
                     <i class="fas fa-address-book fa-sm"></i>
@@ -449,24 +452,49 @@ class EmpresaController extends BaseController
                 </a>
             </div>';
 
-            $data[] = [
-                '<span class="font-weight-bold">' . htmlspecialchars($e->razon_social ?? '') . '</span>',
-                htmlspecialchars($e->dpto ?? ''),
-                htmlspecialchars($e->ciudad ?? ''),
-                htmlspecialchars($e->actividad_economica ?? ''),
-                htmlspecialchars($e->correo_comercial ?? ''),
-                $badgeHtm,
-                $accionesHtm
-            ];
-        }
+                $data[] = [
+                    '<span class="font-weight-bold">' . htmlspecialchars($e->razon_social ?? '') . '</span>',
+                    htmlspecialchars($e->dpto ?? ''),
+                    htmlspecialchars($e->ciudad ?? ''),
+                    htmlspecialchars($e->actividad_economica ?? ''),
+                    htmlspecialchars($e->correo_comercial ?? ''),
+                    $badgeHtm,
+                    $accionesHtm
+                ];
+            }
 
-        header('Content-Type: application/json');
-        echo json_encode([
-            "draw" => $draw,
-            "recordsTotal" => $totalRecords,
-            "recordsFiltered" => $totalFiltered,
-            "data" => $data
-        ]);
-        exit;
+            $this->json([
+                "draw" => $draw,
+                "recordsTotal" => $totalRecords,
+                "recordsFiltered" => $totalFiltered,
+                "data" => $data
+            ]);
+        } catch (Throwable $e) {
+            $logMessage = '[Empresas/DataTables] ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine();
+            error_log($logMessage);
+            $logsDir = BASE_PATH . '/logs';
+            $logFile = $logsDir . '/error.log';
+            if (is_dir($logsDir) && is_writable($logsDir)) {
+                @file_put_contents($logFile, '[' . date('Y-m-d H:i:s') . '] ' . $logMessage . PHP_EOL, FILE_APPEND);
+            }
+
+            $debugInfo = null;
+            if (in_array($_SESSION['usuario_rol'] ?? '', ['admin', 'superadmin'], true)) {
+                $debugInfo = $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine();
+            }
+
+            $response = [
+                "draw" => $draw,
+                "recordsTotal" => 0,
+                "recordsFiltered" => 0,
+                "data" => [],
+                "error" => "Error interno al cargar empresas."
+            ];
+            if ($debugInfo) {
+                $response["debug"] = $debugInfo;
+            }
+
+            $this->json($response, 500);
+        }
     }
 }

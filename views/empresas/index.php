@@ -79,6 +79,7 @@
         }
 
         if (window.jQuery && jQuery.fn.DataTable && document.getElementById('dataTable')) {
+            jQuery.fn.dataTable.ext.errMode = 'none';
             const table = jQuery('#dataTable').DataTable({
                 pageLength: 10,
                 lengthMenu: [10, 15, 25, 50, 100],
@@ -88,8 +89,22 @@
                 ajax: {
                     url: '<?php echo url('empresa/datosDataTables'); ?>',
                     type: 'POST',
+                    dataSrc: function(json) {
+                        if (!json || !Array.isArray(json.data)) {
+                            return [];
+                        }
+                        return json.data;
+                    },
                     data: function(d) {
                         d.search.value = inputBuscar ? inputBuscar.value : '';
+                    },
+                    error: function(xhr, textStatus) {
+                        console.error('DataTables AJAX error:', textStatus, xhr.status, xhr.responseText);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error al cargar empresas',
+                            text: 'No se pudo completar la busqueda. Intenta nuevamente.'
+                        });
                     }
                 },
                 order: [
@@ -113,6 +128,10 @@
                         badge.innerText = settings._iRecordsTotal + ' registros en total (' + settings._iRecordsDisplay + ' filtrados)';
                     }
                 }
+            });
+
+            jQuery('#dataTable').on('error.dt', function(e, settings, techNote, message) {
+                console.error('DataTables error:', message, techNote, settings);
             });
 
             if (inputBuscar) {

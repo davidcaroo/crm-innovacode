@@ -29,6 +29,7 @@ return [
     'POST /empresas/procesar-importacion'      => ['empresa', 'procesarImportacion'],
     'GET  /empresas/crear'                     => ['empresa', 'crear'],
     'POST /empresas/guardar'                   => ['empresa', 'guardar'],
+    'POST /empresas/datos'                     => ['empresa', 'datosDataTables'],
     'GET  /empresas/:id/editar'                => ['empresa', 'editar'],
     'POST /empresas/actualizar'                => ['empresa', 'actualizar'],
     'GET  /empresas/:id/eliminar'              => ['empresa', 'eliminar'],

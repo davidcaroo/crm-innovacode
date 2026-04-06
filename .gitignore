@@ -10,6 +10,7 @@ logs/error.log
 
 # Configuration files with credentials (keep example files)
 config/config.php
+config/config.production.php
 
 # OS generated files
 .DS_Store

@@ -115,6 +115,7 @@ function url(string $route, array $params = []): string
         'empresa/procesarImportacion'   => '/empresas/procesar-importacion',
         'empresa/crear'                 => '/empresas/crear',
         'empresa/guardar'               => '/empresas/guardar',
+        'empresa/datosDataTables'       => '/empresas/datos',
         'empresa/editar'                => '/empresas/:id/editar',
         'empresa/actualizar'            => '/empresas/actualizar',
         'empresa/eliminar'              => '/empresas/:id/eliminar',

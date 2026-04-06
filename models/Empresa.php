@@ -109,8 +109,12 @@ class Empresa extends BaseModel
         }
 
         if (!empty($searchValue)) {
-            $sql .= " AND (e.razon_social LIKE :search OR e.dpto LIKE :search OR e.ciudad LIKE :search OR e.correo_comercial LIKE :search)";
-            $params[':search'] = '%' . $searchValue . '%';
+            $sql .= " AND (e.razon_social LIKE :search1 OR e.dpto LIKE :search2 OR e.ciudad LIKE :search3 OR e.correo_comercial LIKE :search4)";
+            $searchParam = '%' . $searchValue . '%';
+            $params[':search1'] = $searchParam;
+            $params[':search2'] = $searchParam;
+            $params[':search3'] = $searchParam;
+            $params[':search4'] = $searchParam;
         }
 
         $columnsMapping = [
@@ -156,8 +160,12 @@ class Empresa extends BaseModel
         }
 
         if (!empty($searchValue)) {
-            $sql .= " AND (e.razon_social LIKE :search OR e.dpto LIKE :search OR e.ciudad LIKE :search OR e.correo_comercial LIKE :search)";
-            $params[':search'] = '%' . $searchValue . '%';
+            $sql .= " AND (e.razon_social LIKE :search1 OR e.dpto LIKE :search2 OR e.ciudad LIKE :search3 OR e.correo_comercial LIKE :search4)";
+            $searchParam = '%' . $searchValue . '%';
+            $params[':search1'] = $searchParam;
+            $params[':search2'] = $searchParam;
+            $params[':search3'] = $searchParam;
+            $params[':search4'] = $searchParam;
         }
 
         $stmt = $this->db->prepare($sql);
@@ -165,7 +173,8 @@ class Empresa extends BaseModel
             $stmt->bindValue($key, $value, PDO::PARAM_STR);
         }
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_OBJ)->total;
+        $row = $stmt->fetch(PDO::FETCH_OBJ);
+        return $row ? (int)$row->total : 0;
     }
 
     public function actualizar($id, $data, $usuario_id = null)
